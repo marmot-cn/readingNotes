@@ -116,6 +116,10 @@
 
 `account`: 登录名
 `encrypted password`: 加密的密码
+		
+		$1$xxxx$xxx
+		
+		$加密方式$salt$加密后的密码
 
 **加密方法**
 
