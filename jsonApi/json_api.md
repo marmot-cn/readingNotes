@@ -2454,11 +2454,11 @@ A server **MUST** prepare responses, and a client **MUST** interpret responses, 
 
 **204 No Content**
 
-服务端 **必须** 返回一个 `204 No Content` 状态码如果一个删除请求成功并且没有内容返回。
+没有内容返回,服务端 **必须** 返回一个 `204 No Content` 状态码如果一个删除请求成功.
 
 **200 OK**
 
-服务端 **必须** 返回一个 `200 OK` 状态码如果一个删除请求成功并且服务端仅仅返回`top-level meta data`顶级元数据.
+如果有内容返回,仅返回`top-level meta data`顶级元数据,服务端 **必须** 返回一个 `200 OK` 状态码如果一个删除请求成功.
 
 **Other Responses:其它响应**
 
