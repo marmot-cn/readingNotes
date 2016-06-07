@@ -31,3 +31,6 @@
 还原`/etc/sudoers`权限
 
 		chmod 440 /etc/sudoers
+		
+		
+		
