@@ -74,7 +74,7 @@
 
 定义`flannel`网络配置到`etcd`,这个配置会推送到各个`minions`的`flannel`服务上:
 
-		etcdctl mk /coreos.com/network/config '{"Network":"172.17.0.0/16"}'
+		etcdctl mk /xxx/network/config '{"Network":"172.17.0.0/16"}'
 		
 
 ####minon
@@ -107,7 +107,7 @@
 `/etc/sysconfig/flanneld`:
 
 		FLANNEL_ETCD="http://masterIP:2379"
-		FLANNEL_ETCD_KEY="/coreos.com/network"
+		FLANNEL_ETCD_KEY="/xxx/network"
 		
 这里使用的是`masterIP`,如果etcd有自己的独立服务器则使用自己的ip.  
 `FLANNEL_ETCD_KEY`在上文已经定义过.
