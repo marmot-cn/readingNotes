@@ -6,8 +6,8 @@
 
 **禁用防火墙**
 
-		systemctl stop firewalld #停止firewall
-		systemctl disable firewalld #禁止firewall开机启动
+		systemctl stop firewalld.service #停止firewall
+		systemctl disable firewalld.service #禁止firewall开机启动
 		
 使用`iptables`,不过我`iptables`只是了解一个大概,需要单独编写iptables的使用情况.
 		
