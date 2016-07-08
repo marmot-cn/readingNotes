@@ -4,21 +4,21 @@
 
 ###魔术方法
 
-* `__construct()`
-* `__destruct()`
-* `__call()`
-* `__callStatic()`
-* `__get()`
-* `__set()`
+* `__construct()`: 构造函数.
+* `__destruct()`: 析构函数.
+* `__call()`: 在对象中调用一个不可访问方法时.
+* `__callStatic()`: 用静态方式中调用一个不可访问方法时.
+* `__get()`: 读取不可访问属性的值时被调用.
+* `__set()`: 在给不可访问属性赋值时被调用.
 * `__isset()`
 * `__unset()`
 * `__sleep()`: serialize时调用,必须返回一个包含对象中所有应被序列化的变量名称的数组.
 * `__wakeup()`: unserialize时调用.
 * `__toString()`: 一个类被当成字符串时应怎样回应.`echo $obj;`这样的情况.
 * `__invoke()`: 以调用函数的方式调用一个对象时
-* `__set_state()`: `var_export`时调用该静态方法
+* `__set_state()`: `var_export()`时调用该静态方法
 * `__clone()`
-* `__debugInfo()`
+* `__debugInfo()`: `var_dump()`时调用该方法,该方法必须返回一个数组.
 
 ####`__sleep()`和`__wakeup()`
 
@@ -292,20 +292,172 @@
 		
 ####`__debugInfo()`
 
-####`__construct()`
+在调用`var_dump()`时触发调用该方法.该方法必须返回数组.
 
-####`__destruct()`
+**示例**
 
-####`__call()`
+		class A
+		{
+		    public $var1 = 1;
+		    public $var2 = 2;
+		}
+		
+		$a = new A();
+		var_dump($a);
+		
+输出:
 
-####`__callStatic()`
+		object(A)#1 (2) {
+		  ["var1"]=>
+		  int(1)
+		  ["var2"]=>
+		  int(2)
+		}
 
-####`__get()`
+我们加上`__debugInfo()`方法:
 
-####`__set()`
+		class A
+		{
+		    public $var1 = 1;
+		    public $var2 = 2;
+		
+		    public function __debugInfo() {
+		        return array('Hello World');
+		    }
+		}
+		
+		$a = new A();
+		var_dump($a);
 
-####`__isset()`
+输出:
 
-####`__unset()`
+		object(A)#1 (1) {
+		  [0]=>
+		  string(11) "Hello World"
+		}
+
+####`__construct()`和`__destruct()`
+
+`__construct()`构造函数,`__destruct()`析构函数.
+
+**示例**
+
+		class A
+		{
+			public function __construct()
+			{
+				print 'In constructor'.PHP_EOL;
+			}
+		
+			public function __destruct()
+			{
+				print 'In destructor'.PHP_EOL;
+			}
+		}
+		
+		$a = new A();
+		
+输出:
+
+In constructor
+
+In destructor
+
+####`__call()`和`__callStatic()`
+
+`public mixed __call ( string $name , array $arguments )`
+
+在对象中调用一个不可访问方法时,`__call()` 会被调用.
+
+`public static mixed __callStatic ( string $name , array $arguments )`
+
+用静态方式中调用一个不可访问方法时,`__callStatic()` 会被调用. php5.3.0之后的版本.
+
+* `$name`: 参数是要调用的方法名称.
+* `$arguments`: 参数是一个枚举数组,包含着要传递给方法`$name`的参数.
+
+**示例**
+
+		class A
+		{
+			public function __call($name, $arguments) 
+		    {
+		        echo "Calling object method '$name' "
+		             . implode(', ', $arguments). "\n";
+		    }
+		
+		    public static function __callStatic($name, $arguments) 
+		    {
+		        // 注意: $name 的值区分大小写
+		        echo "Calling static method '$name' "
+		             . implode(', ', $arguments). "\n";
+		    }
+		
+		    private function test()
+		    {
+		    	return 100;
+		    }
+		}
+		
+		$a = new A;
+		
+		//存在的私有方法
+		$a->test("hello","world");
+		//不存在方法
+		$a->notExist("hello","world");
+		//静态调用
+		A::notExist("hello","world");
+		
+		输出:
+		
+		Calling object method 'test' hello, world
+		Calling object method 'notExist' hello, world
+		Calling static method 'notExist' hello, world
+
+####`__set()`和`__get()`
+
+在静态方法中,这些魔术方法将不会被调用
+
+`public void __set ( string $name , mixed $value )`
+
+在给不可访问属性赋值时,`__set()` 会被调用.
+
+`public mixed __get ( string $name )`
+
+读取不可访问属性的值时,`__get()` 会被调用.
+
+**示例**
+
+		class A
+		{
+			private $var1;
+			private $var2;
+		
+		    public function __set($name, $value) 
+		    {
+		        echo "Setting '$name' to '$value'\n";
+		    }
+		
+		
+			public function __get($name)
+			{
+				echo "Getting '$name'",PHP_EOL;
+				return 'Hello World'.PHP_EOL;
+			}
+		}
+		
+		
+		$a = new A();
+		$a->var1 = 'A';
+		echo $a->var1;
+
+输出:
+		Setting 'var1' to 'A'
+		Getting 'var1'
+		Hello World
+
+####`__isset()`和`__unset()`
+
+在静态方法中,这些魔术方法将不会被调用
 
 ####`__clone()`
