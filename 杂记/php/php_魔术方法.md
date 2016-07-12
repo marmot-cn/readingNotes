@@ -17,7 +17,7 @@
 * `__toString()`: 一个类被当成字符串时应怎样回应.`echo $obj;`这样的情况.
 * `__invoke()`: 以调用函数的方式调用一个对象时
 * `__set_state()`: `var_export()`时调用该静态方法
-* `__clone()`
+* `__clone()`: 克隆对象时被调用.
 * `__debugInfo()`: `var_dump()`时调用该方法,该方法必须返回一个数组.
 
 ####`__sleep()`和`__wakeup()`
