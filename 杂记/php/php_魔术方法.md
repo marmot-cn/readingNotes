@@ -10,8 +10,8 @@
 * `__callStatic()`: 用静态方式中调用一个不可访问方法时.
 * `__get()`: 读取不可访问属性的值时被调用.
 * `__set()`: 在给不可访问属性赋值时被调用.
-* `__isset()`
-* `__unset()`
+* `__isset()`: 当对不可访问属性调用 `isset()` 或 `empty()` 时, `__isset()` 会被调用.
+* `__unset()`: 当对不可访问属性调用 `unset()` 时, `__unset()` 会被调用.
 * `__sleep()`: serialize时调用,必须返回一个包含对象中所有应被序列化的变量名称的数组.
 * `__wakeup()`: unserialize时调用.
 * `__toString()`: 一个类被当成字符串时应怎样回应.`echo $obj;`这样的情况.
@@ -458,6 +458,114 @@ In destructor
 
 ####`__isset()`和`__unset()`
 
-在静态方法中,这些魔术方法将不会被调用
+在静态方法中,这些魔术方法将不会被调用.
+
+当对不可访问属性调用 `isset()` 或 `empty()` 时, `__isset()` 会被调用.
+
+当对不可访问属性调用 `unset()` 时, `__unset()` 会被调用.
+
+		<?php
+		
+		class A
+		{
+			private $var1;
+			public $var2;
+			public $var3 = 1;
+		
+		    public function __isset($name) 
+		    {
+		        echo "Is '$name' set?\n";
+		    }
+		
+		
+			public function __unset($name)
+			{
+				echo "Unsetting '$name'\n";
+			}
+		}
+		
+		
+		$a = new A();
+		
+		var_dump(isset($a->var2));//false
+		var_dump(isset($a->var3));//true
+		isset($a->var1);//Is var1 set?
+		empty($a->var1);//Is var1 set?
+		unset($a->var1);//Unsetting var1 
 
 ####`__clone()`
+
+当复制完成时,如果定义了 `__clone()` 方法,则新创建的对象(复制生成的对象)中的 `__clone()` 方法会被调用,可用于修改属性的值(如果有必要的话).
+
+我们先理解`clone`和不克隆的区别:
+
+		class A
+		{
+			private $var1;
+		
+			public function __construct()
+			{
+				$this->var1 = 1;
+			}
+		
+			public function setValue($value)
+			{
+				$this->var1 = $value;
+			}
+		
+			public function run()
+			{
+				echo $this->var1, PHP_EOL;
+			}
+		}
+		
+		$a = new A();
+		$b = clone $a;
+		$c = $a;
+		$a->run();//1
+		$b->run();//1
+		$c->run();//1
+		$a->setValue(2);
+		$b->setValue(3);
+		$c->setValue(4);
+		$a->run();//4
+		$b->run();//3
+		$c->run();//4;
+		
+`$c`是`$a`的一个引用,所以`$c->setValue(4)`时候,`$a`的值也连带修改了.
+
+`$b`是`$a`的克隆,不在是`$a`的引用而是一个副本(`copy`).
+
+**`__clone()`示例**
+
+		class A
+		{
+			private $var1;
+		
+			public function __construct()
+			{
+				$this->var1 = 1;
+			}
+		
+			public function setValue($value)
+			{
+				$this->var1 = $value;
+			}
+		
+			public function run()
+			{
+				echo $this->var1, PHP_EOL;
+			}
+		
+			public function __clone()
+			{
+				$this->var1 = 2;
+			}
+		}
+		
+		$a = new A();
+		$b = clone $a;
+		$a->run();//1
+		$b->run();//2
+
+`$b`在克隆`$a`时候`__clone`方法被调用,所以`var1`的值被修改了.
