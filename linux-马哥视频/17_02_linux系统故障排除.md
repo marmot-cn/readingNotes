@@ -179,3 +179,76 @@ chroot /mnt/sysroot 虚根,不能识别dev设备文件, 需要手动创建dev设
 ---
 
 ####/etc/profile
+
+`/etc/profile`文件的改变会涉及到系统的环境,也就是有关Linux环境变量的东西.
+
+在文件中`:`表示并列含义,有多个的话用`:`分离.
+
+在文件中`.`表示操作的当前目录.
+
+**常见的环境变量**
+
+* `PATH`: 决定了`shell`将到哪些目录中寻找命令或程序.
+* `HOME`: 当前用户主目录.
+* `MAIL`: 当前用户的邮件存放目录.
+* `SHELL`: 当前用户用的是哪种`Shell`.
+* `HISTSIZE`: 是指保存历史命令记录的条数.
+* `LOGNAME`: 是指当前用户的登录名.
+* `HOSTNAME`: 主机名, 许多应用程序如果要用到主机名的话, 通常是从这个环境变量中来取得的.
+* `LANG/LANGUGE`: 是和语言相关的环境变量,使用多种语言的用户可以修改此环境变量.
+* `PS1`: 基本提示符,对于`root`用户是`#`,对于普通用户是`$`.
+* `PS2`: 附属提示符,默认是"`>`"
+
+#####几个文件的区别
+
+**`/etc/profile`**
+
+用来设置`系统环境参数`,比如`$PATH`. 这里面的环境变量是对系统内`所有用户`生效的.
+
+此文件为系统的每个用户设置环境信息,当用户第一次登录时,该文件被执行,并从`/etc/profile.d`目录的配置文件中搜集shell的设置.
+
+**`/etc/bashrc`**
+
+这个文件设置系统`bash shell`相关的东西,对系统内所有用户生效,只要用户运行bash命令,那么这里面的东西就在起作用.
+
+为每一个运行bash shell的用户执行此文件,当bash shell被打开时,该文件被读取.
+
+**`~/.bash_profile`**
+
+用来设置一些环境变量,功能和`/etc/profile`类似,但是这个是针对用户来设定的,也就是说,你在`/home/user1/.bash_profile`中设定了环境变量只针对`user1`这个用户生效.
+
+每个用户都可使用该文件输入专用于自己使用的shell信息,当用户登录时,该文件仅仅执行一次.默认情况下,他设置一些环境变量,执行用户的`.bashrc`文件.
+
+交互式,`login`方式进入`bash`运行的,意思是只有用户登录时才会生效.
+
+**`~/.bashrc`**
+
+作用类似于`/etc/bashrc`,只是针对用户自己而言,不对其他用户生效.
+
+文件包含专用于你的bash shell的bash信息,当登录时以及每次打开新的shell时,该文件被读取.
+
+交互式`non-login`方式进入`bash`运行的,用户不一定登录,只要以该用户身份运行命令行就会读取该文件.
+
+**执行顺序**
+
+`/etc/profile -> (~/.bash_profile | ~/.bash_login | ~/.profile) -> ~/.bashrc -> /etc/bashrc -> ~/.bash_logout`
+
+`~/.bash_profile`文件中一般会有下面的代码(执行`~/.bashrc`)执行:
+
+		if [ -f ~/.bashrc ] ; then
+		. ~/.bashrc
+		fi 
+
+`~/.bashrc`中,一般还会有以下代码(执行`/etc/bashrc`):
+
+		if [ -f /etc/bashrc ]; then
+			. /etc/bashrc
+		fi
+		
+**`/etc/profile`和`~/.bashrc`**
+
+`/etc/profile`中设定的变量(全局)的可以作用于任何用户,而`~/.bashrc`等中设定的变量(局部)只能继承`/etc/profile`中的变量,他们是"`父子`"关系.
+
+**`~/.bash_profile`和`~/.bashrc`**
+
+`~/.bash_profile`是`交互式login`方式进入 bash 运行的`~/.bashrc`,`~/.bashrc`是交互式 `non-login 方式`进入 bash 运行的通常二者设置大致相同,所以通常前者会调用后者.
