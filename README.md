@@ -29,7 +29,7 @@
 
 ####语言
 
-* head First C
+* Head First C
 * 从paxos到zookeeper:分布式一致性原理
 * RESTful Web APIs
 * 深入浅出java
