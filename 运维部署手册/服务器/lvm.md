@@ -2,6 +2,18 @@
 
 ---
 
+###简介
+
+* 创建物理卷`pvcreate`
+* 创建卷组并给卷组增加分区`vgcreate`
+* 创建新的逻辑卷使用lvcreate
+
+
+![lvm](./img/lvm.jpg "lvm")
+
+
+###示例
+
 这里我用的是阿里云的云盘.挂载一块新的云盘后
 
 ####准备存盘分区
@@ -151,6 +163,14 @@
 		  Read ahead sectors     auto
 		  - currently set to     256
 		  Block device           253:0
+		  
+`一些参数`:
+
+`-l`:
+	* `%VG`: a percentage of the total space in the Volume Group with the suffix %VG
+	* `%FREE`: a percentage of the remaining free space in the Volume Group with the suffix %FREE
+	* `%PVS	`: a percentage of the remaining free space for the specified PhysicalVolume(s) with the suffix %PVS		
+	* `%ORIGIN`: a percentage of the total space in the Origin  Logical  Volume  with  the  suffix  %ORIGIN  
 
 **格式化和挂载逻辑卷**
 
