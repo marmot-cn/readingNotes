@@ -207,6 +207,7 @@ dropbear会在用户登录时检查其默认shell是否当前系统的安全shel
 		
 		创建一个文件a
 		[ansible@k8s-minon2-test ~]$ touch a
+		[ansible@rancher-agent-2 ~]$ echo 1 > a
 		建立一个快捷方式,软连接
 		[ansible@k8s-minon2-test ~]$ cp -s a a_slink
 		创建一个硬连接				
@@ -220,9 +221,12 @@ dropbear会在用户登录时检查其默认shell是否当前系统的安全shel
 		
 将`a_slink`复制成为`a_slink2`.
 		
+		[ansible@k8s-minon2-test ~]$ cp a_slink a_slink2
 		原本要复制的是连接文件，却将连接文件连接的实际文件复制过来了
 		[ansible@k8s-minon2-test ~]$ ll -s a_slink2
 		0 -rw-rw-r-- 1 ansible ansible 0 6月  27 10:41 a_slink2
+		[ansible@rancher-agent-2 ~]$ cat a_slink2
+		1
 		
 若要复制连接文件而不是它指向的源文件,就要使用`-d`参数.
 

@@ -57,7 +57,7 @@ kernel --> 物理终端(/dev/console) --> 记录到 /var/log/dmesg,(由`klogd`�
 		
 `-action`: 加上`-`表示异步写入,先写到内存过一会在同步到磁盘上去.		
 		
-**facility**
+**facility(设备)**
 
 facility,可以理解为日志的来源或设备.目前常用的facility有以下几种:
 
@@ -134,4 +134,4 @@ action(动作)日志记录的位置
 
 发送`1`号信号`SIGUP`,让服务不用重启,就可以重读配置文件. 
 
-`SIGHUP` as a notification about terminal closing event doesn't make sense for a daemon, because deamons are detached from their terminal. So the system will never send this signal to them. Then it is common practice for daemons to use it for another meaning, typically reloading the daemon's configuration. This is not a rule, just kind of a convention. That's why it's not documented in the manpage.
+`SIGHUP` as a notification about `terminal closing event` doesn't make sense for a daemon, because deamons are detached from their terminal. So the system will never send this signal to them. Then it is common practice for daemons to use it for another meaning, typically reloading the daemon's configuration. This is not a rule, just kind of a convention. That's why it's not documented in the manpage.
