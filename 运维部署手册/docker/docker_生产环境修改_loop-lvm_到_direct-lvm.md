@@ -98,6 +98,10 @@
   		
 ####创建thinpool
  
+ * `-n` name
+ * `-W|--wipesignatures {y|n}`
+ 
+ 
 在名为`docker`的`卷组`上创建一个逻辑卷`thinpool`,占据整个`VG`的`%95`;
  
  		[root@rancher-agent-1 ~]# lvcreate --wipesignatures y -n thinpool docker -l 95%VG
