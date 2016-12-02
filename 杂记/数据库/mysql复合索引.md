@@ -149,7 +149,7 @@ Mysql难以优化引用可空列查询,它会使索引、索引统计和值更�
  
 这是因为会自动把where子句转换成to_number(dept_id)=900198,就是3所说的情况,这样就限制了索引的使用.
  
-	select * from dept where dept_id = '900198';  
+		select * from dept where dept_id = '900198';  
  
 ###MySQL里建立索引应该考虑数据库引擎的类型
 
