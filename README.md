@@ -76,6 +76,9 @@
 * 程序员的数学 
 * 程序员的数学2:概率统计 
 * 程序员的数学3:线性代数 
+* Common LISP: A Gentle Introduction to Symbolic Computation 
+* 程序是怎样跑起来的 
+* 码农·Lisp面面观
 
 ##在读书单
 
@@ -87,5 +90,6 @@
 * 编码:隐匿在计算机软硬件背后的语言 
 * Google软件测试之道
 * APUE
-* 图灵程序设计丛书:图解TCP/IP(第5版) 
+* 图灵程序设计丛书:图解TCP/IP(第5版)
+* 松本行弘的程序世界 
 
