@@ -47,6 +47,14 @@ URL 是相对于 DocumentRoot 的路径而言的.
 		用空格区分多个
 		
 		
+地址的表示方法:
+
+* IP
+* network/nermask
+* HOSTNAME: www.a.com
+* DOMAINNAME: magedu.com
+* Partial IP: 172.16, 172.16.0.0/16
+				
 `AuthConfig` 基于验证一个文件中的账户和密码才能访问.	
 
 		AuthTypes Basic
@@ -57,6 +65,15 @@ URL 是相对于 DocumentRoot 的路径而言的.
 		Require group GroupName (只有某个组才能登陆)
 		Require valid-user (只要出现在文件中的用户都可以登陆)
 
+
+**Order**
+
+基于主机的访问控制.
+
+**AuthConfig**
+
+基于用户或组的访问控制.
+
 ####elinks
 
 纯文本浏览器
@@ -65,6 +82,10 @@ URL 是相对于 DocumentRoot 的路径而言的.
 
 * `-dump`: 显示后立即退出
 * `-source`: 显示网页源码
+
+####Alias
+
+路径别名
 
 ###整理知识点
 
