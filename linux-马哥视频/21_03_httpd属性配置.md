@@ -27,6 +27,14 @@ URL 是相对于 DocumentRoot 的路径而言的.
 
 在 AllowOverride 设置为 None 时,`.htaccess` 文件将被完全忽略。当此指令设置为 All 时,所有具有 "`.htaccess`" 作用域的指令都允许出现在 `.htaccess` 文件中.
 
+还可以对它指定如下一些能被重写的指令类型:
+
+* `AuthConfig`: 允许使用所有的权限指令,他们包括 AuthDBMGroupFile  AuthDBMUserFile  AuthGroupFile  AuthName  AuthTypeAuthUserFile 和 Require.
+* `FileInfo`
+* `Indexes`
+* `Limit`
+* `Options`
+
 ####Order
 
 `Order`: 用于定义基于主机的访问功能的, IP, 网络地址或主机定义访问控制机制.`Order`本身不控制,只是说明默认机制.
