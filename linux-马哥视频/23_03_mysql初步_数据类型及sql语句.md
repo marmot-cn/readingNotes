@@ -216,6 +216,62 @@ mysql运行过程当中运行时的信息,关机后是空的.
 * GRANT,授权
 * REVOKE,撤销授权
 	
+**创建用户**
+
+		CREATE USER `USERNAME`@`HOST` [IDENTIFIED BY `PASSWORD`];
+		DROP USER 'USERNAME'@'HOST';
+		
+**HOST**
+
+* IP
+* HOSTNAME
+* NETWORK
+* 通配符
+	* `_`: 匹配任意单个字符, 172.16.0.__ (两个下划线 10-99).
+	* `%`: 匹配任意长度的任意字符. 	
+	
+			jerry@'%' 从所有主机登陆
+			
+	
+**GRANT**
+
+		GRANT pri1,pri2,... ON DB_NAME.TB_NAME	TO 'USERNAME'@'HOST' [IDENTIFIED BY 'PASSWORD'];
+		
+		如果用户不存在则自动创建用户,并授权.
+		
+		权限: select,update...
+	
+**ALL PRIVILEGES**	
+	
+		ALL PRIVILEGES 所有权限
+		GRANT ALL PRIVILEGES ON mydb.* TO 'jerry'@'%';
+		
+**USAGE**
+
+		无权限
+	
+**REVOKE**
+
+		REVOKE pri1,pri2,... ON DB_NAME FROM 'USERNAME'@'HOST';	
+**查看用户授权**
+
+		SHOW GRANTS FOR 'USERNAME'@'HOST';		
+		
+####选择 和 投影
+
+**选择**
+
+指定以某字段作为搜索码,与某值做逻辑比较运算,筛选符合条件的`行`.	
+**投影**	
+
+针对列的
+		
+		查询所有列
+		SELECT *
+		
+		查询名字列
+		SELECT name 
+	
 ###整理知识点
 
 ---
