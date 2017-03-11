@@ -40,6 +40,12 @@ httpd程序相同,把底层的不同通过虚拟机(apr)来兼容起来.
 
 ####编译配置LAMP
 
+**MPM**
+
+* prefork
+* worker
+* event
+
 ###整理知识点
 
 ---
