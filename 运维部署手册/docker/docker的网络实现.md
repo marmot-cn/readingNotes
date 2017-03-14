@@ -167,7 +167,7 @@ docker在启动后会在`filter`表中和`nat`表中创建docker链.
 
 这条规则代表`允许`容器之间互相通信.
 
-如果`Docker server`启动参数`--icc`(`icc`参数表示是否允许容器间相互通信)设置为`false`时,医生规则会被设置为`DROP`,`Docker`容器间的相互通信就被禁止.在这种情况下想让两个容器通信就需要在`docker run`时使用`--link`选项.
+如果`Docker server`启动参数`--icc`(`icc`参数表示是否允许容器间相互通信)设置为`false`时,以上规则会被设置为`DROP`,`Docker`容器间的相互通信就被禁止.在这种情况下想让两个容器通信就需要在`docker run`时使用`--link`选项.
 
 **`-A FORWARD -i docker0 ! -o docker0 -j ACCEPT`**
 
