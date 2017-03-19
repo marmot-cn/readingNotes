@@ -110,7 +110,7 @@
 在名为`docker`的`卷组`上创建一个逻辑卷`thinpoolmeta`,占据整个`VG`的`%95`;
 
 
-		[root@rancher-agent-1 ~]# lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG
+		[root@rancher-agent-1 ~]#lvcreate --wipesignatures y -n thinpoolmeta docker -l 1%VG
 		  Logical volume "thinpoolmeta" created.
 				
 		
