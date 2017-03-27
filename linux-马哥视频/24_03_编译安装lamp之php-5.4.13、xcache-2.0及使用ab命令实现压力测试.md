@@ -6,6 +6,10 @@
 
 ---
 
+### apache 结合 php
+
+		AddType
+
 
 ###整理知识点
 
