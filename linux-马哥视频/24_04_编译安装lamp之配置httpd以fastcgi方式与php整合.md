@@ -1,8 +1,8 @@
-#24_04_编译安装LAMP之配置httpd以FastCGI方式与php整合
+# 24_04_编译安装LAMP之配置httpd以FastCGI方式与php整合
 
 ---
 
-###笔记
+### 笔记
 
 ---
 
@@ -121,7 +121,7 @@ httpd 必须要提供 fastcgi 模块. 2.4以后就自带了,fcgi.
 			
 		</VirtualHost>
 
-###整理知识点
+### 整理知识点
 
 ---
 
