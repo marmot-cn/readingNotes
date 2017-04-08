@@ -563,3 +563,111 @@ Elasticsearch有一个功能叫做聚合(aggregations),它允许你在数据上�
  
 让我们找到所有职员中最大的共同点(兴趣爱好)是什么:
 
+#### ik
+
+curl -XPUT http://120.25.161.1:9200/iktest
+
+curl -XPOST http://120.25.161.1:9200/test/fulltext/_mapping -d'
+{
+    "fulltext": {
+             "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+        },
+        "properties": {
+            "content": {
+                "type": "text",
+                "analyzer": "ik_max_word",
+                "search_analyzer": "ik_max_word",
+                "include_in_all": "true",
+                "boost": 8
+            }
+        }
+    }
+}'
+
+**reindex**
+
+因为我已经导入了50w数据,需要让旧数据使用`ik`分词,创建新的`mapping`.
+
+		curl -XPOST http://120.25.161.1:9200/iktest/company/_mapping -d'
+		{
+		    "company": {
+		             "_all": {
+		            "analyzer": "ik_max_word",
+		            "search_analyzer": "ik_max_word",
+		            "term_vector": "no",
+		            "store": "false"
+		        },
+		        "properties": {
+		            "name": {
+		                "type": "text",
+		                "analyzer": "ik_max_word",
+		                "search_analyzer": "ik_max_word",
+		                "include_in_all": "true",
+		                "boost": 8
+		            }
+		        }
+		    }
+		}'
+
+把旧的数据移到新的索引上
+
+		curl -XPOST http://120.25.161.1:9200/_reindex -d'
+		{
+		  "source": {
+		    "index": "test"
+		  },
+		  "dest": {
+		    "index": "iktest"
+		  }
+		}'
+
+
+curl -XPOST http://120.25.161.1:9200/iktest/fulltext/1 -d'
+{"content":"美国留给伊拉克的是个烂摊子吗"}
+'
+
+curl -XPOST http://120.25.161.1:9200/iktest/fulltext/2 -d'
+{"content":"公安部：各地校车将享最高路权"}
+'
+
+curl -XPOST http://120.25.161.1:9200/iktest/fulltext/3 -d'
+{"content":"中韩渔警冲突调查：韩警平均每天扣1艘中国渔船"}
+'
+
+curl -XPOST http://120.25.161.1:9200/iktest/fulltext/4 -d'
+{"content":"中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"}
+'
+
+curl -XPOST http://120.25.161.1:9200/iktest/fulltext/_search  -d'
+{
+    "query" : { "match" : { "content" : "中国" }},
+    "highlight" : {
+        "pre_tags" : ["<tag1>", "<tag2>"],
+        "post_tags" : ["</tag1>", "</tag2>"],
+        "fields" : {
+            "content" : {}
+        }
+    }
+}
+'
+
+####导入数据
+
+		curl -XPOST 120.25.161.1:9200/_bulk --data-binary @data1.json
+		
+		
+curl -XPOST http://120.25.161.1:9200/test/company/_search  -d'
+{
+    "query" : { "match" : { "name" : "中国" }},
+    "highlight" : {
+        "pre_tags" : ["<tag1>", "<tag2>"],
+        "post_tags" : ["</tag1>", "</tag2>"],
+        "fields" : {
+            "content" : {}
+        }
+    }
+}'
