@@ -39,14 +39,14 @@ MUA: 邮件用户代理
 		c.com 涉及到邮件中继,是否中继取决于c.com是否开放中继.
 		b.net 不涉及到邮件中继
 
-MTA:
+MTA: 邮件传送代理
 
 * sendmail
 * qmail
 * postfix,模块化设计
 * exim
 
-MRA:
+MRA: 邮件访问代理 
 
 * cyrus-imap
 * dovecot

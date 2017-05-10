@@ -1,17 +1,16 @@
-###apache性能测试工具ab
+### apache性能测试工具ab
 ab是apache自带的压力测试工具。ab非常实用，它不仅可以对apache服务器进行网站访问压力测试，也可以对或其它类型的服务器进行压力测试。比如nginx、tomcat、IIS等。
 
-####ab的原理
+#### ab的原理
 ab是apachebench命令的缩写。
 
 ab的原理：ab命令会创建多个并发访问线程，模拟多个访问者同时对某一URL地址进行访问。它的测试目标是基于URL的，因此，它既可以用来测试apache的负载压力，也可以测试nginx、lighthttp、tomcat、IIS等其它Web服务器的压力。
 
 ab命令对发出负载的计算机要求很低，它既不会占用很高CPU，也不会占用很多内存。但却会给目标服务器造成巨大的负载，其原理类似CC攻击。自己测试使用也需要注意，否则一次上太多的负载。可能造成目标服务器资源耗完，严重时甚至导致死机。
 
-####ab参数说明
-`ab --help`
+#### ab参数说明
 
-![image](/img/abHelp.png "ab --help")
+`ab --help`
 
 下面我们对这些参数，进行相关说明。如下：
 
@@ -64,9 +63,12 @@ ab命令对发出负载的计算机要求很低，它既不会占用很高CPU，
 		-q如果处理的请求数大于150，ab每处理大约10%或者100个请求时，会在stderr输出一个进度计数。此-q标记可以抑制这些信息。
 
 
-####ab性能指标
+#### ab性能指标
+
 ---
-#####吞吐率(Requests per second)
+
+##### 吞吐率(Requests per second)
+
 服务器并发处理能力的量化描述，单位是reqs/s，指的是在某个并发用户数下单位时间内处理的请求数。某个并发用户数下单位时间内能处理的最大请求数，称之为最大吞吐率。
 
 记住：吞吐率是基于并发用户数的。这句话代表了两个含义：
@@ -79,17 +81,21 @@ Request per second=Complete requests/Time taken for tests
 
 必须要说明的是，这个数值表示当前机器的整体性能，值越大越好。
 
-#####并发连接数(The number of concurrent connections)
+##### 并发连接数(The number of concurrent connections)
+
 并发连接数指的是某个时刻服务器所接受的请求数目，简单的讲，就是一个会话。
 
-#####并发用户数(Concurrency Level)
+##### 并发用户数(Concurrency Level)
+
 要注意区分这个概念和并发连接数之间的区别，一个用户可能同时会产生多个会话，也即连接数。在HTTP/1.1下，IE7支持两个并发连接，IE8支持6个并发连接，FireFox3支持4个并发连接，所以相应的，我们的并发用户数就得除以这个基数。
 
-#####用户平均请求等待时间(Time per request)
+##### 用户平均请求等待时间(Time per request)
+
 计算公式：处理完成所有请求数所花费的时间/（总请求数/并发用户数），即：
 Time per request=Time taken for tests/（Complete requests/Concurrency Level）
 
-#####服务器平均请求等待时间(Time per request:across all concurrent requests)
+##### 服务器平均请求等待时间(Time per request:across all concurrent requests)
+
 计算公式：处理完成所有请求数所花费的时间/总请求数，即：
 
 Time taken for/testsComplete requests
@@ -100,7 +106,8 @@ Time taken for/testsComplete requests
 
 Time per request/Concurrency Level
 
-####ab其他一些信息
+#### ab其他一些信息
+
 1. Server Software表示被测试的Web服务器软件名称。
 2. Server Hostname表示请求的URL主机名。
 3. Server Port表示被测试的Web服务器软件的监听端口。
@@ -115,4 +122,4 @@ Time per request/Concurrency Level
 12. Requests per second吞吐率，计算公式：Complete requests/Time taken for tests
 13. Time per request用户平均请求等待时间，计算公式：Time token for tests/(Complete requests/Concurrency Level)。
 14. Transfer rate表示这些请求在单位时间内从服务器获取的数据长度，计算公式：Total trnasferred/ Time taken for tests，这个统计很好的说明服务器的处理能力达到极限时，其出口宽带的需求量。
-15. Percentage of requests served within a certain time（ms）这部分数据用于描述每个请求处理时间的分布情况，表示xx%的请求处理时间都不超过xms，这个处理时间是指前面的Time per request，即对于单个用户而言，平均每个请求的处理时间。
+15. Percentage of requests served within a certain time（ms）这部分数据用于描述每个请求处理时间的分布情况，表示xx%的请求处理时间都不超过xms，这个处理时间是指前面的Time per request，即对于单个用户而言，平均每个请求的处理时间.
