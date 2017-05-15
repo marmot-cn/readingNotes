@@ -1,14 +1,14 @@
-#Rancher
+# Rancher
 
 ----
 
-###概述
+### 概述
 
 Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`network connectivity`(网络连通性).
 
 `Cattle`是`Rancher`自己独有的容器编排工具.
 
-###Quick Start Guide
+### Quick Start Guide
 
 机器配制需求:
 
@@ -45,9 +45,9 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 		 
 `Rancher`将会启动这个容器去方位`overlay`网络.
 
-###安装rancher server
+### 安装rancher server
 
-####单节点
+#### 单节点
 
 配制外置数据库:
 
@@ -66,7 +66,7 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 		    -e CATTLE_DB_CATTLE_PASSWORD=<Password> \
 		    rancher/server
 
-####多节点
+#### 多节点
 
 **端口需求**
 
@@ -92,14 +92,14 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 * `3 Nodes`: 可以允许任何`1`个节点宕机
 * `5 Nodes`: 可以允许任何`2`个节点宕机
 
-###更新
+### 更新
 
-####RANCHER SERVER
+#### RANCHER SERVER
 
 * `rancher/server:latest`,`latest`标记表示最新版.
 * `rancher/server:stable`,`stable`稳定版.
 
-#####更新: 有external数据库,建议使用这种模式部署server端
+##### 更新: 有external数据库,建议使用这种模式部署server端
 
 **停止容器**
 
@@ -111,7 +111,7 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 
 因为旧容器标记着`--restart=always`,所以机器在重启的时候,容器也会被重启.
 
-#####更新: 有外挂data数据目录
+##### 更新: 有外挂data数据目录
 
 **停止容器**
 
@@ -121,7 +121,7 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 
 **移除旧版本的容器**
 
-#####更新: 没有外挂data数据目录
+##### 更新: 没有外挂data数据目录
 
 **停止容器**
 
@@ -142,7 +142,7 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 
 		docker run -d --volumes-from rancher-data --restart=always -p 8080:8080 rancher/server:latest
 
-#####更新: server HA 模式
+##### 更新: server HA 模式
 	
 	
 		sudo docker rm -f $(sudo docker ps -a | grep rancher | awk {'print $1'}) 
@@ -150,9 +150,9 @@ Rancher 只需要每个host的`CPU`,`memory`,`local disk storage`(硬盘)和`net
 		//使用server的最新版本
 		sudo sh rancher-ha.sh rancher/server:v1.1.0
 		
-###RANCHER 基础服务
+### RANCHER 基础服务
 
-####网络
+#### 网络
 
 Rancher通过实现`覆盖网络(overlay network)`的网络隧道实现跨主机通信.如果一个容器需要加入rancher的网络,需要添加`label`:
 
@@ -162,7 +162,7 @@ Rancher通过实现`覆盖网络(overlay network)`的网络隧道实现跨主机
 
 容器在同一个环境内是可以被路由和访问的通过rancher的网络.
 
-####负载均衡 Load Balancer
+#### 负载均衡 Load Balancer
 
 Rancher 通过 HAProxy 实现负载均衡.
 
@@ -190,9 +190,9 @@ Our load balancer has HAProxy software installed on the load balancer agent cont
 
 选择`Intenal`. 所有Internal ports 只能被同一个环境的服务访问到.
 
-###Cattle
+### Cattle
 
-####Stack
+#### Stack
 
 **docker-compose.yml**
 
@@ -202,7 +202,7 @@ Our load balancer has HAProxy software installed on the load balancer agent cont
 
 管理rancher启动服务的额外信息.
 
-####Service
+#### Service
 
 **service高可用**
 

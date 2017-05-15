@@ -54,6 +54,49 @@
 
 邮件投递代理
 
+#### mutt
+
+mutt -f PROTOCOL://username@magedu.com@172.16.100.1
+
+* sername@magedu.com 是用户名(虚拟域会用到该机制)
+* 172.16.100.1 主机
+
+		mutt -f 协议://用户名@服务器地址
+		
+#### SASL
+
+cyrus-sasl
+
+服务脚本: saslauthd
+
+postfix --> /usr/lib/sasl2/smtpd.cnf(配置文件,是否使用sasl认证)
+
+* pwcheck_method: saslauthd (使用什么来检查密码,这里使用saslauthd)
+* meth_list: PLAIN LOGIN (使用哪种方法认证)
+
+**编辑配置文件**
+		
+		vim /etc/sysconfig/saslauthd
+		
+		...
+		MECH=shadow (pam支持不好)
+		
+**启动服务**
+
+		service saslauthd start
+		
+		chkconfig saslauthd on
+		
+**测试**
+
+		testsaslauthd -uxxx -pxxxx
+
+#### 基于虚拟用户的邮件系统架构
+
+![](./img/26_01_1.png "")
+
+一台服务器为多个域收发邮件.
+
 ### 整理知识点
 
 ---
