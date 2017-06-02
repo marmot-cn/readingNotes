@@ -238,6 +238,10 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 
 从进入插入模式的那一刻起(例如,输入`i`),直到返回普通模式时为止(输入`<ESC>`),Vim会记录每一个按键操作.作出这样的修改后再用`.`可以重复执行.
 
+**`@:`**
+
+`.`命令可以重复上次的普通模式命令.`@:`可以重复上次的 Ex 命令.
+
 **`u`**
 
 撤销命令.
@@ -463,6 +467,8 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 
 可以把文档的一行或多行移到文档的其他地方.
 
+`:[range]move {address}`
+
 #### 全局命令 `g`
 
 * `:[range]g/pattern/cmd`
@@ -529,6 +535,85 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 `:delmarks a b c`, 可以删除某个或多个标记
 
 `:delmarks!`,会删除所有标记. 只删除当前的,不删除`A-Z,0-9`.
+
+#### normal 命令
+
+**`[range]normal xx`**
+
+在某个范围重复执行`xx`命令.
+
+		:%normal A;
+		
+		符号%代表整个文件范围,VIM在文件每行末尾添加一个分号.在此修改时会切换到插入模式,但是在修改完后Vim会自动返回到普通模式.
+
+#### 命令自动补全
+
+`Ctrl+d`会让Vim显示可用的补全列表.
+
+`Tab` 会依次显示命令.
+
+`Shift+Tab` 会反向显示.
+
+#### 把当前单词插入到命令行
+
+**Ctrl+w&Ctrl+r**
+
+在命令行模式下,会把光标指向的单词复制黏贴到命令行内.
+
+#### 回溯历史命令
+
+在命令行内, 按 `<UP>` 和 `<Down>` 可以回滚历史命令执行记录.
+
+		:c 这时候在按上下键,会过滤出以字母`c`开头的命令
+
+**`q:`**
+
+命令行历史窗口,在命令行窗口内我们可以编辑过去执行的命令.
+
+`Enter` 会执行命令.
+
+**`q\`**
+
+打开查找命令历史的命令行窗口.
+
+#### VIM 中运行命令
+
+**`:!`**
+
+在命令前加一个`!`就可以执行外部命令.
+
+`%` 代表当前文件名.
+
+**`:read !{cmd}`**
+
+在`shell`中执行`{cmd}`,并把其标准输出插入到光标下方.
+
+**`:shell`**
+
+运行该命令会启动一个交互的`shell`会话.在此按`exit`后回到`vim`.
+
+也可以使用`Ctrl+z`挂起`Vim`所属的进程.
+
+		jobs 查看当前作业列表
+		fg %1 唤醒别挂起的作业
+		
+**`:[range]!{cmd}`**(比较有用)
+
+由`[range]`所指定的行会传给`{cmd}`当做标准输入,然后又会用`{cmd}`的输出覆盖`[range]`内原本的内容.
+
+```shell
+first name,last name, email
+johb,smith,johb@example.com
+drew,neil,drew@example.com
+jane,doe,jane@example.com
+
+:2,$!sort -t',' -k2
+
+first name,last name, email
+jane,doe,jane@example.com
+drew,neil,drew@example.com
+johb,smith,johb@example.com
+```			
 
 #### 示例
 
