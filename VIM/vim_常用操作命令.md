@@ -2,7 +2,25 @@
 
 ---
 
-#### 基本命令
+### 基本命令
+
+#### 退出
+
+**`:w[rite]`**
+
+把缓冲区内容写入磁盘.
+
+**`:e[dit]!`**
+
+把磁盘文件内容读入缓冲区(回滚所做修改)
+
+**`:qa[ll]!`**
+
+关闭所有窗口,摒弃修改而无需警告
+
+**`:wa[ll]!`**
+
+把所有改变的缓冲区写入磁盘.
 
 #### 移动
 
@@ -362,24 +380,17 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 
 命令需要组合使用,不能单独使用
 
-		guw,gue 转换一个单词.
+		guw,gue 转换一个单词小写.
+		gUw,gUe 转换一个单词大写
 		
 		gu5w 转换5个单词.
 		
 		gu0 从光标所在位置到行首,都变为大写
 		gu$ 从光标所在位置到行尾,都变为小写
 
-**`g~`**
+**`~`**
 
-反转大小写.
-
-**`gu`**
-
-转换为小写.
-
-**`gU`**
-
-转换为大写.
+反转一个光标处字符大小写.
 
 #### 刷新加载文件
 
@@ -548,6 +559,8 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 
 #### 命令自动补全
 
+在命令模式下:
+
 `Ctrl+d`会让Vim显示可用的补全列表.
 
 `Tab` 会依次显示命令.
@@ -615,7 +628,111 @@ drew,neil,drew@example.com
 johb,smith,johb@example.com
 ```			
 
-#### 示例
+### vim缓冲区
+
+我们所编辑的只是文件在内存中的映像,也就是VIM术语中的==缓冲区==.
+
+文件是存储在磁盘上的,缓冲区则存在于内存中.当 VIM 打开一个文件时,该文件的内容被读入一个具有相同名字的缓冲区.
+	
+		一次打开多个文件
+		vim *.txt
+		
+**`:ls`**
+
+`:ls`命令会列出所有被载入到内存中的缓冲区的列表.
+		
+		:ls
+		  1 %a   "phpcs.xml"                    line 1
+		  2      "phpunit.xml"                  line 0
+		  3      "ruleset.xml"                  line 0
+		  
+**`:bnext` `:bprev`**
+
+`:brev`命令可以切换到列表中的上一个缓冲区.
+
+`:bnext`命令可以切换到列表中的下一个缓冲区.
+
+`:bfirst`跳至列表的开头.
+
+`:blast`跳至列表的结尾.
+		
+		:bnext
+		:ls
+		  1 #    "phpcs.xml"                    line 1
+		  2 %a   "phpunit.xml"                  line 1
+		  3      "ruleset.xml"                  line 0
+		
+* `%` 致命哪个缓冲区在当前窗口可见.
+* `#` 代表轮换文件.`Ctrl+^`可以在当前文件和轮换文件间快速切换.
+* `数字` 由 VIM 自动分配的编号.`buffer N`命令凭编号直接跳到一个缓冲区.
+
+`:buffer {bufname}` 只需包含文件路径中足以唯一标识此缓冲区的字符即可.
+
+#### 删除缓冲区
+
+每次打开一个文件时, VIM 就会创建一个新的缓冲区.
+
+`:bdelete` 删除缓冲区
+
+	:bdelete N1, N2, N3
+	:N,M bd(bdelete)
+
+删除一个缓冲区并==不会==影响缓冲区所关联的文件,而只是简单地把该文件在内存中的映像删除掉.
+
+#### 参数列表将缓冲区分组
+
+`:args` 可清空并重新设置参数列表.
+
+**`:args`**
+
+```vim
+vim *.php
+:args
+	
+[AddDistributionProductCommandHandler.class.php]
+DeleteDistributionProductCommandHandler.class.php
+DistributionProductCommandHandlerFactory.class.php
+OffDistributionProductCommandHandler.class.php
+OnDistributionProductCommandHandler.class.php
+SaveDistributionProductPricesCommandHandler.class.php
+```	
+	
+`[]`字符则指明参数列表中哪个文件时活动文件.
+
+当不带参数运行 `:args` 命令时,会打印当前参数列表的内容.	
+```
+:args {arglist}
+```
+
+`arglist`:
+
+* 文件名
+* 通配符
+* shell命令的输出结果
+
+		vim
+		
+		//把 test 文件加载到内存中,vim 可以显示 test 内容
+		:args test
+		
+		//把当前目录所有文件打开
+		:args `ls`
+		
+**`:args` 通配符**
+
+* `*`: 匹配 0个 或 多个 字符.范围局限于指定的目录.
+* `*.*`: 匹配 0个 或 多个 字符.可以递归的进入指定目录的子目录.
+
+
+**`:args` shell命令**
+
+Vim 会在 shell 中执行反撇号(\`)括起来的命令.然后在把命令的输出作为`:args`命令的参数
+
+		:args `shell命令`
+
+**`:argdo`**
+
+### 示例
 
 **在行尾添加`;`**
 
