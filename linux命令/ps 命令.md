@@ -45,6 +45,7 @@ root@389444860b8e:/var/www/html# ps -A
 因为这些进程都是会话首进程.
 
 ```shell
+root@389444860b8e:/var/www/html# ps -A -o pgid,pid,cmd
  PGID   PID CMD
     1     1 php-fpm: master process (/usr/local/etc/php-fpm.conf)
     1     7 php-fpm: pool www
@@ -87,4 +88,3 @@ root@389444860b8e:/var/www/html# ps -C php-fpm -o pgid,pid,cmd
 **`-G grplist`**
 
 通过进程组ID或进程组名称查找进程,显示进程组ID在grplist里的进程.
-
