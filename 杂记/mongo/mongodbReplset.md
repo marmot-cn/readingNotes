@@ -4,6 +4,7 @@
 # MongoDB 副本集
 
 ---
+
 MongoDB的主从集群分为两种:
 
 1. Master-Slave 复制(主从复制)  
@@ -21,7 +22,8 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 [id]:http://docs.mongoing.com/manual-zh/core/replication-introduction.html
 
 
-###部署环境
+### 部署环境
+
 因为是在一台电脑上布置,用三个端口模拟3台机子
 2个standard节点
 
@@ -32,7 +34,8 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 	
 	127.0.0.1:28012
 
-####第一步:创建目录
+#### 第一步:创建目录
+
 		➜  data  mkdir ~/data/mongodb/replset/r0 //机子0号存放数据的目录
 		➜  data  mkdir ~/data/mongodb/replset/r1 //机子1号存放数据的目录		
 		➜  data  mkdir ~/data/mongodb/replset/r2 //机子2号存放数据的目录		
@@ -40,7 +43,7 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 		➜  data  mkdir ~/data/mongodb/replset/log //存放日记的目录
 		➜  data  chmod 600 ~/data/mongodb/replset/key/r* //600，防止其它程序改写此KEY
 
-####第二步:创建Key
+#### 第二步:创建Key
 	
 	➜  data  echo "replset1 key" > ~/data/mongodb/replset/key/r0
     ➜  data  echo "replset1 key" > ~/data/mongodb/replset/key/r1
@@ -51,14 +54,16 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 如果副本及开启auth,需要key
 [key官方资料][id]
 [id]:http://docs.mongodb.org/manual/tutorial/deploy-replica-set-with-auth/
-####第三步:已副本及的方式启动Mongodb
+
+#### 第三步:已副本及的方式启动Mongodb
+
 这里采用的是直接在命令行输出查看
 		
 		mongod --dbpath=~/data/mongodb/replset/r0 --replSet replset --port 28010 --directoryperdb
 		mongod --dbpath=/Users/chloroplast1983/data/mongodb/replset/r1 --replSet replset --port 28011 --directoryperdb
 		mongod --dbpath=/Users/chloroplast1983/data/mongodb/replset/r2 --replSet replset --port 28012 --directoryperdb
 
-####第四步:初始化副本集
+#### 第四步:初始化副本集
 
 		mongo --port 28010
 		config_replset =
@@ -72,8 +77,11 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 			]
 		}
 		rs.initiate(config_replset);
+
 ![Smaller icon](./img/initialReplset.png "初始化")
-####第五步:数据同步测试
+
+#### 第五步:数据同步测试
+
 1. 向PRIMARY主节点写入一条数据
 		use test
 		db.say.insert({"text":"Hello World"})	
@@ -83,10 +91,11 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 *SECONDARY不能写,而设置slaveOk后,可能从SECONDARY读取数据
 默认情况下SECONDARY不能读写，要设定db.getMongo().setSlaveOk();才可以从SECONDARY读取
 replSet里只能有一个Primary库，只能从Primary写数据，不能向SECONDARY写数据*
+
 3. ARBITER 读取写入都不能<br />
 ![Smaller icon](./img/canNotRWarbiter.png "ARBITER读写都不能")
 
-####第六步:故障切换测试:把主节点关掉，看副节点是否能接替主节点进行工作
+#### 第六步:故障切换测试:把主节点关掉，看副节点是否能接替主节点进行工作
 
 1. 用ctrl+c把28010端口的mongodb服务停掉
 ![Smaller icon](./img/shutDownPrimary.png "停掉PRIMARY")
@@ -98,7 +107,8 @@ replSet里只能有一个Primary库，只能从Primary写数据，不能向SECON
 ![Smaller icon](./img/arbiterVote.png "28012投票")
 
 
-###总结
+### 总结
+
 1. 当副本集的总可投票数为偶数时,可能出现无法选举出主节点的情况
 2. 2个Standard节点组成Replication Sets是不合理的,因为不具备故障切换能力
    a. 当SECONDARY Down掉,剩下一个PRIMARY,此时副本集运行不会出问题,因为不用选择PRIMARY节点

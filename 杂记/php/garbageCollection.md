@@ -1,4 +1,4 @@
-#PHP垃圾回收机制
+# PHP垃圾回收机制
 
 ---
 
@@ -64,7 +64,7 @@
 		c: (refcount=3, is_ref=0)='new string'
 		b: (refcount=1, is_ref=0)='new string'
 
-如果我们现在执行 unset($a);,包含类型和值的这个变量容器就会从内存中删除.
+如果我们现在执行 `unset($a);`,包含类型和值的这个变量容器就会从内存中删除.
 
 
 ###复合类型(Compound Types)
@@ -85,7 +85,7 @@
    			'number' => (refcount=1, is_ref=0)=42
 		)
 		
-![Smaller icon](/img/php/compoundTypesZval-1.png "")
+![Smaller icon](./img/compoundTypesZval-1.png "")
 
 这三个zval变量容器是: a,meaning和 number.
 
@@ -105,7 +105,7 @@
   		'life' => (refcount=2, is_ref=0)='life'
 		)
 
-![Smaller icon](/img/php/compoundTypesZval-2.png "")
+![Smaller icon](./img/compoundTypesZval-2.png "")
 
 从以上的xdebug输出信息,我们看到原有的数组元素和新添加的数组元素关联到同一个"refcount"2的zval变量容器. 尽管 Xdebug的输出显示两个值为'life'的 zval 变量容器,`其实是同一个`. 函数xdebug_debug_zval()不显示这个信息,但是你能通过显示内存指针信息来看到.
 
@@ -149,7 +149,7 @@
 
 跟刚刚一样,对一个变量调用unset,将删除这个符号,且它指向的变量容器中的引用次数也减1.所以,如果我们在执行完上面的代码后,对变量$a调用unset, 那么变量 $a 和数组元素 "1" 所指向的变量容器的引用次数减1, 从"2"变成"1". 下例可以说明: 
 
-**Unsetting $a**
+**Unsetting `$a`**
 
 		(refcount=1, is_ref=1)=array (
   		 0 => (refcount=1, is_ref=0)='one',
@@ -161,7 +161,7 @@
 图示:
 
 ![Smaller icon](./img/compoundTypesZval-4.png "")		
-###清理变量容器的问题(Cleanup Problems)
+### 清理变量容器的问题(Cleanup Problems)
 
 ---
 
@@ -169,11 +169,11 @@
 
 如果你要实现分析算法,或者要做其他像一个子元素指向它的父元素这样的事情,这种情况就会经常发生.当然,同样的情况也会发生在对象上,实际上对象更有可能出现这种情况,因为对象总是隐式的被引用. 
 
-###回收周期(Collecting Cycles)
+### 回收周期(Collecting Cycles)
 
 ---
 
-对算法的完全说明有点超出这部分内容的范围,将只介绍其中基础部分.首先,我们先要建立一些基本规则,如果一个引用计数增加,它将继续被使用,当然就不再在垃圾中.如果引用计数减少到零,所在变量容器将被清除(free).就是说,仅仅在引用计数减少到非零值时,才会产生垃圾周期(garbage cycle).其次,在一个垃圾周期中,通过检查引用计数是否减1,并且检查哪些变量容器的引用次数是零,来发现哪部分是垃圾.
+对算法的完全说明有点超出这部分内容的范围,将只介绍其中基础部分.首先,我们先要建立一些基本规则,如果一个引用计数增加,它将继续被使用,当然就不再在垃圾中.如果引用计数减少到零,所在变量容器将被清除(free).就是说,==仅仅在引用计数减少到非零值时(上述数组引用数组的问题)==,才会产生垃圾周期(garbage cycle).其次,在一个垃圾周期中,通过检查引用计数是否减1,并且检查哪些变量容器的引用次数是零,来发现哪部分是垃圾.
 
 ![Smaller icon](./img/collectingCycles-1.png "")
 
@@ -196,7 +196,7 @@ In step B, the algorithm runs a depth-first search on all possible roots to `dec
 允许打开和关闭垃圾回收机制并且允许自主的初始化的原因,是由于你的应用程序的某部分可能是高时效性的.在这种情况下,你可能不想使用垃圾回收机制.当然,对你的应用程序的某部分关闭垃圾回收机制,是在冒着可能内存泄漏的风险,因为一些可能根也许存不进有限的根缓冲区.因此,就在你调用gc_disable()函数释放内存之前,先调用gc_collect_cycles()函数可能比较明智.因为这将清除已存放在根缓冲区中的所有可能根,然后在垃圾回收机制被关闭时,可留下空缓冲区以有更多空间存储可能根. 
 
 
-###内存占用空间的节省
+### 内存占用空间的节省
 
 ---
 
@@ -228,7 +228,7 @@ In step B, the algorithm runs a depth-first search on all possible roots to `dec
 
 在这个很理论性的例子中,我们创建了一个对象,这个对象中的一个属性被设置为指回对象本身.在循环的下一个重复(iteration)中,当脚本中的变量被重新复制时,就会发生典型性的内存泄漏.在这个例子中,两个变量容器是泄漏的(对象容器和属性容器),但是仅仅能找到一个可能根：就是被unset的那个变量.在10,000次重复后(也就产生总共10,000个可能根),当根缓冲区满时,就执行垃圾回收机制,并且释放那些关联的可能根的内存.这从PHP 5.3的锯齿型内存占用图中很容易就能看到.每次执行完10,000次重复后,执行垃圾回收,并释放相关的重复使用的引用变量.在这个例子中由于泄漏的数据结构非常简单,所以垃圾回收机制本身不必做太多工作.从这个图表中,你能看到 PHP 5.3的最大内存占用大概是9 Mb,而PHP 5.2的内存占用一直增加. 
 
-###执行时间增加(Run-Time Slowdowns)
+### 执行时间增加(Run-Time Slowdowns)
 
 ---
 
@@ -261,7 +261,7 @@ In step B, the algorithm runs a depth-first search on all possible roots to `dec
 
 ![Smaller icon](./img/memoryUsage-2.png "")
 
-###PHP内部 GC 统计信息
+### PHP内部 GC 统计信息
 
 ---
 
@@ -293,7 +293,7 @@ In step B, the algorithm runs a depth-first search on all possible roots to `dec
 		
 主要的信息统计在第一个块.你能看到垃圾回收机制运行了110次,而且在这110次运行中,总共有超过两百万的内存分配被释放.只要垃圾回收机制运行了至少一次,根缓冲区峰值(Root buffer peak)总是10000. 
 
-###结论
+### 结论
 
 ---
 
