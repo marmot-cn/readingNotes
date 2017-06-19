@@ -72,30 +72,30 @@ MongoDB在1.6版本开发了replica set,主要增加了故障自动切换和自�
 			]
 		}
 		rs.initiate(config_replset);
-![Smaller icon](/img/mongodb/initialReplset.png "初始化")
+![Smaller icon](./img/initialReplset.png "初始化")
 ####第五步:数据同步测试
 1. 向PRIMARY主节点写入一条数据
 		use test
 		db.say.insert({"text":"Hello World"})	
-![Smaller icon](/img/mongodb/insertPrimary.png "主节点写入数据")
+![Smaller icon](./img/insertPrimary.png "主节点写入数据")
 2. 进入SECONDARY(副节点)查看数据是否同步
-![Smaller icon](/img/mongodb/findSecondary.png "副节点读取数据")		
+![Smaller icon](./img/findSecondary.png "副节点读取数据")		
 *SECONDARY不能写,而设置slaveOk后,可能从SECONDARY读取数据
 默认情况下SECONDARY不能读写，要设定db.getMongo().setSlaveOk();才可以从SECONDARY读取
 replSet里只能有一个Primary库，只能从Primary写数据，不能向SECONDARY写数据*
 3. ARBITER 读取写入都不能<br />
-![Smaller icon](/img/mongodb/canNotRWarbiter.png "ARBITER读写都不能")
+![Smaller icon](./img/canNotRWarbiter.png "ARBITER读写都不能")
 
 ####第六步:故障切换测试:把主节点关掉，看副节点是否能接替主节点进行工作
 
 1. 用ctrl+c把28010端口的mongodb服务停掉
-![Smaller icon](/img/mongodb/shutDownPrimary.png "停掉PRIMARY")
+![Smaller icon](./img/shutDownPrimary.png "停掉PRIMARY")
 
 2. 查看端口28011的情况,发现28011投给自己一票
-![Smaller icon](/img/mongodb/secondaryVote.png "28011变为PRIMARY")
+![Smaller icon](./img/secondaryVote.png "28011变为PRIMARY")
 
 3. 查看端口28012的情况,PRIMARY节点28010 DOWN了之后, ARBITER就投票给SECONDARY 28011, SECONDARY 就成为新的PRIMARY节点
-![Smaller icon](/img/mongodb/arbiterVote.png "28012投票")
+![Smaller icon](./img/arbiterVote.png "28012投票")
 
 
 ###总结
