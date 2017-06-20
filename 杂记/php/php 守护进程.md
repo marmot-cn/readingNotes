@@ -119,7 +119,6 @@ signal(SIGCHLD,SIG_IGN);
 
 当执行 `signal` 处理函数之后, 再返回到用户进程被中断或者 `system call`. 打断的地方.
 
-
 ### 程序设计
 
 #### 信号处理

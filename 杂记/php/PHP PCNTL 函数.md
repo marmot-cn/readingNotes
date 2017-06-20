@@ -62,7 +62,7 @@ void pcntl_exec ( string $path [, array $args [, array $envs ]] )
 
 **示例**
 
-`backgroun.php` 背景程序,以这个程序运行 `command` 程序.
+`background.php` 背景程序,以这个程序运行 `command` 程序.
 
 ```php
 <?php
