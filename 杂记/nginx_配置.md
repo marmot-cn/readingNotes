@@ -518,8 +518,7 @@ nginx的upstream目前支持4种方式的分配.
 		对以“mp3或exe”结尾的地址进行负载均衡
 		
 		 
-		
-		proxy_pass http://img_relay$request_uri;
+			proxy_pass http://img_relay$request_uri;
 		
 			设置被代理服务器的端口或套接字，以及URL
 		
