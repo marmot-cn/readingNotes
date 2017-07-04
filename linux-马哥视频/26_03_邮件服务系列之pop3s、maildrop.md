@@ -192,6 +192,9 @@ caller
 
 `Amavisd-new` 调用 `Spamassassin`,`clamav`.
 
+#### maildrop
+
+属于 MDA, Courier的组件. 负责邮件投递.
 
 ### 整理知识点
 
