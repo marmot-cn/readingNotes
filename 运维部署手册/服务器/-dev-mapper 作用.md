@@ -1,0 +1,1 @@
+# /dev/mapper 作用

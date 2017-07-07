@@ -1,8 +1,8 @@
-#LVM
+# LVM
 
 ---
 
-###简介
+### 简介
 
 * 创建物理卷`pvcreate`
 * 创建卷组并给卷组增加分区`vgcreate`
@@ -12,11 +12,11 @@
 ![lvm](./img/lvm.jpg "lvm")
 
 
-###示例
+### 示例
 
 这里我用的是阿里云的云盘.挂载一块新的云盘后
 
-####准备存盘分区
+#### 准备存盘分区
 		
 		[root@iZ94ebqp9jtZ /]# fdisk -l
 		Disk /dev/xvda: 21.5 GB, 21474836480 bytes
@@ -89,7 +89,7 @@
 		Calling ioctl() to re-read partition table.
 		Syncing disks.	
 		
-####准备物理卷(PV)
+#### 准备物理卷(PV)
 
 **创建物理卷(`pvcreate`)**
 
@@ -115,7 +115,7 @@
  		
 `pvremove /dev/xdb1`
  			
-####准备卷组(VG)
+#### 准备卷组(VG)
 
 **创建卷组(`vgcreate`)**
 
@@ -135,7 +135,7 @@
 
 `vgremove volume-group1`
 
-####创建逻辑卷(LV)
+#### 创建逻辑卷(LV)
 
 **创建逻辑卷(`lvcreate`)**
 
@@ -209,7 +209,7 @@
 		                       30G   44M   28G   1% /data
 		[root@iZ94ebqp9jtZ home]# echo '/dev/volume-group1/data /data ext4 defaults 0 0' >> /etc/fstab
 		
-####扩容
+#### 扩容
 
 **从30G扩容为32G**
 
@@ -255,7 +255,7 @@ mount
 		 /dev/mapper/volume--group1-data
 		                       32G   48M   30G   1% /data
 		                       
-####添加新的物理卷到卷组中
+#### 添加新的物理卷到卷组中
 
 当系统安装了新的磁盘或新建分区并创建了新的物理卷,而要将其添加到已有卷组时,就需要使用vgextend命令:
 
