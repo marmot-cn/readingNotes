@@ -1,9 +1,9 @@
-#iptables
+# iptables
 
 ---
 [参考连接](http://edu.51cto.com/course/course_id-4422.html "参考连接")
 
-####OSI和DoD模型
+#### OSI和DoD模型
 
 **OSI**
 
@@ -85,7 +85,7 @@ Socket的出现只是使得程序员更方便地使用TCP/IP协议栈而已,是`
 3. 加网络层首部
 4. 加(DoD网络接口层)数据链路层首部
 
-####TCP连接控制
+#### TCP连接控制
 
 传输连接有三个阶段:
 
@@ -100,7 +100,7 @@ TCP连接的建立都是采用`客户服务器方式`.
 
 文档:`IP/tcp协议中的三次握手和四次握手.md`
 
-####ICMP协议
+#### ICMP协议
 
 `ping` 使用 `ICMP`协议
 
@@ -109,7 +109,7 @@ a - echo-request -> b
 
 b - echo-reply -> b
 
-####Linux防火墙和NAT配置
+#### Linux防火墙和NAT配置
 
 **NetFilter框架**
 
@@ -137,7 +137,7 @@ b - echo-reply -> b
 * `LOCAL_OUT`
 * `POST_ROUTING`
 
-#####链表
+##### 链表
 
 ![链表图示](./img/4.png "链表图示")
 
@@ -186,7 +186,7 @@ b - echo-reply -> b
 * `OUTPUT`链,在数据包被确定目的地址前改变数据包.
 * `POSTROUTING`链,数据包确定了目标地址后,即路由判断后改变数据包.
 
-####IPtables规则
+#### IPtables规则
 
 **理解IPtables规则**
 
@@ -194,7 +194,7 @@ b - echo-reply -> b
 * 如果满足条件,就执行目标(target)中的规则或者特定值
 * 如果不满足条件,就判断下一条Rules.
 
-####IPtables实现网络安全
+#### IPtables实现网络安全
 
 **iptables命令**
 
