@@ -1,8 +1,8 @@
-#docker的网络实现
+# docker的网络实现
 
 ---
 
-####Docker 的 bridge模式
+#### Docker 的 bridge模式
 
 当Docker server启动时,会在主机上创建一个名为`docker0`的虚拟网桥,此主机上启动的Docker容器会连接到这个虚拟网桥上.
 
@@ -111,11 +111,11 @@
 	* 第一行: `默认路由`,默认网关为宿主机的`docker0`
 	* 第二行: 表示传往(`192.168.42.0/24`)因为和主机在同一个段,通信时不需要通过网关
 	
-####iptables
+#### iptables
 
 我们在宿主机查看iptables规则
 
-####首先我们先了解Docker链
+#### 首先我们先了解Docker链
 
 docker在启动后会在`filter`表中和`nat`表中创建docker链.
 		
@@ -148,7 +148,7 @@ docker在启动后会在`filter`表中和`nat`表中创建docker链.
 		Chain POSTROUTING (policy ACCEPT 20933 packets, 2928K bytes)
 		 pkts bytes target     prot opt in     out     source               destination
 			
-####filter(用于`过滤`数据包,哪些数据报可以通过,哪些数据报不可以通过)
+#### filter(用于`过滤`数据包,哪些数据报可以通过,哪些数据报不可以通过)
 
 **`-A FORWARD -o docker0 -j DOCKER`**
 
@@ -208,7 +208,7 @@ docker在启动后会在`filter`表中和`nat`表中创建docker链.
 
 对目标`192.168.42.2/32`端口为`5000`,并且不是从`docker 0`网卡流入的数据允许通过.即外网访问`192.168.42.2:5000`(这里是我的私有仓库)允许访问通过.
 
-#####nat(修改数据包`地址`,源地址,目标地址,源端口,目标端口)
+##### nat(修改数据包`地址`,源地址,目标地址,源端口,目标端口)
 
 **`-A PREROUTING -m addrtype --dst-type LOCAL -j DOCKER`**
 

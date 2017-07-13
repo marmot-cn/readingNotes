@@ -166,7 +166,7 @@ Linux 内核当中实现了网络功能.
 
 ![钩子函数](./img/28_01_4.png)
 
-这三个位置是`iptables`放规则的地方.
+这五个位置是`iptables`放规则的地方.
 
 * 本地入(`input`). `LOCAL_IN`
 * 本地出(`output`). `LOCAL_OUT`
@@ -229,6 +229,15 @@ ssh 访问规则
 
 源地址转换(`SNAT`)应该在`POST_ROUTING`上面改.
 
+**表**
+
+* `filter`
+* `nat`
+* `mangle`
+* `raw` 优先级最高
+
+![表](./img/28_01_6.png)
+
 **规则链**
 
 每个钩子上的多个规则称为规则链.
@@ -241,43 +250,33 @@ ssh 访问规则
 * OUTPUT
 * POSTROUTING
 
-`filter`过滤功能: 表
+* `filter`过滤功能: 表
+	* `INPUT`
+	* `OUTPUT`
+	* `FORWARD`
+* `nat`地址转换: 表
+	* `PREROUTING`
+	* `OUTPUT`
+	* `POSTROUTING`
+* `mangle`(拆开,修改,封装 报文首部): 表
+	* 功能:
+		* 修改`ttl`值
+		* 修改服务类型
+	* 链:
+		* `PREROUTING`
+		* `INPUT`
+		* `FORWARD`
+		* `OUTPUT`
+		* `POSTROUTING`
+* `raw`表:
+	* `PREROUTING`
+	* `OUTPUT`
 
-* INPUT
-* OUTPUT
-* FORWARD
-
-`nat`地址转换: 表
-
-* PREROUTING
-* OUTPUT
-* POSTROUTING
-
-`mangle`(拆开,修改,封装 报文首部): 表
-
-功能:
-
-* 修改`ttl`值
-* 修改服务类型
-
-链:
-
-* PREROUTING
-* INPUT
-* FORWARD
-* OUTPUT
-* POSTROUTING
-
-iptables(表).
+`iptables`.
 
 ```shell
 IPUT 上即可以放 filter 也可以放 mangle. 但是不能混着放, 即一条 input 一条 mangle
 ```
-
-`raw`表:
-
-* PREROUTING
-* OUTPUT
 
 #### 数据包过滤匹配流程(一个链上的多个功能的优先次序)
 
