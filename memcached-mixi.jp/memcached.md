@@ -1,14 +1,14 @@
-#Memcached
+# Memcached
 
 
-##memcached基础
+## memcached基础
 
 ---
 
 memcached是高性能分布式内存缓存服务器.一般的使用目的是,通过`缓存数据库查询结果`,`减少数据库访问次数`,以`提高动态Web应用的速度`,提高`可扩展性`.
 
 
-###memcache和memcached区别
+### memcache和memcached区别
 
 2者都是memcache客户端(php).
 
@@ -34,7 +34,7 @@ memcached是高性能分布式内存缓存服务器.一般的使用目的是,通
 * 出错码更精确
 * 将memcached api统一换为libmemcached(方便多语言访问memcached，让分布式等各种规则都一致).
 
-###memcached 的特征
+### memcached 的特征
 
 * 协议简单
 * 基于libevent的事件处理
@@ -65,7 +65,7 @@ memcached中保存的数据都存储在memcached内置的内存存储空间中.�
 * 最大键长为250个字符
 * 储存数据不能超过1MB
 
-###memcached启动
+### memcached启动
 
 * -p : 使用的TCP端口. 默认为11211.
 * -m : 最大内存大小. 默认为64M.
@@ -77,7 +77,7 @@ memcached中保存的数据都存储在memcached内置的内存存储空间中.�
 * -f :指定增长因子，默认1.25
 * -M:内存耗尽时禁止移除缓存中的数据，而是返回错误信息
 
-###memcached操作
+### memcached操作
 
 **保存数据**
 
@@ -145,11 +145,11 @@ item的值超过某个阈值(当前是100bytes)时,会首先对值进行压缩�
 * 增一和减一是原子操作, 但`未设置初始值时`,`不会自动赋成0`.
 
 
-##理解memcached的内存存储
+## 理解memcached的内存存储
 
 ---
 
-###为什么使用Slab Allocation
+### 为什么使用Slab Allocation
 
 在该机制出现以前,内存的分配是通过对所有记录简单的进行`malloc`和`free`(C语言函数)来进行的.但是,这种方式会`导致内存碎片`,`加重操作系统内存管理器的负担`.**最坏的情况下**,会导致操作系统比memcached进程本身还慢.
 
@@ -210,7 +210,7 @@ free()释放的是指针指向的内存.`释放的是内存,不是指针`.
 		现在整个内存空间的状态是0~9空闲,10~14被占用,15~24被占用,25~99空闲.其中0~9就是一个内存碎片了.如果10~14一直被占用,而以后申请的空间都大于10个单位,那么0~9就永远用不上了,造成内存浪费.
 		
 
-###什么是Slab Allocation机制
+### 什么是Slab Allocation机制
 
 Slab Allocator的基本原理是按照`预先规定的大小`,将分配的内存`分割`成`特定长度`的块,以完全解决内存碎片问题.
 
@@ -226,7 +226,7 @@ slab allocator还有`重复使用`已分配的内存的目的. 分配到的内�
 * **Sub Class** : 特定大小的chunk组.
 
 
-###在Slab中缓存记录的原理
+### 在Slab中缓存记录的原理
 
 memcached根据收到的数据的大小,选择最适合的数据大小的slab.memcached中保存着slab内空闲chunk的列表,根据该列表选择chunk,让后将数据缓存于其中.
 
@@ -234,7 +234,7 @@ memcached根据收到的数据的大小,选择最适合的数据大小的slab.me
 
 ![选择存储记录的组的方法](./img/memcached-2.jpg "选择存储记录的组的方法")
 
-###Slab Allocator的缺点
+### Slab Allocator的缺点
 
 `Slab Allocator解决了当初的内存碎片问题`.
 
@@ -250,7 +250,7 @@ memcached根据收到的数据的大小,选择最适合的数据大小的slab.me
 
 memcached启动时制定的内存分配量是memcached用于保存数据的量,没有包括`slab allocator`本身占用的内存,以及为了保存数据而设置的管理控件.因此,`memcached进程的实际内存分配量要比指定的容量要大`.
 
-###使用Growth Factor进行调优
+### 使用Growth Factor进行调优
 
 memcached在启动时制定`Growth Factor因子`(通过-f选项),用于控制`slab`之间的差异.默认值为`1.25`.
 
@@ -286,7 +286,7 @@ slab之间的差别比较大,有些情况下就相当浪费内存.
 
 计算一下数据的预期平均长度,调整`growth factor`,已获得最恰当的设置.
 
-###查看memcached的内部状态
+### 查看memcached的内部状态
 
 **telnet**
 
@@ -304,7 +304,7 @@ slab之间的差别比较大,有些情况下就相当浪费内存.
 		memstat --servers=server1,server2,server3,...
 
 
-####一些参数
+#### 一些参数
 
 **pid**  						
 
@@ -498,11 +498,11 @@ LRU释放的对象数目
 
 已过期的数据条目来存储新数据的数目
 
-##memcached的删除机制
+## memcached的删除机制
 
 ---
 
-###有效利用资源
+### 有效利用资源
 
 memcached`不会`释放已分配的内存.记录超时后,客户端就无法再看见该记录(invisible,透明),其存储空间即可重复使用.
 
@@ -510,7 +510,7 @@ memcached`不会`释放已分配的内存.记录超时后,客户端就无法再�
 
 memcached内部不会监视记录是否过期,而是在`get时查看记录的时间戳`,检查记录是否过期.这中技术被称为`lazy expiration`.因此,`memcached不会在过期监视上耗费CPU时间`.
 
-###LRU:从缓存中有效删除数据的原理
+### LRU:从缓存中有效删除数据的原理
 
 memcached会优先使用已超时的记录的空间.但还是会发生追加新记录时空间不足的情况,此时就要使用名为Least Recently Used(LRU)机制来分配空间.`删除最近最少使用`的记录的机制.
 
@@ -521,15 +521,15 @@ memcached会优先使用已超时的记录的空间.但还是会发生追加新�
 * -M : 可以禁止LRU.(内存用尽时memcached会返回错误)
 * -m : 用来指定最大内存大小的.不指定具体数值则使用默认值64MB.
 
-##memcached的分布式算法
+## memcached的分布式算法
 
 ---
 
-###memcached的分布式
+### memcached的分布式
 
 memcached服务端并没有`分布式`功能.完全是由`客户端`程序库来实现的.
 
-###什么是分布式
+### 什么是分布式
 
 **准备**
 
@@ -558,7 +558,7 @@ memcached服务端并没有`分布式`功能.完全是由`客户端`程序库来
 
 这样,将不同的键保存到不同的服务器上,就实现了memcached的分布式,memcached服务器增多后,键就会分散.即使一台memcached服务器发生故障无法连接,也不会影响其他的缓存,系统依然能继续运行.
 
-###根据余数计算分散(取余)
+### 根据余数计算分散(取余)
 
 **定义**
 
@@ -576,7 +576,7 @@ memcached服务端并没有`分布式`功能.完全是由`客户端`程序库来
 
 **示例**
 
-###一致性hash(Consistent Hashing)
+### 一致性hash(Consistent Hashing)
 
 **原理**
 
