@@ -66,6 +66,25 @@ iptables [-t TABLE] COMMAND CHAIN [num] 匹配条件 -j 处理动作
 				* `--ports`: 即是目标端口,又是源端口 
 
 						-m multiport --destination-ports 21,22,80 -j ACCEPT
+			* `iprange`: 
+				* `--src-range (ip-ip)`: 源地址范围
+				* `--dst-range (ip-ip)`: 目标地址范围
+
+						放行给这个地址范围之外的主机访问 
+						iptables -A INPUT -p tcp -m iprange ! --src-range 172.16.100.3-172.16.100.100 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+			* `connlimit`(连接数限定,限定某一个ip地址最多可以同时发起几个链接):
+				* `--connlimit-above #`: 上限,最多允许使用多少个链接. 低于`n`个开发. 通常加`!`使用
+
+						低于两个就允许, 通常加叹号使用
+						iptables -A INPUT -d 172.16.100.7 -p tcp --dport 80 -m connlimit ! --connlimit-above 2 -j ACCEPT
+						
+						不加叹号
+						iptables -A INPUT -d 172.16.100.7 -p tcp --dport 80 -m connlimit ! --connlimit-above 2 -j DROP
+						
+			* `limit`: 限定流量上限.
+				* `--limit rate` 单位时间内最多可以允许`rate`个人进来.
+				* `--limit-burst number` 并发涌至的请求数. 
+				
 						
 **条件取反**
 
