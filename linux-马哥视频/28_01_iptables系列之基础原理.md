@@ -250,15 +250,15 @@ ssh 访问规则
 * OUTPUT
 * POSTROUTING
 
-* `filter`过滤功能: 表
+* `filter`表过滤功能: 
 	* `INPUT`
 	* `OUTPUT`
 	* `FORWARD`
-* `nat`地址转换: 表
+* `nat`表地址转换: 
 	* `PREROUTING`
 	* `OUTPUT`
 	* `POSTROUTING`
-* `mangle`(拆开,修改,封装 报文首部): 表
+* `mangle`表(拆开,修改,封装 报文首部): 
 	* 功能:
 		* 修改`ttl`值
 		* 修改服务类型

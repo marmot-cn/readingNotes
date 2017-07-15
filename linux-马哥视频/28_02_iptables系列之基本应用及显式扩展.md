@@ -52,7 +52,7 @@ iptables [-t TABLE] COMMAND CHAIN [num] 匹配条件 -j 处理动作
 			* `--dport`
 	* 显示扩展(使用额外的条件匹配机制,数据包报文的速度,链接的状态,根据时间放行报文...): 必须指明由哪个模块进行的扩展(因为这些扩展和协议没有关系,所以必须手动指定).
 		* `-m EXTENSION(扩展名称) --spe-opt(扩展独有选项)` 
-			* `state`: 状态扩展, 结合`ip_conntract`追踪会话状态(根据ip追踪状态),(tcp,udp,icmp 三种协议都可以追踪).`/proc/sys/net/netfilter/`配置文件
+			* `-m state`: 状态扩展, 结合`ip_conntract`追踪会话状态(根据ip追踪状态),(tcp,udp,icmp 三种协议都可以追踪).`/proc/sys/net/netfilter/`配置文件
 				* `NEW`: 新请求(类似`tcp`的第一次握手,但是不限于`tcp`)
 				* `ESTABLISHED`: 已建立的链接
 				* `INVALID`: 非法链接请求(比如: `SYN=1,FIN=1`)
@@ -60,19 +60,19 @@ iptables [-t TABLE] COMMAND CHAIN [num] 匹配条件 -j 处理动作
 						
 						状态为 NEW 和 ESTABLISHED 都放行
 						-m state --state NEW,ESTABLISED -j ACCEPT
-			* `multiport`: 离散多端口匹配扩展
+			* `-m multiport`: 离散多端口匹配扩展
 				* `--source-ports`
 				* `--destination-ports`
 				* `--ports`: 即是目标端口,又是源端口 
 
 						-m multiport --destination-ports 21,22,80 -j ACCEPT
-			* `iprange`: 
+			* `-m iprange`: 
 				* `--src-range (ip-ip)`: 源地址范围
 				* `--dst-range (ip-ip)`: 目标地址范围
 
 						放行给这个地址范围之外的主机访问 
 						iptables -A INPUT -p tcp -m iprange ! --src-range 172.16.100.3-172.16.100.100 --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-			* `connlimit`(连接数限定,限定某一个ip地址最多可以同时发起几个链接):
+			* `-m connlimit`(连接数限定,限定某一个ip地址最多可以同时发起几个链接):
 				* `--connlimit-above #`: 上限,最多允许使用多少个链接. 低于`n`个开发. 通常加`!`使用
 
 						低于两个就允许, 通常加叹号使用
@@ -81,10 +81,29 @@ iptables [-t TABLE] COMMAND CHAIN [num] 匹配条件 -j 处理动作
 						不加叹号
 						iptables -A INPUT -d 172.16.100.7 -p tcp --dport 80 -m connlimit ! --connlimit-above 2 -j DROP
 						
-			* `limit`: 限定流量上限.
+			* `-m limit`: 限定流量上限(令牌桶控制流量上限,不控制最大上限,只控制单位时间内的流量上限和一次性蜂拥而至的上限).
 				* `--limit rate` 单位时间内最多可以允许`rate`个人进来.
-				* `--limit-burst number` 并发涌至的请求数. 
-				
+				* `--limit-burst number` 一次性并发涌至的请求数(第一次进来的请求)
+						
+						每秒钟ping请求每分钟至允许ping5次(burst默认是5个).第一次5个进来后就会按照每分钟5个速率进来.
+						现在默认策略是DROP
+						iptables -A INPUT -d 172.16.100.7 -p icmp --icmp-type 8 -m limit limit 5/minute -j ACCEPT
+						iptables -A OUTPUT -s 172.16.100.7 -m state --state REALTED,ESTABLISHED -j ACCEPT
+			
+			* `-m stirng`: 内核>2.6.14
+				* `-alog(必须)`: 字符串匹配算法
+					* `bm`
+					* `kmp`
+				* `--from offset`
+				* `--to offset`
+				* `--string(必须)`: 匹配哪一个字符串
+				* `--hex-string`: 使用十六进制
+						
+						只要请求包含 h7n9 就拒绝.无法检查文件内容,
+						因为我们请求页面, 这个数据需要在OUTPUT响应给用户.加入我们添加到INPUT链,则只能过滤文件名字
+						iptables -I OUTPUT -s 172.16.100.7 -m string --algo kmp --string "h7n9" -j REJECT
+						
+			* `-m recent`: 限制一段时间内的连接数
 						
 **条件取反**
 
