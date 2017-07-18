@@ -35,14 +35,23 @@ iptables [-t TABLE] COMMAND CHAIN [num] 匹配条件 -j 处理动作
 			* `--sport PORT`: 源端口
 			* `--dport PORT`: 目标端口 
 			* `--tcp-flags mask comp`: `tcp`的标志位. 只检查`mask`指定的标志位, 是逗号分隔的标志位列表. `comp`: 此列表中出现在`mask`中, 且必须为`1`. `comp`中没出现, 而`mask`中出现的, 必须为`0`.
+				* 标记
+					* SYN
+					* ACK
+					* FIN
+					* RST
+					* URG
+					* PSH
+					* ALL
+					* NONE
 				
-					---tcp-flags SYN.FIN,ACK.RST SYN,ACK
-					两个列表使用逗号隔开.
-					将检查tcp报文的 SYN.FIN,ACK.RST 这4个标志位,
-					且只能 SYN,ACK 为1.
-					剩下的都必须为0.
-					
-					--tcp-flags SYN,FIN,ACK,RST SYN = --syn 三次握手的第一次.
+							---tcp-flags SYN.FIN,ACK.RST SYN,ACK
+							两个列表使用逗号隔开.
+							将检查tcp报文的 SYN.FIN,ACK.RST 这4个标志位,
+							且只能 SYN,ACK 为1.
+							剩下的都必须为0.
+							
+							--tcp-flags SYN,FIN,ACK,RST SYN = --syn 三次握手的第一次.
 			* `--syn`: 三次握手的第一次.
 		* `-p icmp`
 			* `0`: `echo-replay` 响应报文
