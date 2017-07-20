@@ -4,11 +4,109 @@
 
 ### 基本命令
 
+#### 打开文件
+
+**`e[dit] /path/filename`**
+
+允许通过文件的绝对路径或相对路径来打开文件.
+
+可以使用`TAB`自动补全文件.
+
+如果文件不存在, `VIM`就会创建一个新的空白缓冲区.
+
+但是如果文件夹也不存在, 保存就会报错.
+
+```shell
+打开不存在的文件夹下面的一个不存在的文件
+:edit notExistFolder/notExistFile
+
+随便编辑, 然后保存
+
+:w
+"notExistFolder/notExistFile" E212: Can't open file for writing
+Press ENTER or type command to continue
+
+需要先创建文件夹
+:!mkdir -p %:h
+:w
+保存成功
+```
+
+**`e[dit]! /path/filename`**
+
+不保存当前文件, 然后编辑另一个文件.
+
+可以使用`TAB`自动补全文件.
+
+**`:pwd`**
+
+当因当前工作路径.
+
+**`:edit %:h`**
+
+`%` 代表缓冲区的完整文件路径.
+
+`:h` 修饰符会去除文件名, 但保留路径中的其他部分.
+
+```shell
+我们编辑 test/a
+
+:edit %<TAB> 会显示 test/a
+:edit %:h<TAB> 会显示 test/
+```
+
+不带`:h`会显示当前编辑的`路径/文件名`, 带`:h`会去掉`文件名`, 只保留路径.
+
+**修改`.vimrc` 映射快捷键**
+
+```shell
+cnoremap <expr> %% getcmdtype( ) == ':' ? expand('%:h').'/' : '%%'
+```
+
+`:edit %:h` 等同于 `:edit %%`.
+
+**以超级用户权限保存文件**
+
+```shell
+以管理员身份创建一个文件
+
+用普通用户身份打开这个文件, 进行插入操作时会提示: W10: Warning: Changing a readonly file
+随便写点东西进去.
+
+:w 保存会提示 'readonly' option is set (add! to override)
+:!w 还是不行
+
+:w !sudo tee % > /dev/null
+然后输入当前用户密码(当前用户可以sudo), 选择 (L)oad file
+```
+
+`sudo tee % > /dev/null` 这条命令会把缓冲区的内容当做标准输入, 用它来覆盖`%`(当前文件)的内容.
+
+我们可以修改`vimrc`使用`w!!`来代替上述`tee`命令.
+
+```shell
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+```
+
+#### 查找文件
+
+我在项目目录内, 现在需要查找`Application`目录下的文件.
+
+```shell
+:set path+=Application/**
+
+:find User.class.php 就会打开第一个匹配到的文件
+:find User.class.php <TAB> 就会一次展开匹配到的文件
+```
+
 #### 退出
 
-**`:w[rite]`**
+**`:w[rite] file`**
 
-把缓冲区内容写入磁盘.
+把缓冲区内容写入启动vim时指定的文件中.
+
+如果指定了`file`, 则保存到`file`中.
 
 **`:e[dit]!`**
 
@@ -21,6 +119,12 @@
 **`:wa[ll]!`**
 
 把所有改变的缓冲区写入磁盘.
+
+#### 文件状态
+
+**`C-g`**
+
+显示当前文件的文件名及状态.
 
 #### 移动
 
@@ -334,6 +438,8 @@ CTRL-O goes to the older position, and CTRL-I or tab goes to the newer one. 仅�
 
 * 重复 `@x`
 * 回退 `u`
+
+这个`x`代表是记录到一个名为`x`的寄存器. 可以用其他字符代替.
 
 #### 加法和减法
 
