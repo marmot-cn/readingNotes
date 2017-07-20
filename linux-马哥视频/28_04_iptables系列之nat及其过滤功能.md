@@ -192,7 +192,7 @@ iptables -P FORWATD DROP
 iptables -A FORWARD -m state --state ESTABLISHED -j ACCEPT
 
 放行 web 访问
-iptables -A FORWARD -S 192.168.10.0/24 -p tcp --dport 80 -m state --state NEW -j ACCEPT
+iptables -A FORWARD -s 192.168.10.0/24 -p tcp --dport 80 -m state --state NEW -j ACCEPT
 
 放行 ping
 iptables -A FORWARD -s 192.168.10.0/24 -p icmp --icmp-type 8 -m state --state NEW -j ACCEPT
