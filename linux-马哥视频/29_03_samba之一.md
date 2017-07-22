@@ -42,12 +42,12 @@
 
 `samba`会启动两个进程:
 
-* nmbd: 提供 `NetBIOS`
-* smbd: 提供 文件共享
+* `nmbd`: 提供 `NetBIOS`
+* `smbd`: 提供 文件共享
 
 **Windows主机共享文件监听端口**
 
-* NETBIOS: `udp:137`,`udp:138`,`tcp:139` (本机测试 upd:137,138 端口没有启动, windows客户端启动)
+* NETBIOS: `udp:137`,`udp:138`,`tcp:139`
 * 共享文件: `tcp:445`
 
 使用`iptables`在`linux`主机开通服务, 需要放行这些端口.
@@ -133,7 +133,7 @@
 * `guest ok = ` 来宾账户, 匿名访问
 * `public = ` 是否被所有用户读
 * `read only = ` 是否只读
-* `writable = ` 是否可写(不允许 read onlu = yes 和 writable = yes 同时出现)
+* `writable = ` 是否可写(不允许 read only = yes 和 writable = yes 同时出现)
 * `wriet list = user1, user2... 或 @group(该组用户可写) +group(该组用户可写)` 具有写权限的用户列表
 * `valid users = ` 白名单, 限定哪些用户可以访问
 * `invalid users = ` 黑名单(如果和白名单同时使用, 白名单生效)
@@ -181,21 +181,25 @@ Press enter to see a dump of your service definitions
 	writable = yes
 ...
 
-启动smba
+启动 smba
 [root@iZ944l0t308Z ~]# service smb start
 Redirecting to /bin/systemctl start  smb.service
 
-可见 tcp 445, 139 端口启动. udp 137 138 没有启动(windows启动了.
+启动 nmb
+[root@iZ944l0t308Z ~]# service nmb start
+Redirecting to /bin/systemctl start  nmb.service
+
+可见 tcp 445, 139 端口启动. udp 137 138 
 [root@iZ944l0t308Z ~]# netstat -tunlp
 Active Internet connections (only servers)
 Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-tcp        0      0 0.0.0.0:445             0.0.0.0:*               LISTEN      4657/smbd
-tcp        0      0 0.0.0.0:139             0.0.0.0:*               LISTEN      4657/smbd
+tcp        0      0 0.0.0.0:445             0.0.0.0:*               LISTEN      5046/smbd
+tcp        0      0 0.0.0.0:139             0.0.0.0:*               LISTEN      5046/smbd
 tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/systemd
 tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      831/sshd
 tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN      4662/cupsd
-tcp6       0      0 :::445                  :::*                    LISTEN      4657/smbd
-tcp6       0      0 :::139                  :::*                    LISTEN      4657/smbd
+tcp6       0      0 :::445                  :::*                    LISTEN      5046/smbd
+tcp6       0      0 :::139                  :::*                    LISTEN      5046/smbd
 tcp6       0      0 :::111                  :::*                    LISTEN      3785/rpcbind
 udp        0      0 0.0.0.0:992             0.0.0.0:*                           3785/rpcbind
 udp        0      0 0.0.0.0:111             0.0.0.0:*                           3785/rpcbind
@@ -203,6 +207,16 @@ udp        0      0 120.25.87.35:123        0.0.0.0:*                           
 udp        0      0 10.170.148.109:123      0.0.0.0:*                           500/ntpd
 udp        0      0 127.0.0.1:123           0.0.0.0:*                           500/ntpd
 udp        0      0 0.0.0.0:123             0.0.0.0:*                           500/ntpd
+udp        0      0 10.170.151.255:137      0.0.0.0:*                           7483/nmbd
+udp        0      0 10.170.148.109:137      0.0.0.0:*                           7483/nmbd
+udp        0      0 120.25.87.255:137       0.0.0.0:*                           7483/nmbd
+udp        0      0 120.25.87.35:137        0.0.0.0:*                           7483/nmbd
+udp        0      0 0.0.0.0:137             0.0.0.0:*                           7483/nmbd
+udp        0      0 10.170.151.255:138      0.0.0.0:*                           7483/nmbd
+udp        0      0 10.170.148.109:138      0.0.0.0:*                           7483/nmbd
+udp        0      0 120.25.87.255:138       0.0.0.0:*                           7483/nmbd
+udp        0      0 120.25.87.35:138        0.0.0.0:*                           7483/nmbd
+udp        0      0 0.0.0.0:138             0.0.0.0:*                           7483/nmbd
 udp6       0      0 :::992                  :::*                                3785/rpcbind
 udp6       0      0 :::111                  :::*                                3785/rpcbind
 udp6       0      0 :::123                  :::*                                500/ntpd
