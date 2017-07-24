@@ -186,6 +186,25 @@
 	
 **15** 模棱两可的分组
 
+		单值规则: 对于每个分组来说都必须返回且仅返回一个值
+		
+		SELECT product_id, MAX(date_reported) AS latest, bug_id
+		FROM Bugs JOIN BugsProducts USING (bug_id)
+		GROUP BY product_id;
+		一个给定的product_id有很多不同的bug_id.
+		
+		由于对这些"额外"的列没有办法保证它们满足单值规则, 数据库就假设它们违反了单值规则,
+		MySQL中返回的值是这一组结果的第一条, 其排序规则是按照实际的物理存储顺序来定义的,
+		
+		问题解决思路:
+		
+		1. 只查询功能依赖的列
+		2. 使用关联子查询
+		3. 使用衍生表
+		4. 使用JOIN
+		5. 对额外的列使用聚合函数
+		6. 连接同组所有值(GROUP_CONTACT()函数)
+
 **16** 随机选择
 
 		使用`rand()`意味着整个排序过程无法利用索引.
