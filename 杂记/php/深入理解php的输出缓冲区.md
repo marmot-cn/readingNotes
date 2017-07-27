@@ -164,7 +164,7 @@ ZEND_GET_MODULE(myext)
 ### 本机测试
 
 ```shell
-php -doutput_buffering=32 -dimplicit_flush=on -S0.0.0.0:8080 -t/var/www
+php 32 -dimplicit_flush=on -S0.0.0.0:8080 -t/var/www
 
 php脚本: 我在ff测试, 需要添加编码输出的头
 header( 'Content-type: text/html; charset=utf-8' );
@@ -188,3 +188,30 @@ for( $i = 0 ; $i < 10 ; $i++ )
 }
 每次刚好输出2个字节, 输出10个ac
 ```
+
+在`CLI`下测试:
+
+```php
+<?php
+
+echo 1;
+sleep(1);
+echo 2;
+sleep(1);
+echo 3;
+sleep(1);
+echo 4;
+sleep(1);
+echo 5;
+sleep(1);
+echo 6;
+
+正常每1秒输出1个数字
+[root@iZ944l0t308Z ~]# php test.php
+123
+
+每2秒输出2个数字
+[root@iZ944l0t308Z ~]# php -doutput_buffering=2 test.php
+1234
+```
+
