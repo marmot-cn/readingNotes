@@ -121,7 +121,7 @@ free命令默认单位为k, -m 单位为M. 我们这里的swap使用了21M的空
 
 在根目录下生成一个文件:swap-file,大小1G:
 
-		[root@coolnull u01]# dd if=/dev/zero of=/swap-file bs=1M count=1024
+		[root@coolnull u01]# dd if=/dev/zero of=./swap-file bs=1M count=1024
 		1024+0 records in
 		1024+0 records out
 		1073741824 bytes (1.1 GB) copied, 5.91518 s, 182MB/s
@@ -133,12 +133,12 @@ free命令默认单位为k, -m 单位为M. 我们这里的swap使用了21M的空
 		
 修改swap-file文件的权限,听说是为了增加安全.这里我是不能理解,如果改成只有root可读写的话那些非root用户执行的程序怎么办
 
-		# chown root:root /swap-file
-		# chmod 0600 /swap-file
+		# chown root:root ./swap-file
+		# chmod 0600 ./swap-file
 		
 将生成的文件格式化成交换分区:
 
-		[root@coolnull /]# mkswap /swap-file
+		[root@coolnull /]# mkswap ./swap-file
 		mkswap: /swap-file: warning: don't erase bootbitssectors
 		        onwhole disk. Use -f to force.
 		Setting up swapspace version 1, size = 1048572 KiB
@@ -147,7 +147,7 @@ free命令默认单位为k, -m 单位为M. 我们这里的swap使用了21M的空
 		
 启动swap分区并查看状态:
 
-		[root@coolnull /]# swapon /swap-file
+		[root@coolnull /]# swapon ./swap-file
 		[root@coolnull /]# swapon -s
 		Filename                                Type            Size    Used   Priority
 		/dev/sda2                               partition       2047992 0       -1
