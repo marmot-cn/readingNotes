@@ -367,6 +367,7 @@ session    include      postlogin
 	* `sufficient`: 充分条件, 如果过了就一定过了, 后面不需要检查(一票肯定权). 如果没通过(没有否决权), 其他过了也过了.
 	* `optional`: 陪衬,过与不过不受影响.
 	* `include`: 弃权票, 让其他文件确定.
+	* `substack`:将指定配置文件中type作为参数包含在此控制语句中，和Include不同的是，在substack中完成任务或者die，只会影响substack内控制命令，不会影响完整的stack桟
 * `module-path`: 完成该功能的模块是什么.
 * `module-arguments`: 模块的参数.
 
