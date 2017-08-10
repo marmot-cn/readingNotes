@@ -1,4 +1,4 @@
-#Mysql InnoDB非索引行检索使用行锁还是表锁?
+# Mysql InnoDB非索引行检索使用行锁还是表锁?
 
 ---
 
@@ -91,7 +91,7 @@
 		Query OK, 1 row affected (0.00 sec)
 		
 
-###结论
+### 结论
 
 示例在`MySQL加锁处理分析`笔记中,`id列上没有索引,RC隔离级别`和`id列上没有索引,RR隔离级别`;
 

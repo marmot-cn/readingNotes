@@ -1,8 +1,8 @@
-#CentOS6.5 安装docker
+# CentOS6.5 安装docker
 
 ---
 
-####升级内核
+#### 升级内核
 
 **升级3.10内核**
 
@@ -12,7 +12,7 @@ yum安装带aufs模块的3.10内核
 		wget http://www.hop5.in/yum/el6/hop5.repo
 		yum install kernel-ml-aufs kernel-ml-aufs-devel
 
-**修改grub的主配置文件**		
+**修改`grub`的主配置文件**		
 				
 修改grub的主配置文件/etc/grub.conf,设置default=0,表示第一个title下的内容为默认启动的kernel(一般新安装的内核在第一个位置)
 
@@ -54,7 +54,7 @@ yum安装带aufs模块的3.10内核
 		grep aufs /proc/filesystems
 		nodev	aufs
 		
-####安装docker
+#### 安装docker
 
 **关闭selinux**
 
@@ -78,7 +78,7 @@ yum安装带aufs模块的3.10内核
 
 		service docker start
 		Starting cgconfig service:                                 [  OK  ]
-		dockerdoStarting docker:	                                   [  OK  ]
+		dockerdoStarting docker:	                                [  OK  ]
 		
 **查看docker版本**
 
@@ -94,7 +94,7 @@ yum安装带aufs模块的3.10内核
 		Git commit (server): 786b29d/1.7.1
 		OS/Arch (server): linux/amd64
 		
-####让非root用户使用docker命令(免 sudo 使用 docker)
+#### 让非root用户使用docker命令(免 sudo 使用 docker)
 
 **添加docker组**
 
@@ -122,8 +122,11 @@ yum安装带aufs模块的3.10内核
 		
 **用户添加到docker组`危险`**
 
-docker 组内用户执行命令的时候会自动在所有命令前添加 sudo.
+`docker`组内用户执行命令的时候会自动在所有命令前添加`sudo`.
 
 		
+
+
+
 
 

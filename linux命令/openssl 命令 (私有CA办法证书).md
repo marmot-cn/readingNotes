@@ -6,13 +6,20 @@
 
 ![openssl-ca](./img/openssl-ca.jpg)
 
+#### 命令
+
+`openssl`:
+
+* `genrsa` 生成`rsa`私钥文件.
+* `req` 用于生成证书请求.
+
 #### 示例
 
 #### 修改配置文件
 
 ```shell
 cat  /etc/pki/tls/openssl.cnf
- 
+``` 
 
 ##### 创建私有证书签发机构CA步骤
 
@@ -41,7 +48,6 @@ total 16
 `umask 077`, 建立的文件默认权限是 `-rw-------`, 文件夹权限 `drwx------`.
 
 `umask` 是从权限中"拿走"相应的位即可.
-
 
 * r 读取: 4
 * w 写入: 2
@@ -147,9 +153,9 @@ ssh ansible@120.25.87.35 -p 17456
 切换 root
 
 [root@rancher-agent-1 ansible]# mkdir -p /etc/httpd/ssl
-[root@rancher-agent-1 ansible]# cd  /etc/httpd/ssl
+[root@rancher-agent-1 ansible]# cd /etc/httpd/ssl
 生成私钥
-[root@rancher-agent-1 ssl]# (umask  077; openssl  genrsa -out  /etc/httpd/ssl/httpd.key  2048)
+[root@rancher-agent-1 ssl]# (umask 077; openssl genrsa -out /etc/httpd/ssl/httpd.key 2048)
 ```
 
 **生成证书签署请求**
@@ -157,7 +163,7 @@ ssh ansible@120.25.87.35 -p 17456
 `csr` 是证书请求文件,用于申请证书. 在制作`csr`文件的时,必须使用自己的私钥来签署申,还可以设定一个密钥.
 
 ```shell
-[root@rancher-agent-1 ssl]#openssl  req  -new  -key /etc/httpd/ssl/httpd.key  -out /etc/httpd/ssl/httpd.csr  -days  365
+[root@rancher-agent-1 ssl]#openssl req -new -key /etc/httpd/ssl/httpd.key -out /etc/httpd/ssl/httpd.csr  -days  365
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -242,7 +248,7 @@ Data Base Updated
 **查看所签署的证书信息**
 
 ```shell
-[root@rancher-server ansible]# cat  /etc/pki/CA/index.txt
+[root@rancher-server ansible]# cat /etc/pki/CA/index.txt
 V	180704104350Z		01	unknown	/C=CN/ST=Shannxi/O=marmot/OU=Tech/CN=www.marmot.com/emailAddress=41893204@qq.com
 ```
 

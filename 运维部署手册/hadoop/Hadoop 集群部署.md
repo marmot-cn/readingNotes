@@ -393,6 +393,8 @@ resourcemanager running as process 28774. Stop it first.
 10.116.138.44: starting nodemanager, logging to /home/hadoop/hadoop-2.7.3/logs/yarn-root-nodemanager-iZ94ebqp9jtZ.out
 ```
 
+`sbin/stop-all.sh` 关闭`hadoop`集群.
+
 #### 检查爱是否启动成功
 
 访问`http://120.24.3.210:50070/`
