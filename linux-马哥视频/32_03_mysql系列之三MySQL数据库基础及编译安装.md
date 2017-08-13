@@ -237,7 +237,7 @@ make install
 
 客户端`mysql`访问`mysqld`
 
-* Unix 在同一台主机上
+* unix 在同一台主机上
 	* mysql -> mysql.sock --> mysqld, 通过mysql.sock完成进程间通信
 * windows 在同一台主机上
 	* mysql -> memory(共享内存) or pipe(管道) -> mysqld 
@@ -259,7 +259,7 @@ mysql -u root -h xxxx(xxx是本机ip), 使用 tcp/ip 协议通信
 
 配置文件中`[client]`都会生效.
 
-都支持选项:
+链接到服务端支持的选项:
 
 * -u(--user) USERNAME
 * -h(--host) HOST
@@ -270,6 +270,7 @@ mysql -u root -h xxxx(xxx是本机ip), 使用 tcp/ip 协议通信
 	* `pipe`(windows)
 	* `memory`(windows)
 * --port 指定端口(如果使用mysql.sock, 指定端口没有意义)
+* `-D(--database)`设定默认库
 
 #### `mysql`非客户端工具
 
