@@ -69,6 +69,10 @@ Please select a continent or ocean.
 在设置中国时区使用亚洲/上海
 
 cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+或 
+rm /etc/localtime
+ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 ```
 
 ## 硬件时间时钟,软件时间时钟
@@ -198,7 +202,23 @@ restrict 10.111.1.1 mask 255.0.0.0 nomodify #添加10.0.0.0/8网段访问，不�
 * ntp6.aliyun.com
 * ntp7.aliyun.com
 
+### 本机修改服务文件
 
+```shell
+
+server ntp1.aliyun.com iburst
+server ntp2.aliyun.com iburst
+server ntp3.aliyun.com iburst
+server ntp4.aliyun.com iburst
+server ntp5.aliyun.com iburst
+server ntp6.aliyun.com iburst
+server ntp7.aliyun.com iburst
+server 0.cn.pool.ntp.org iburst
+server 1.cn.pool.ntp.org iburst
+server 2.cn.pool.ntp.org iburst
+server 3.cn.pool.ntp.org iburst
+
+```
 
 
 
