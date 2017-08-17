@@ -117,7 +117,7 @@ POSTROUTING：在通过Linux路由器之后做的策略，也就是路由器的�
 
 **在B电脑上设置网关**
 
-vi/etc/sysconfig/network-scripts/ifcfg-eth0
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
 
 添加或修改
 

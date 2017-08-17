@@ -1,8 +1,8 @@
-#linux swap交换分区说明/管理
+# linux swap交换分区说明/管理
 
 ---
 
-####swap说明
+#### swap说明
 
 **swap概述**
 
@@ -48,7 +48,7 @@
 		或
 		echo 'vm.swappiness=10' >>/etc/sysctl.conf
 		
-####管理swap
+#### 管理swap
 
 **查看系统当前SWAP空间大小**
 
@@ -115,7 +115,7 @@ free命令默认单位为k, -m 单位为M. 我们这里的swap使用了21M的空
 		proc                    /proc                   proc    defaults        0 0
 
 
-####增加swap空间
+#### 增加swap空间
 
 **使用文件来作为SWAP交换分区**
 
