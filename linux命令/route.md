@@ -68,9 +68,19 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 * `Genmask`: 网络掩码. 目标网络的掩码;如果目标为主机，则显示’255.255.255.255’如果目标为网关，则显示 ’0.0.0.0’
 * `Flags`:
 	* `U(route is up)`: 路由已经启动.
-	* `H`: 目标是一部主机(IP)而非网域.
-	* `G`: 需要透过外部的主机(gateway)来转递封包.
-	* `R(reinstate route for dynamic routing)`：使用动态路由时，恢复路由资讯的旗标
+	* `H(target is a host)`: 目标是一部主机(IP)而非网域.
+	* `G(use gateway)`: 需要透过外部的主机(gateway)来转递封包.
+	* `R(reinstate route for dynamic routing)`：使用动态路由时，恢复路由资讯的旗标.
+	* `D(dynamically installed by daemon or redirect)`: 已经由服务或转`port`功能设定为动态路由.
+	* `M(modified from routing daemon or redirect)`: 路由已经被修改了.
+	* `!(reject route)`: 这个路由将不会被接受(用来抵挡不安全的网域).
+* `Metric`: 到目标的'距离'(通常基于跳数统计).它不被当前内核使用,但是也许被路由守护进程需要.
+* `Ref`: 参考此路由的数量.
+* `Use`: 路由查找计数.
+* `Iface`: 此路由数据包发送到的网络接口.
+* `MSS`: 基于此路由的TCP连接默认最大段大小.
+* `Window`: 基于此路由的TCP连接默认窗口大小.
+* `irtt`: 初始往返时间. 内核使用此值在不需要等待响应的情况下推测最佳TCP协议参数.
 
 ### 示例(我自己没有环境测试过)
 
