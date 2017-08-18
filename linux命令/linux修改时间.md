@@ -217,7 +217,6 @@ server 0.cn.pool.ntp.org iburst
 server 1.cn.pool.ntp.org iburst
 server 2.cn.pool.ntp.org iburst
 server 3.cn.pool.ntp.org iburst
-
 ```
 
 
