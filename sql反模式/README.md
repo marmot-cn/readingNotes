@@ -25,6 +25,14 @@
 	
 **3** 单纯的树
 
+		邻接表: 表中记录父id来表示层级关系
+		递归查询: mysql不支持
+		枚举路径: 专门有一个字段记录层级路径 1/2/3
+		嵌套集: 
+			nsleft: 小于该节点所有后代ID
+			nsright: 大于该节点所有后代的ID
+		闭包表: 单独一张表记录层级关系
+
 **4** 需要ID
 
 		1.理解主键和伪主键
@@ -103,6 +111,13 @@
 		//attributes,序列化存储.如果 type == order_car 则该字段为序列化的 order_car 汽车订单私有字段.如果 type == order_computer 则该字段为序列化的 order_computer 电脑订单私有字段,
 
 **7** 多态关联
+
+		多态关联是comments中有一个字段type,来标记是来源于bugs表还是features表. 这样不能使用外键来约束. 必须使用程序来维护关系.
+		
+		解决方案:
+		1. 交叉表 建立一个bugsComments表和featuresComments表. 只记录之间的关系, 可以使用外键约束
+		2. 创建公用的超级表(基表), 让bugs和features都继承一张issues表. 让comments和issues来建立外键约束
+		
 
 **8** 多列属性
 
