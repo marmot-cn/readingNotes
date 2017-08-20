@@ -76,12 +76,15 @@
 ### 执行次序
 
 1. FROM 从哪张表过滤
-2. WHERE 指定条件
-3. GROUP BY 分组
-4. HAVING 对分组结果过滤
-5. ORDER BY 排序
-6. SELECT
-7. LIMIT
+2. ON
+3. JOIN
+4. WHERE 指定条件
+5. GROUP BY 分组
+6. HAVING 对分组结果过滤
+7. SELECT
+8. DISTINCT
+9. ORDER BY 排序
+10. LIMIT
 
 ### 多表查询
 

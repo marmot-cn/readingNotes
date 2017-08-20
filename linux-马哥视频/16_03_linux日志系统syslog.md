@@ -55,7 +55,7 @@ kernel --> 物理终端(/dev/console) --> 记录到 /var/log/dmesg,(由`klogd`�
 
 		facility.priority	action
 		
-`-action`: 加上`-`表示异步写入,先写到内存过一会在同步到磁盘上去.		
+`-action`: 加上`-`表示异步写入,先写到内存过一会在同步到磁盘上去.
 		
 **facility(设备)**
 
