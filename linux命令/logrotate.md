@@ -27,7 +27,7 @@ yum install logrotate crontabs
 * `delaycompress`: 总是与`compress`选项一起用,`delaycompress`选项指示`logrotate`不要将最近的归档压缩,压缩将在下一次轮循周期进行.这在你或任何软件仍然需要读取最新归档时很有用.
 * `missingok`: 在日志轮循期间,任何错误将被忽略,例如“文件无法找到”之类的错误.
 * `notifempty`: 如果日志文件为空,轮循不会进行. 
-* `create 644 root root`:  以指定的权限创建全新的日志文件,同时`logrotate`也会重命名原始日志文件.
+* `create mode owner group `:  以指定的权限创建全新的日志文件,同时`logrotate`也会重命名原始日志文件.
 * `prerotate,endscript`: 在logrotate之前执行的命令. 如`/usr/bin/charrt -a /var/log/logfile`.
 * `postrotate,endscript`: 在所有其它指令完成后, `postrotate`和`endscript`里面指定的命令将被执行.在这种情况下, `rsyslogd`进程将立即再次读取其配置并继续运行.如`/usr/bin/charrt +a /var/log/logfile`.
 * `sharedscripts`: 共享脚本，表示切换时只执行一次脚本.
@@ -47,6 +47,22 @@ logrotate /etc/logrotate.conf
 ```shell
 logrotate /etc/logrotate.d/log-file 
 ```
+
+## 计划任务
+
+```shell
+[ansible@iZ944l0t308Z ~]$ sudo cat /etc/cron.daily/logrotate
+#!/bin/sh
+
+/usr/sbin/logrotate -s /var/lib/logrotate/logrotate.status /etc/logrotate.conf
+EXITVALUE=$?
+if [ $EXITVALUE != 0 ]; then
+    /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"
+fi
+exit 0
+```
+
+每天执行一次.
 
 ## 示例
 
