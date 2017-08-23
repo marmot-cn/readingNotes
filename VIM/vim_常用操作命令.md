@@ -700,7 +700,7 @@ I've been expecting you, Mister Bond.
 
         :g/test/d
         删除所有带test的行
-        :g!/test/d
+        :g!/test/d 或者 v/test/d
         保留带test的行
         :g/hello/,/world/d
         删除所有hello,world之间的行
