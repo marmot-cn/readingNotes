@@ -1,6 +1,6 @@
-#Linux别名登录服务器 SSH别名设置
+# Linux别名登录服务器 SSH别名设置
 
-####修改设置
+#### 修改设置
 
 修改`/etc/ssh/ssh_config`或`~/.ssh/config`文件,添加如下几行
 

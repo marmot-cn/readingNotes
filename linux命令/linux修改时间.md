@@ -213,10 +213,6 @@ server ntp4.aliyun.com iburst
 server ntp5.aliyun.com iburst
 server ntp6.aliyun.com iburst
 server ntp7.aliyun.com iburst
-server 0.cn.pool.ntp.org iburst
-server 1.cn.pool.ntp.org iburst
-server 2.cn.pool.ntp.org iburst
-server 3.cn.pool.ntp.org iburst
 ```
 
 
