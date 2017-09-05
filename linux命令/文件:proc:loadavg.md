@@ -1,4 +1,4 @@
-# /proc/loadavg
+# 文件 /proc/loadavg
 
 ---
 
