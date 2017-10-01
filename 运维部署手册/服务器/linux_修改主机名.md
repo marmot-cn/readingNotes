@@ -1,4 +1,4 @@
-#Linux 修改主机名
+# Linux 修改主机名
 
 ---
 		
@@ -6,7 +6,7 @@
 
 		[chloroplast@iZ94ebqp9jtZ
 
-####Centos 6.5
+#### Centos 6.5
 		
 修改后		
 		
@@ -20,7 +20,7 @@
 修改`HOSTNAME`
 
 
-####Centos 7
+#### Centos 7
 
 **修改文件**
 
