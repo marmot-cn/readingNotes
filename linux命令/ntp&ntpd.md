@@ -217,3 +217,16 @@ server ntp7.aliyun.com iburst
 
 
 
+## 测试
+
+### 查看与时间同步服务器的时间偏差
+
+```shell
+ntpdc -c loopinfo
+```
+
+### 查看当前同步的时间服务器
+
+```shell
+ntpq -p	
+```
