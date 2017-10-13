@@ -118,7 +118,7 @@ Systemd 用目标（target）替代了运行级别的概念,提供了更大的�
 
 #### 定时器
 
-定时器是以 `.timer` 为后缀的配置文件,记录由system的里面由时间触发的动作,,定时器可以替代 cron 的大部分功能.
+定时器是以 `.timer` 为后缀的配置文件,记录由system的里面由时间触发的动作, 定时器可以替代 cron 的大部分功能.
 
 #### 日志
 
@@ -150,7 +150,7 @@ systemd提供了自己日志系统(logging system),称为 journal. 使用 system
 
 **[Install]**
 
-是服务安装的相关设置,包含systemctlenable或者disable的命令安装信息.
+是服务安装的相关设置,包含systemctl enable或者disable的命令安装信息.
 
 
 #### 示例代码
@@ -178,3 +178,52 @@ systemd提供了自己日志系统(logging system),称为 journal. 使用 system
 		
 		[Install]
 		WantedBy=multi-user.target
+		
+##### 测试
+
+```shell
+[root@localhost ansible]# systemctl start helloworld.service
+[root@localhost ansible]# systemctl status helloworld.service
+● helloworld.service - helloworld service
+   Loaded: loaded (/usr/lib/systemd/system/helloworld.service; disabled; vendor preset: disabled)
+   Active: active (running) since Thu 2017-10-05 15:30:56 CST; 5s ago
+ Main PID: 23496 (helloworld.sh)
+   CGroup: /system.slice/helloworld.service
+           ├─23496 /bin/bash /home/ansible/helloworld.sh
+           └─23508 sleep 1
+
+Oct 05 15:30:56 localhost.localdomain systemd[1]: Started helloworld service.
+Oct 05 15:30:56 localhost.localdomain systemd[1]: Starting helloworld service...
+
+日志在不断生成
+[root@localhost ansible]# tail -f /var/log/helloworld.log
+2017-10-05 15:31:10 hello world!
+2017-10-05 15:31:11 hello world!
+2017-10-05 15:31:12 hello world!
+2017-10-05 15:31:13 hello world!
+2017-10-05 15:31:14 hello world!
+2017-10-05 15:31:15 hello world!
+2017-10-05 15:31:16 hello world!
+2017-10-05 15:31:17 hello world!
+2017-10-05 15:31:18 hello world!
+2017-10-05 15:31:19 hello world!
+2017-10-05 15:31:20 hello world!
+2017-10-05 15:31:21 hello world!
+
+[root@localhost ansible]# systemctl stop helloworld.service
+[root@localhost ansible]# systemctl status helloworld.service
+● helloworld.service - helloworld service
+   Loaded: loaded (/usr/lib/systemd/system/helloworld.service; disabled; vendor preset: disabled)
+   Active: failed (Result: signal) since Thu 2017-10-05 15:31:46 CST; 5s ago
+  Process: 23613 ExecStop=/bin/kill -9 $MAINPID (code=exited, status=0/SUCCESS)
+  Process: 23496 ExecStart=/home/ansible/helloworld.sh (code=killed, signal=KILL)
+ Main PID: 23496 (code=killed, signal=KILL)
+
+Oct 05 15:30:56 localhost.localdomain systemd[1]: Started helloworld service.
+Oct 05 15:30:56 localhost.localdomain systemd[1]: Starting helloworld service...
+Oct 05 15:31:46 localhost.localdomain systemd[1]: Stopping helloworld service...
+Oct 05 15:31:46 localhost.localdomain systemd[1]: helloworld.service: main process exited, code=killed, status=9/KILL
+Oct 05 15:31:46 localhost.localdomain systemd[1]: Stopped helloworld service.
+Oct 05 15:31:46 localhost.localdomain systemd[1]: Unit helloworld.service entered failed state.
+Oct 05 15:31:46 localhost.localdomain systemd[1]: helloworld.service failed.
+```
