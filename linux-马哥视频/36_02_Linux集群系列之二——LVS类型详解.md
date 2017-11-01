@@ -114,10 +114,11 @@
 
 在`DR`模型中, `direcor`和`real server`都配置了`vip`. 因为如果`real server`用`rip`响应的话, 客户端会不识别的. 在`direcotr`上有两个地址`vip`和`dip`, 一个配置在网卡上, 一个配置在网卡别名上. `real server`中`vip`配置在网卡别名上, 并且是隐藏的, 不接受任何请求. 只有封装响应报文的时候用`vip`地址作为源地址响应. 真正的网卡还是本身的`rs ip`的网卡.
 
-路由器和`director`通信的时候需要识别`vip`的`mac`地址, 使用`arp`广播, 但是`real server`不会响应广播.
-
+路由器和`director`通信的时候需要识别`vip`的`mac`地址, 使用`arp`广播, 但是`real server`不会响应广播. 因为如果`real server`和`director`对寻找`mac`地址的`arp`广播都响应, 可能谁返回最快, 谁就是`vip`对应的`mac`地址, 所以不能让`real server`不能对`mac`地址的广播请求响应.
 
 `director`在`dr`模型中, 在转发请求给各个`real server`时, 不会通过改变目标地址来实现, 还是通过**修改mac地址**实现的. 不拆`ip`首部, 拆`mac`首部. 源`mac`改为`director`的`dmac`, 目标`mac`改为挑选到得`real server`的`mac`. 报文转发到`real server`时候, 拆掉`mac`地址时候, 目标`ip`是`vip`, 而`real server`有`vip`所有会认为到达自己的主机上的.
+
+这时在通过`arp`找见目标`mac`对应的`ip`
 
 请求报文小, 响应报文大. 如果不处理响应报文, 则处理能力会得到提升.
 
