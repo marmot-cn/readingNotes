@@ -88,6 +88,7 @@ ifconfig enp0s8 down
 
 ```
 在 192.168.0.178主机上, 配置 director
+[root@localhost ~]# ifconfig enp0s3:0 192.168.0.101 broadcast 192.168.0.101 netmask 255.255.255.255 up
 [root@localhost ~]# ifconfig
 enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet 192.168.0.178  netmask 255.255.255.0  broadcast 192.168.0.255
