@@ -1359,5 +1359,3 @@ VI中的多行删除与复制
 `:set paste`开启`paste`选项, 则复制代码不会出现乱行.
 
 `:set nopaste`关闭.
-
-

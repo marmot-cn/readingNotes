@@ -88,3 +88,9 @@ root@389444860b8e:/var/www/html# ps -C php-fpm -o pgid,pid,cmd
 **`-G grplist`**
 
 通过进程组ID或进程组名称查找进程,显示进程组ID在grplist里的进程.
+
+**`e`**
+
+**`l`**
+
+**`f`**
