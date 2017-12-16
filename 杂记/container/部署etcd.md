@@ -1,4 +1,4 @@
-#etcd 容器部署
+# etcd 容器部署
 
 ---
 
@@ -6,8 +6,7 @@
 
 如下是官网示例
 
-####单节点
-
+## 单节点
 
 		docker run -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
 		 --name etcd quay.io/coreos/etcd \
@@ -25,7 +24,7 @@
 		etcdctl -C http://${HostIP}:2379 member list
 		etcdctl -C http://${HostIP}:4001 member list
 
-####多节点
+## 多节点
 
 `-initial-cluster`,必须包含每个etcd节点的`peer urls`.
 
@@ -72,7 +71,13 @@
 
 		etcdctl -C http://192.168.12.50:2379,http://192.168.12.51:2379,http://192.168.12.52:2379 member list
 		
-####问题
+## 问题
+
+### rancher 部署的问题
+
+在`rancher`部署一开始我映射端口到私有地址, 则会提示失败. 需要一开始映射端口不指定地址. 等部署完成以后在加上服务器的私有地址即可.
+
+### 挂载目录
 
 在配置中发现问题如下,
 
@@ -82,3 +87,7 @@
 
 * 指定数据目录: `-data-dir /data/etcd`
 * 挂载目录: `-v /data/etcd:/data/etcd`
+
+### 阿里云镜像
+
+可以使用我在阿里云部署的镜像`registry.cn-hangzhou.aliyuncs.com/marmot/etcd`.
