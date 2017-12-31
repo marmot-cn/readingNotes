@@ -1,6 +1,6 @@
-# monlog
+# monolog
 
-## 安装 monlog 扩展
+## 安装 monolog 扩展
 
 ```
 composer require monolog/monolog
@@ -62,7 +62,7 @@ $log->debug('Debug',array('xxx'=>'xxx1'));
 testWarning 集合存储1条 Foo
 testError 不存储因为级别高
 testInfo 集合存储2条 Bar, Foo
-testDebu 集合存储3条 Bar, Foo, Debug
+testDebug 集合存储3条 Bar, Foo, Debug
 ```
 
 `MongoDBHandler`:
