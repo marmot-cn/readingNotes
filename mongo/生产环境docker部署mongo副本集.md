@@ -2,9 +2,39 @@
 
 ## 版本
 
-部署了`mongo:3.6`
+部署了`mongo:3.6`, 通过镜像部署集成.
 
 ## 生产环境调整参数
+
+参数调整部署在`ansible`剧本内.
+
+## 部署
+
+### 下载ca证书
+
+### 创建文件夹
+
+### mongo配置文件
+
+`mongo`的配置文件.
+
+```
+net:
+  ssl:
+    mode: requireSSL
+    PEMKeyFile: /etc/ssl/client.pem
+    PEMKeyPassword: '!&,wa~/M8@=\*Mw>'
+    CAFile: /etc/ssl/cacert.pem
+    clusterFile: /etc/ssl/mongo-1.pem
+    clusterPassword: 'N;N.C4qD"jw`3M,g'
+    allowInvalidHostnames: true
+security:
+    clusterAuthMode: x509
+replication:
+    replSetName: "marmot"
+```
+
+
 
 简单部署完成后, 查看日志发现:
 
