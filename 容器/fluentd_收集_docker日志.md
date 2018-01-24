@@ -286,3 +286,11 @@ flush_interval 10s
 * `capped_size`, 集合大小, 因为我上个参数设置了没用, 这个参数属性也没生效.
 * `time_key` 时间戳的名字
 * `flush_interval` 刷新时间间隔, 默认是`60s`.
+
+## 一些问题
+
+如果应用容器需要把日志输出到`fluentd`, 需要在部署`fluentd`时候把`ip`绑定为`docker 0`的`ip`即可.
+
+```
+172.17.0.1
+```

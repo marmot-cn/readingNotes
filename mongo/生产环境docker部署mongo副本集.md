@@ -14,19 +14,38 @@
 
 ### 创建文件夹
 
+* `ca`, 
+* `config`
+* `data`
+
+```
+[ansible@demo mongo-1]$ tree
+.
+|-- ca
+|	|-- client.pem 客户端访问证书
+| 	|--	cacert.pem CA证书
+|   `-- mongo-1.pem 数据同步使用的整数
+|-- config
+|   `-- mongod.conf 配置文件
+`-- data
+```
+
 ### mongo配置文件
 
 `mongo`的配置文件.
+
+每个节点都需要一个配置文件, `clusterFile`会根据不同的节点使用不同的证书.
+其他节点的整数都已经集成到镜像内. 
 
 ```
 net:
   ssl:
     mode: requireSSL
-    PEMKeyFile: /etc/ssl/client.pem
-    PEMKeyPassword: '!&,wa~/M8@=\*Mw>'
-    CAFile: /etc/ssl/cacert.pem
-    clusterFile: /etc/ssl/mongo-1.pem
-    clusterPassword: 'N;N.C4qD"jw`3M,g'
+    PEMKeyFile: /etc/ssl/private/client.pem
+    PEMKeyPassword: 'xxxxx'
+    CAFile: /etc/ssl/private/cacert.pem
+    clusterFile: /etc/ssl/private/mongo-?.pem
+    clusterPassword: 'xxxx'
     allowInvalidHostnames: true
 security:
     clusterAuthMode: x509
@@ -34,82 +53,61 @@ replication:
     replSetName: "marmot"
 ```
 
-
-
-简单部署完成后, 查看日志发现:
+### 启动mongo节点
 
 ```
-WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
-
-WARNING: Access control is not enabled for the database.
-Read and write access to data and configuration is unrestricted.
-
-WARNING: /sys/kernel/mm/transparent_hugepage/enabled is 'always'.
-We suggest setting it to 'never'
-
-WARNING: /sys/kernel/mm/transparent_hugepage/defrag is 'always'.
-We suggest setting it to 'never'
+docker run --name mongo -p "ip:端口:27017" -v /data/mongo-?/data:/data/db -v /data/mongo-?/config/mongod.conf:/etc/mongod.conf -v /data/mongo-?/ca:/etc/ssl/private -d registry.cn-hangzhou.aliyuncs.com/marmot/mongo-replica-set --config /etc/mongod.conf
 ```
 
-查看手册, 还有如下约定:
+### 配置副本集
+
+进入其中一台节点.
 
 ```
-Disable the tuned tool if you are running RHEL 7 / CentOS 7 in a virtual environment.
-
-When RHEL 7 / CentOS 7 run in a virtual environment, the tuned tool automatically invokes a performance profile derived from performance throughput, which automatically sets the readahead settings to 4MB. This can negatively impact performance.
-```
-
-docker run --name mongo-1 -p "27017:27017" -v /data/mongo-1:/data/db -v /data/mongo-1/mongod.conf:/etc/mongod.conf -d mongo:3.6 --config /etc/mongod.conf
-
-docker run --name mongo-2 -p "27018:27017" -v /data/mongo-2:/data/db -v /data/mongo-2/mongod.conf:/etc/mongod.conf -d mongo:3.6 --config /etc/mongod.conf
-
-docker run --name mongo-3 -p "27019:27017" -v /data/mongo-3:/data/db -v /data/mongo-3/mongod.conf:/etc/mongod.conf -d mongo:3.6 --config /etc/mongod.conf
-
-
 rs.initiate( {
    _id : "marmot",
    members: [
-      { _id: 0, host: "10.170.148.109:27017" },
-      { _id: 1, host: "10.170.148.109:27018" },
-      { _id: 2, host: "10.170.148.109:27019" }
+      { _id: 0, host: "xxx.xxx.xxx.xxx:端口" },
+      { _id: 1, host: "xxx.xxx.xxx.xxx:端口" },
+      { _id: 2, host: "xxx.xxx.xxx.xxx:端口" }
    ]
 })
-
-
-mongo --ssl --sslAllowInvalidHostnames --sslCAFile /data/db/cacert.pem --sslPEMKeyFile /data/db/mongo.pem
-
-
-### 部署副本集带auth
-
-先启动不带`auth`的节点
-
-```
-docker run --name mongo-1 -p "27017:27017" -v /data/mongo-1:/data/db -d mongo:3.6 --replSet "marmot" --keyFile /data/db/keyfile
-docker run --name mongo-2 -p "27018:27017" -v /data/mongo-2:/data/db -d mongo:3.6 --replSet "marmot" --keyFile /data/db/keyfile
-docker run --name mongo-3 -p "27019:27017" -v /data/mongo-3:/data/db -d mongo:3.6 --replSet "marmot" --keyFile /data/db/keyfile
 ```
 
-在其中一台节点先生成用户
+创建用户管理员.
 
 ```
 use admin
 db.createUser(
   {
-    user: "myUserAdmin",
-    pwd: "abc123",
+    user: "admin",
+    pwd: "xxxxxx",
     roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
   }
-)
+) 
+```
+
+创建root.
+
+```
 db.createUser( {
-    user: "siteRootAdmin",
-    pwd: "abc123",
+    user: "root",
+    pwd: "xxxx",
     roles: [ { role: "root", db: "admin" } ]
  });
+```
 
+验证用户名和密码.
+
+```
 use admin
-db.auth("myUserAdmin", "abc123")
-db.auth("siteRootAdmin", "abc123")
+db.auth("admin", "xxxx")
+db.auth("root", "xxx")
+```
 
+创建`test`库用于测试, 开发环境直接给予`root`账户也可以.
+
+```
 use test
 db.createUser(
   {
@@ -124,49 +122,24 @@ db.demo.insert( { item: "card", qty: 15 } )
 db.demo.find()
 ```
 
-关闭所有节点, 添加`--auth`, 然后在重新启动
+查看集群状态
 
 ```
-docker run --name mongo-1 -p "27017:27017" -v /data/mongo-1:/data/db -d mongo:3.6 --auth --replSet "marmot" --keyFile /data/db/keyfile
-
-docker run --name mongo-2 -p "27018:27017" -v /data/mongo-2:/data/db -d mongo:3.6 --auth --replSet "marmot" --keyFile /data/db/keyfile
-
-docker run --name mongo-3 -p "27019:27017" -v /data/mongo-3:/data/db -d mongo:3.6 --auth --replSet "marmot" --keyFile /data/db/keyfile
+use admin
+db.auth("root", "xxxx")
+rs.status()
 ```
 
-在到主节点测试添加数据, 现在好了
+### 链接客户端
 
 ```
-docker exec -it mongo-1 mongo admin
-db.auth("siteRootAdmin", "abc123")
-
-use demo
-db.createUser(
-  {
-    user: "myTester",
-    pwd: "xyz123",
-    roles: [ { role: "readWrite", db: "demo" }]
-  }
-)
+mongo --ssl --sslAllowInvalidHostnames --sslCAFile /etc/ssl/private/cacert.pem --sslPEMKeyFile /etc/ssl/private/client.pem
 ```
 
+### 访问从节点数据
+
+需要设置 
+
+```
 db.getMongo().setSlaveOk()
-
-先不加
-
 ```
-security:
-    authorization: enabled
-```
-
-docker run --name mongo-1 -p "27017:27017" -v /data/mongo-1:/data/db -d mongo:3.6 --config /data/db/mongod.conf
-
-docker run --name mongo-2 -p "27018:27017" -v /data/mongo-2:/data/db -d mongo:3.6 --config /data/db/mongod.conf
-
-docker run --name mongo-3 -p "27019:27017" -v /data/mongo-3:/data/db -d mongo:3.6 --config /data/db/mongod.conf
-
-```
-mongo --ssl  --sslAllowInvalidHostnames --sslCAFile /data/db/cacert.pem --sslPEMKeyFile /data/db/mongo.pem
-```
-
-集群不加`--auth`
