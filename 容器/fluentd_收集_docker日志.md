@@ -263,8 +263,8 @@ port 3717
 database sandboxlog
 collection services
 
-user sandboxlog
-password hWcExTEbz4cA2yh2
+user xxx
+password xxxx
 
 capped
 capped_size 1024m
@@ -286,6 +286,14 @@ flush_interval 10s
 * `capped_size`, 集合大小, 因为我上个参数设置了没用, 这个参数属性也没生效.
 * `time_key` 时间戳的名字
 * `flush_interval` 刷新时间间隔, 默认是`60s`.
+
+### 镜像地址
+
+`registry.cn-hangzhou.aliyuncs.com/marmot/fluentd`
+
+### rancher配置
+
+![rancher flentd](./img/fluentd.png)
 
 ## 一些问题
 
