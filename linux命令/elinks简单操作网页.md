@@ -1,4 +1,4 @@
-# elinks
+# elinks简单操作网页
 
 `elinks`可以在`shell`界面简单操作网页.
 

@@ -42,6 +42,8 @@
 * DAS: 直接附加存储, Direct Attached Storage. 直接接到本机主板总线(BUS), 当前主机会直接识别为一个存储设备. 很难实现共享.
 * NAS: 网络附加存储, Network Attached Storage. 文件服务器: 文件级别.
 * SAN: 存储区域网络, Storage Area Network. 将本地总线上的数据转换成能够通过网络发送, 延长了`DAS`设备传输距离的共享设备. 支持多节点同时接入(可以共享给多个节点同时使用).
+	* FC(光纤) SAN
+	* IP SAN
 
 ## 整理知识点
 
