@@ -47,6 +47,8 @@ Cluster Resource Manager
 
 #### DC
 
+决策节点, 自动选出的.
+
 Designated Coordinator. 
 
 * PE: Policy Engine
