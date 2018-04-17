@@ -95,3 +95,81 @@ Linux 3.10.0-514.26.2.el7.x86_64 (demo) 	12/16/2017 	_x86_64_	(1 CPU)
 ### 针对特定进程统计(-p)
 
 使用`-p`选项，我们可以查看特定进程的系统资源使用情况.
+
+### 显示每个进程的上下文切换情况(-w)
+
+```
+[root@iZ94ebqp9jtZ ~]# pidstat -w -p 18060 1 10
+Linux 3.10.0-514.26.2.el7.x86_64 (iZ94ebqp9jtZ) 	04/12/2018 	_x86_64_	(1 CPU)
+
+11:44:12 AM   UID       PID   cswch/s nvcswch/s  Command
+11:44:13 AM     0     18060     10.10      0.00  AliYunDun
+11:44:14 AM     0     18060     10.10      0.00  AliYunDun
+11:44:15 AM     0     18060     10.10      0.00  AliYunDun
+11:44:16 AM     0     18060     10.10      0.00  AliYunDun
+11:44:17 AM     0     18060     10.00      0.00  AliYunDun
+11:44:18 AM     0     18060     10.00      0.00  AliYunDun
+```
+
+* `PID`: 进程id.
+* `cswch/s`: 每秒主动任务上下文切换(自愿上下文切换)数量. 当某一任务处于阻塞等待时, 将主动让出自己的CPU资源.
+* `nvcswch/s`: 每秒被动任务上下文切换(非自愿上下文切换)数量. CPU分配给某一任务的时间片已经用完, 因此将强迫该进程让出CPU的执行权.
+* `Command`: 命令名.
+
+### 显示选择任务的线程的统计信息外的额外信息(-t)
+
+```
+[root@iZ94ebqp9jtZ ~]# pidstat -t -p 18060 1 10
+Linux 3.10.0-514.26.2.el7.x86_64 (iZ94ebqp9jtZ) 	04/12/2018 	_x86_64_	(1 CPU)
+
+12:02:40 PM   UID      TGID       TID    %usr %system  %guest    %CPU   CPU  Command
+12:02:41 PM     0     18060         -    0.00    0.00    0.00    0.00     0  AliYunDun
+12:02:41 PM     0         -     18060    0.00    0.00    0.00    0.00     0  |__AliYunDun
+12:02:41 PM     0         -     18061    0.00    0.00    0.00    0.00     0  |__AliYunDun
+12:02:41 PM     0         -     18062    0.00    0.00    0.00    0.00     0  |__AliYunDun
+12:02:41 PM     0         -     18073    0.00    0.00    0.00    0.00     0  |__AliYunDun
+12:02:41 PM     0         -     18074    0.00    0.00    0.00    0.00     0  |__AliYunDun
+```
+
+* `TGID`: 主线程id.
+* `TID`: 线程id.
+* `%usr`：进程在用户空间占用cpu的百分比.
+* `%system`：进程在内核空间占用cpu的百分比.
+* `%guest`：进程在虚拟机占用cpu的百分比.
+* `%CPU`：进程占用cpu的百分比.
+* `CPU`：处理进程的cpu编号.
+* `Command`：当前进程对应的命令.
+
+### pidstat -T
+
+```
+pidstat -T TASK
+pidstat -T CHILD
+pidstat -T ALL
+```
+* `TASK`: 表示独立的`task`.
+* `CHILD`: 关键字表示报告进程下所有线程统计信息.
+* `AL`L 表示报告独立的task和task下面的所有线程.
+
+```
+[root@iZ94ebqp9jtZ ~]# pidstat -T ALL -p 18060 1 10
+Linux 3.10.0-514.26.2.el7.x86_64 (iZ94ebqp9jtZ) 	04/12/2018 	_x86_64_	(1 CPU)
+
+02:48:51 PM   UID       PID    %usr %system  %guest    %CPU   CPU  Command
+02:48:52 PM     0     18060    0.00    0.00    0.00    0.00     0  AliYunDun
+
+02:48:51 PM   UID       PID    usr-ms system-ms  guest-ms  Command
+02:48:52 PM     0     18060         0         0         0  AliYunDun
+02:48:53 PM     0     18060    1.01    0.00    0.00    1.01     0  AliYunDun
+02:48:53 PM     0     18060        10         0         0  AliYunDun
+02:48:54 PM     0     18060    0.00    0.00    0.00    0.00     0  AliYunDun
+02:48:54 PM     0     18060         0         0         0  AliYunDun
+02:48:55 PM     0     18060    0.00    1.00    0.00    1.00     0  AliYunDun
+```
+
+* `PID`: 进程id.
+* `Usr-ms`: 任务和子线程在**用户级别**使用的毫秒数.
+* `System-ms`: 任务和子线程在**系统级别**使用的毫秒数.
+* `Guest-ms`: 任务和子线程在虚拟机(`running a virtual processor`)使用的毫秒数.
+* `Command`: 命令名.
+

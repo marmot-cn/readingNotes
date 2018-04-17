@@ -50,7 +50,21 @@ OpenAIS提供一种集群模式, 这个模式包括集群框架, 集群成员管
 
 `Wilson`是`openais`的一个版本的名称.
 
+#### corosync --> pacemaker
 
+* SUSE Linux Enterprise Server: Hawk, WebGUI
+* LCMC: Linux Cluster Management Console
+* RHCS: Conga(luci/ricci)
+	* 浏览器 -> luci -> ssh不基于密码,基于密钥 -> ricci
+
+* `corosync`支持节点多, 因为是基于组播通信.
+* `keepalived`支持2个节点, 基于`VRRP`协议.
+
+#### corosync 安装前提
+
+* 时间同步
+* 主机名
+* SSH 互信
 
 ## 整理知识点
 
