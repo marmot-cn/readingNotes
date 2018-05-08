@@ -19,6 +19,8 @@
 		
 ###  查看每个物理CPU中core的个数(即核数)
 
+注意这里是**每个**, 所以查看总的cpu核数, 需要查看每个CPU的核心数并汇总.
+
 **`cpu cores`**
 
 		cat /proc/cpuinfo| grep "cpu cores"| uniq
