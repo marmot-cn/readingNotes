@@ -240,10 +240,14 @@ umount
 
 		 umount /dev/volume-group1/data
 		 
-调整被加载的文件系统大小
+调整被加载的文件系统大小(ext2/ext3/ext4)使用`resize2fs`(增大和减小都支持)
 
 		 e2fsck -f /dev/volume-group1/data
 		 resize2fs /dev/volume-group1/data
+		 
+调整被加载的文件系统大小(xfs)使用`xfs_growfs`(只支持增大)
+
+		xfs_growfs /dev/volume-group1/data
 
 mount		 
 
