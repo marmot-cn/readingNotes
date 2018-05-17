@@ -112,7 +112,7 @@ sys		0m1.200s
 
 然后通过`docker`挂载目录方式挂载.
 
-```
+```php
 root@61342609884c:/var/www/html# cat test3.php
 <?php
 require './Core.php';
