@@ -69,7 +69,7 @@ sys		0m8.590s
 
 #### `FluentdHandler`
 
-```
+```php
 root@d934696db77a:/var/www/html# cat test2.php
 <?php
 require './Core.php';
