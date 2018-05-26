@@ -69,7 +69,7 @@ sys		0m8.590s
 
 #### `FluentdHandler`
 
-```
+```php
 root@d934696db77a:/var/www/html# cat test2.php
 <?php
 require './Core.php';
@@ -112,7 +112,7 @@ sys		0m1.200s
 
 然后通过`docker`挂载目录方式挂载.
 
-```
+```php
 root@61342609884c:/var/www/html# cat test3.php
 <?php
 require './Core.php';
