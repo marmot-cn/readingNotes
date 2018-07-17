@@ -1,8 +1,8 @@
-#16_03_Linux日志系统syslog
+# 16_03_Linux日志系统syslog
 
 ---
 
-###笔记
+### 笔记
 
 ---
 
@@ -11,7 +11,7 @@ Linux上的日志系统
 * syslog
 * syslog-ng: 开源
 
-####日志系统: syslog()
+#### 日志系统: syslog()
 
 syslog是服务,负责为各程序记录日志,可以把每个程序理解为子系统.但是类似nginx等,使用的是自己的日志系统.
 
@@ -49,7 +49,7 @@ kernel --> 物理终端(/dev/console) --> 记录到 /var/log/dmesg,(由`klogd`�
 
 **指定信息的存储位置**:动作
 
-####syslog配置文件: `/etc/syslog.conf`
+#### syslog配置文件: `/etc/syslog.conf`
 
 配置文件定义格式为:
 
@@ -126,11 +126,11 @@ action(动作)日志记录的位置
 `mail.*;mail.!=info`:表示记录`mail`相关的所有级别的信息,但是不包括`info`级别的
 
 
-###整理知识点
+### 整理知识点
 
 ---
 
-####service xxx reload
+#### service xxx reload
 
 发送`1`号信号`SIGUP`,让服务不用重启,就可以重读配置文件. 
 

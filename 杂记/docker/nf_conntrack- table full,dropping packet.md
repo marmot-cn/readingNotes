@@ -2,6 +2,8 @@
 
 ---
 
+`ip_conntrack`是Linux NAT一个跟踪连接条目的模块记录着允许的跟踪连接条目`ip_conntrack`模块会记录`tcp`通讯协议的`established connection`记录.
+
 This is normal.
 Docker uses iptables connection tracking.
 Connection tracking entries will subside for a while, even after the connection is closed.
@@ -73,6 +75,7 @@ net.netfilter.nf_conntrack_max = 200
 ```
 
 docker 待测试服务器
+
 ```shell
 可以看见我们在做ab测试的时候, 会出现 nf_conntrack 丢包
 [ansible@rancher-agent-2 ~]$ sudo tail /var/log/messages
@@ -88,5 +91,4 @@ Jul 17 14:55:14 rancher-agent-2 kernel: nf_conntrack: table full, dropping packe
 ...
 net.netfilter.nf_conntrack_max = 200
 ...
-
 ```
