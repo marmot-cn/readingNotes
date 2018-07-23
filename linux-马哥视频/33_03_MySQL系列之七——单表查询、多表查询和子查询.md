@@ -76,7 +76,7 @@
 ### 执行次序
 
 1. FROM 从哪张表过滤
-2. ON
+2. ON 筛选, 只有那些符合<join-condition>的行才会被记录
 3. JOIN
 4. WHERE 指定条件
 5. GROUP BY 分组

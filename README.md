@@ -2,6 +2,10 @@
 
 ---
 
+[![pmp](./badges/project-management-professional-pmp.png)](https://www.youracclaim.com/badges/13c3cc82-97b7-4c38-8df2-8d1ace580818/public_url)
+
+[![acp](./badges/pmi-agile-certified-practitioner-pmi-acp.png)](https://www.youracclaim.com/badges/1628a78f-7e98-4335-97d7-d0c3186d52e3/public_url)
+
 ## 书单
 
 #### 基础知识
