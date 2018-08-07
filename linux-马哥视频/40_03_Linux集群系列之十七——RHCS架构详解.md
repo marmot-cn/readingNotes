@@ -10,14 +10,12 @@
 
 ### rhcs 高可用集群
 
-
 集群套件:
 
 * 负载均衡功能: LVS
 * 高可用: HA
 * 集群文件系统: GFS
 * 集群逻辑卷: cLVM
-
 
 ```
 资源代理(RA)
@@ -91,7 +89,29 @@ Cluster Configuration System. 集群配置系统
 红帽5, `CMAN`是工作在用户空间中.
 
 * `dlm_controld`: 分布式锁控制器.
-* `lock_dlmd`: 锁管理器
+* `lock_dlmd`: 锁管理器.
+
+### Failover Domain
+
+**服务**故障转移域: 当一个节点发生故障后, 运行在A节点发生故障, 这些节点上的服务和资源所能转移到的目标节点.
+
+故障转移域和服务(`Service`)相关. 
+
+### PXE, COBBLER
+
+早期一般使用人工培植`pxe`+`dhcp`+`tftp`配合`kickstart`.
+
+现在可以使用开源工具, 如`cobbler`.
+
+### 配置文件管理, 软件分发
+
+`puppet`
+
+### n-m 模型
+
+`N`个节点运行`M`个模型(M<=N).
+
+
 
 ## 整理知识点
 
