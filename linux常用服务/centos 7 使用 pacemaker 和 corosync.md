@@ -126,7 +126,7 @@ pcs property list
 创建`virtual_ip`
 
 ```
-pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=192.168.0.206 nic='enp1s4' cidr_netmask=24 op monitor interval=30s
+pcs resource create virtual_ip ocf:heartbeat:IPaddr2 ip=192.168.0.206 nic='enp0s3:0' cidr_netmask=24 op monitor interval=30s
 ```
 
 检查可用的资源
