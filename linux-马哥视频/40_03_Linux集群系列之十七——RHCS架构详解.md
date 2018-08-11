@@ -6,8 +6,6 @@
 
 ---
 
-00.44.21
-
 ### rhcs 高可用集群
 
 集群套件:
@@ -99,7 +97,7 @@ Cluster Configuration System. 集群配置系统
 
 ### PXE, COBBLER
 
-早期一般使用人工培植`pxe`+`dhcp`+`tftp`配合`kickstart`.
+早期一般使用人工配置`pxe`+`dhcp`+`tftp`配合`kickstart`.
 
 现在可以使用开源工具, 如`cobbler`.
 
@@ -110,8 +108,6 @@ Cluster Configuration System. 集群配置系统
 ### n-m 模型
 
 `N`个节点运行`M`个模型(M<=N).
-
-
 
 ## 整理知识点
 
