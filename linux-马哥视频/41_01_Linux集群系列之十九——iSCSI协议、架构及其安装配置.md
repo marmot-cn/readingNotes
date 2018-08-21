@@ -171,6 +171,18 @@ tgtadm --lld iscsi --mode target --op bind --tid 1 --initiator-address 172.16.0.
 
 #### 客户端
 
+每个`initiator`也要有一个唯一的名称.
+
+`iscsi-iname`可以生成一个唯一的名字.
+
+`iscsiadm`模式化命令
+
+* `-m {discovery|node|session|iface}`
+	* `discovery`: 发现某服务器是否有`target`输出, 以及输出了哪些`target`
+	* `node`: 和`target`建立或解除关系. 管理跟某`target`的关联关系.
+	* `session`: 会话管理.
+	* `iface`: 接口管理.
+
 ## 整理知识点
 
 ---
