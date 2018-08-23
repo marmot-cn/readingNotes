@@ -10,9 +10,45 @@
 
 ## 选项
 
-* 没有选项，lsof列出活跃进程的所有打开文件.
-* 组合: 可以将选项组合到一起，如-abc，但要当心哪些选项需要参数.
-* `-a`: 结果进行“与”运算.
-* `-t`: 仅获取进程ID.
-* `-U`: 获取UNIX套接口地址.
-* `-F`: 格式化输出结果, 用于其它命令. 可以通过多种方式格式化, 如`-F pcfn`(用于进程id、命令名、文件描述符、文件名，并以空终止).
+## 示例
+
+```
+lsof
+
+COMMAND     PID   TID    USER   FD      TYPE             DEVICE  SIZE/OFF       NODE NAME
+systemd       1          root  cwd       DIR              253,1      4096          2 /
+systemd       1          root  rtd       DIR              253,1      4096          2 /
+systemd       1          root  txt       REG              253,1   1523568    1053845 /usr/lib/systemd/systemd
+systemd       1          root  mem       REG              253,1     20040    1050452 /usr/lib64/libuuid.so.1.3.0
+systemd       1          root  mem       REG              253,1    261336    1051899 /usr/lib64/libblkid.so.1.1.0
+systemd       1          root  mem       REG              253,1     90664    1050435 /usr/lib64/libz.so.1.2.7
+systemd       1          root  mem       REG              253,1    157424    1050447 /usr/lib64/liblzma.so.5.2.2
+systemd       1          root  mem       REG              253,1     23968    1050682 /usr/lib64/libcap-ng.so.0.0.0
+systemd       1          root  mem       REG              253,1     19888    1050666 /usr/lib64/libattr.so.1.1.0
+systemd       1          root  mem       REG              253,1     19776    1049995 /usr/lib64/libdl-2.17.so
+systemd       1          root  mem       REG              253,1    402384    1050423 /usr/lib64/libpcre.so.1.2.0
+systemd       1          root  mem       REG              253,1   2127336    1049989 /usr/lib64/libc-2.17.so
+systemd       1          root  mem       REG              253,1    144792    1050015 /usr/lib64/libpthread-2.17.so
+systemd       1          root  mem       REG              253,1     88720    1048596 /usr/lib64/libgcc_s-4.8.5-20150702.so.1
+systemd       1          root  mem       REG              253,1     44448    1050019 /usr/lib64/librt-2.17.so
+systemd       1          root  mem       REG              253,1    269416    1052057 /usr/lib64/libmount.so.1.1.0
+systemd       1          root  mem       REG              253,1     91800    1051447 /usr/lib64/libkmod.so.2.2.10
+systemd       1          root  DEL       REG              253,1              1050684 /usr/lib64/libaudit.so.1.0.0;5b63ccad
+systemd       1          root  mem       REG              253,1     61672    1052186 /usr/lib64/libpam.so.0.83.1
+systemd       1          root  mem       REG              253,1     20032    1050671 /usr/lib64/libcap.so.2.22
+systemd       1          root  DEL       REG              253,1              1050432 /usr/lib64/libselinux.so.1;5b63ccad
+systemd       1          root  mem       REG              253,1    164264    1049982 /usr/lib64/ld-2.17.so
+systemd       1          root    0u      CHR                1,3       0t0       1031 /dev/null
+systemd       1          root    1u      CHR                1,3       0t0       1031 /dev/null
+systemd       1          root    2u      CHR                1,3       0t0       1031 /dev/null
+systemd       1          root    3u     unix 0xffff880231f93800       0t0     371466 socket
+systemd       1          root    4u  a_inode                0,9         0       5880 [eventpoll]
+systemd       1          root    5u  a_inode                0,9         0       5880 [signalfd]
+systemd       1          root    6r      DIR               0,21         0       7413 /sys/fs/cgroup/systemd
+```
+
+* `COMMAND`：进程的名称
+* `PID`：进程标识符
+* `USER`：进程所有者
+* `FD`：文件描述符，应用程序通过文件描述符识别该文件.
+	* `cwd`：表示`current work dirctory`，即: 应用程序的当前工作目录, 这是该应用程序启动的目录, 除非它本身对这个目录进行更改.
