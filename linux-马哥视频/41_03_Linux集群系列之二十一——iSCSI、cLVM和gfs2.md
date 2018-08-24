@@ -43,7 +43,25 @@ mount -t gfs2
 
 改`lvm`配置文件(`/etc/lvm/lvm.conf`)的`locking_type`, 默认是`1`, 改为`3`.
 
- 
+`lvmconf --enable-cluster`也会把`locking_type`修改为`3`.
+
+`lvm`扩展后(物理扩展)
+
+`gfs2`文件系统需要做逻辑扩展, 使用`gfs2_grow`命令.
+
+### gfs2
+
+`gfs2_tool gettune 挂载目录`
+
+可以调整挂载的具体参数.
+
+`new_fikes_directio = 0` 默认没有把文件直接写到磁盘.
+
+`log_flush_secs = 60`多久刷新一次日志, 默认是`60s`.
+
+`gfs2_tool settune 挂载目录 new_fikes_directio 1`可以修改参数.
+
+`gfs2_tool freeze 挂载目录`冻结一个`gfs2`文件系统, 就是把该目录变为**只读**了.
 
 ## 整理知识点
 
