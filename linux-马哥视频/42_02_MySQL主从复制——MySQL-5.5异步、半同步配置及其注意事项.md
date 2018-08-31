@@ -39,6 +39,8 @@ REPLICATION SLAVE
 REPLICATION CLIENT
 ```
 
+授予复制账号`REPLICATION CLIENT`权限, **复制用户**可以使用`SHOW MASTER STATUS`,`SHOW SLAVE STATUS`和`SHOW BINARY LOGS`来确定复制状态.
+
 #### slave
 
 **1.** 启用中继日志
