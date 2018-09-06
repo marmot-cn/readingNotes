@@ -34,7 +34,7 @@ ping -c 3 web1
 ping -c 3 web2
 ```
 
-需要配置双机`ssh`免登陆
+需要配置双机免密钥登陆
 
 ## 安装webserver
 
