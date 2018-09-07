@@ -64,7 +64,7 @@ ssudo ystemctl start pcsd
 设置用户`hacluster`的密码, 该用户在软件安装过程中自动创建.
 
 ```
-passwd hacluster
+sudo passwd hacluster
 ...
 ```
 
@@ -82,8 +82,8 @@ sudo pcs cluster setup --name test_cluster web1 web2
 启动所有集群服务并启用
 
 ```
-pcs cluster start --all
-pcs cluster enable --all
+sudo pcs cluster start --all
+sudo pcs cluster enable --all
 ```
 
 检查集群状态
