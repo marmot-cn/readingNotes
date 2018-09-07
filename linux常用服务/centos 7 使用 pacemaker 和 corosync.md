@@ -49,16 +49,16 @@ ping -c 3 web2
 **所有服务器**
 
 ```
-yum -y install corosync pacemaker pcs
-systemctl enable pcsd
-systemctl enable corosync
-systemctl enable pacemaker
+sudo yum -y install corosync pacemaker pcs
+sudo systemctl enable pcsd
+sudo systemctl enable corosync
+sudo systemctl enable pacemaker
 ```
 
 启动`pcsd`
 
 ```
-systemctl start pcsd
+ssudo ystemctl start pcsd
 ```
 
 设置用户`hacluster`的密码, 该用户在软件安装过程中自动创建.
@@ -75,7 +75,8 @@ passwd hacluster
 建立集群
 
 ```
-pcs cluster setup --name test_cluster web1 web2
+sudo pcs cluster auth web1 web2
+sudo pcs cluster setup --name test_cluster web1 web2
 ```
 
 启动所有集群服务并启用
