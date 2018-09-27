@@ -36,6 +36,11 @@ ping -c 3 web2
 
 需要配置双机免密钥登陆
 
+```
+ssh-keygen -t rsa -C "41893204@qq.com"
+cat ~/.ssh/id_rsa.pub | ssh  xxxx@xxxx -p 17456  "umask 077; mkdir -p .ssh ; cat >> .ssh/authorized_keys"
+```
+
 ## 安装webserver
 
 **所有服务器**
