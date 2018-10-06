@@ -1,17 +1,17 @@
-#FastCGI与mod_php详解
+# FastCGI与mod_php详解
 
 ---
 
 [参考链接](http://www.linuxeye.com/Linux/2824.html,"参考连接")
 
-###背景
+### 背景
 
 PHP最常用的方式:
 
 * Apache中,以模块的方式(mod_php)运行.
 * Nginx中,使用的是PHP-FPM.
 
-###PHP处理器(PHP handlers)
+### PHP处理器(PHP handlers)
 
 首先,任何一种Web服务器(Apache、Nginx等)都是被设计成向用户发送html,图片等`静态资源`的,`Web服务器自身并不能解释任何动态脚本`(PHP、Python等).
 
@@ -27,7 +27,7 @@ PHP最常用的方式:
 
 PHP最常用的SAPI提供的2种连接方法: **`mod_php和mod_fastcgi`**
 
-###mod_php模式
+### mod_php模式
 
 **Apache是怎么能够识别php代码**
 
@@ -45,14 +45,14 @@ Apache的配置文件httpd.conf中加上或者修改:
 
 `配置加载mod_php模块后,php便是Apahce进程本身一部分,每个新的Apache子进程都会加载此模块`.
 
-###mod_fastcgi模式
+### mod_fastcgi模式
 
 PHP-FPM - A simple and robust `FastCGI Process Manager for PHP`
 PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation with some additional features useful for sites of any size, especially busier sites.
 
 `PHP-FPM是一个PHP的FastCGI进程管理器`,解释的非常简单.这说明PHP-FPM是辅助mod_fastcgi模式进行工作的.
 
-###什么是CGI？
+### 什么是CGI？
 
 `CGI(Common Gateway Interface) `是外部应用程序(CGI程序)与Web服务器之间的接口标准,是在CGI程序和Web服务器之间传递信息的规程.
 
@@ -60,7 +60,7 @@ PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI implementation w
 
 CGI是一种外部应用程序(CGI程序)与Web服务器的`协议`,CGI是`为了保证Server传递过来的数据是标准格式`.
 
-###什么是FastCGI？
+### 什么是FastCGI？
 
 FastCGI像是一个`常驻(long-live)型的CGI`,它可以一直执行着,只要激活后,不会每次都要花费时间去fork一次(这是CGI最为人诟病的fork-and-execute模式).它还支持分布式的运算,即 FastCGI 程序可以在网站服务器以外的主机上执行并且接受来自其它网站服务器来的请求.
 
