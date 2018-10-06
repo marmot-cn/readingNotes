@@ -174,7 +174,82 @@ events {
 
 #### location
 
+基于`URI`路径定义访问属性.
 
+```
+http://www.abc.com/从这里开始是URI路径
+```
+
+```
+location /URI/ {
+   root "本地文件目录";
+   index 默认主页面;
+}
+```
+
+* `root`定义对于`URI`映射在本地文件系统的路径.
+
+```
+# 对当前路径及子路径下的所有对象都生效
+location URI {}; 
+
+# 精确匹配指定路径, 只对当前资源生效, 不包括子路径
+location = URI {}; 
+
+# 模式匹配 区分字符大小写, URI可以使用正则表达式做通配
+location ~ URI {};
+
+# 模式匹配 不区分字符大小写, URI可以使用正则表达式做通配
+location ~* URI {};
+
+# 不使用正则表达式
+location ^~ URI {};
+```
+
+* 优先级由高到低
+	* `=`精确匹配
+	* `^~`不适用正则表达式
+	* `正则表达式`
+	* 不适用任何符号
+
+
+
+#### error_page
+
+```
+error_page 500 502 503 504 /50x.html;
+
+location = /50x.html {
+      root html;#相对路径, 相对于nginx的默认安装目录, prefix指定
+}
+```
+
+如果返回错误代码是`500`,`502`,`503`,`504` 则读取根下`50x.html`
+
+### 访问控制
+
+#### 基于IP访问控制
+
+**deny(拒绝)** 和 **allow(允许)**
+
+```
+location / {
+  deny all;
+  allow xxx.xx.xx.xx/xx;
+}
+```
+
+#### 基于用户访问控制
+
+Auth Basic
+
+```
+lication / {
+  auth_basic "Restricted";
+  auth_basic_user_file htpasswd;
+}
+
+```
 
 ## 整理知识点
 
