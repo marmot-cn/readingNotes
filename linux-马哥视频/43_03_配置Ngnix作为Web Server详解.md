@@ -245,10 +245,36 @@ Auth Basic
 
 ```
 lication / {
-  auth_basic "Restricted";
+  auth_basic "xxx"; #服务器用于提示
   auth_basic_user_file htpasswd;
 }
 
+```
+
+使用`apache`的`htpasswd`命令, 创建`htpasswd`文件.
+
+`htpasswd`: `-c`创建文件.
+
+### LNMP
+
+#### FastCGI
+
+`Nginx`不支持模块化整合`php`.
+
+`php-fpm`: 默认监听`9000`端口. 
+
+#### 参数
+
+**fastcgi_pass** fastcgi模式的反向代理.
+
+**fastcgi_index** fastcgi的主页面.
+
+**fastcgi_param** fastcgi额外参数. 当做`fastcgi`的参数, 传递给`fpm`服务器.
+
+```
+fastcgi_param SCRIPT_FILENAME xxxx$fastcgi_script_name;
+
+#SCRIPT_FILENAME 脚本文件名称
 ```
 
 ## 整理知识点
