@@ -83,15 +83,15 @@ FastCGI的特点是会在一个进程中依次完成多个请求,以达到提高
 
 FastCGI事先就需要启动,而且可以启动多个CGI模块,在那里一直运行等着web发请求,然后再给php解析运算,完成后生成html返回给web后,但是`完成后它不会退出`,而是`继续等着下一个web请求`.
 
-###PHP-FPM
+### PHP-FPM
 
 PHP-FPM就是针对于PHP的FastCGI的一种实现,他负责管理一个进程池,来处理来自Web服务器的请求.
 
 PHP-FPM(FastCGI Process Manager)仅仅是个"PHP FastCGI 进程管理器".只用于PHP的.
 
-###知识点整理
+### 知识点整理
 
-####Fail-Over
+#### Fail-Over
 
 `失效转移`.
 
