@@ -148,6 +148,37 @@ tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      
 * kqueue(FreeBSD 4.1+)
 * /dev/poll(Solaris 7 11/99+)
 
+### 配置文件
+
+#### worker个数设定
+
+* 如果负载以`CPU`密集型应用为主, 如`SSL`或压缩应用, 则`worker`数应与`cpu`数相同. 
+	* 本地应用占据更多的`CPU`时间处理.
+* 如果负载以`IO`密集型为主, 如响应大量内容给客户端, 则`worker`数应该为`cpu`个数的`1.5`倍或`2`倍.
+
+#### events
+
+```
+events {
+	worker_connections 1024;
+}
+```
+
+事件驱动中每个`worker`支持的链接数.
+
+最大的链接数`worker_connections`*`worker_processes`.
+
+#### server
+
+每个`server`段定义一个虚拟主机.
+
+#### location
+
+
+
 ## 整理知识点
 
 ---
+
+### specs
+
