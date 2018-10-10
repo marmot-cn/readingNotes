@@ -17,4 +17,10 @@ Nginx + (FastCGI) + php-fpm
 
 `Apache`是基于模块与`php`通信.
 
+`php 5.6`的`opcode`只能在单个进程能共享, 可以使用`xcache`缓存共享`opcode`.
+
+### memcached
+
+缓存可序列化数据.
+
 ## 整理知识点
