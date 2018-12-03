@@ -29,8 +29,8 @@
 * 计算节点
 	* kubelet
 		* 负责通容器运行时(如 Docker)打交道, 依赖于 CRI(Container Runtime Interface)的远程调用接口, 定义了容器运行时的各项核心操作(如, 启动一个容器需要的参数).
-			* 只要容器运行时能够运行标准的容器镜像, 就可以通过 CRI 介入到 k8s 中.
-				* Docker 通过 OCI 这个容器运行时规范通底层的 Linux 操作系统进行交互. 把`CRI`请求翻译成对 Linux 操作系统的调用(操作 Linux Namespace 和 Cgroups)
+			* 只要容器运行时能够运行标准的容器镜像, 就可以通过 `CRI` 介入到 k8s 中.
+				* Docker 通过 `OCI` 这个容器运行时规范通底层的 Linux 操作系统进行交互. 把`CRI`请求翻译成对 Linux 操作系统的调用(操作 Linux Namespace 和 Cgroups)
 		* 通过`gRPC`协议通`Device Plugin`进行交互, 管理 GPU 等宿主机物理设备的主要组件.
 		* 调用网络插件`CNI(Container Networking Interface)`为容器配置网络.
 		* 调用存储插件`CSI(Container Storage Interface)`为容器配置持久化存储.

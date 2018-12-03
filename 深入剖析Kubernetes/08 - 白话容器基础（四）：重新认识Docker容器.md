@@ -13,11 +13,14 @@
 
 使用一些**标准**的原语(大写高亮词语), 描述我们索要构建的`Docker`镜像. 这些原语, 都是**按顺序处理**的.
 
+* `FROM`: 使用xx作为基础镜像
+* `EXPOSE xx`: 允许外界访问容器`xx`端口
+* `ENV name value`: 设置环境变量`name`值为`value`
 * `RUN` 就是在容器里执行`shell`命令的意思.
 * `WORKDIR`, 在这一句之后, `Dockerfile`后面的操作都以这一句指定的目录作为当前目录.
-* `CMD` 意思是`Dockerfile`指定`xxx`为这个容器的进程.
+* `CMD` 意思是`Dockerfile`指定`xxx`为这个容器的进程(即 启动命令).
 * `ENTRYPOINT`
-	* `Docker`提供隐含的`ENTRYPOINT`即`/bin/sh -c xxx`
+	* `Docker`提供隐含的`ENTRYPOINT`即`/bin/sh -c xxx(这里的xxx就是上面的CMD)`
 
 **Dockerfile 中的每个原语执行后, 都会生成一个对应的镜像层**. 即使原语本身并没有明显地修改文件的操作(如, ENV 原语), 它对应的层也会存在. 只不过在外界来看, **这个层是空的**.
 
@@ -83,9 +86,11 @@ Commercial support is available at
 
 #### docker commit
 
-把一个正在运行的容器, 直接提交为一个镜像.
+把一个**正在运行**的容器, 直接提交为一个镜像.
 
-实际上就是把容器运行起来后,把最上层的"可读写层"(COW), 加上原先容器镜像的只读层, 打包组成了一个新的镜像. 下面这些只读层在宿主机上是共享的, 不会占用额外的空间.
+实际上就是把容器运行起来后,把最上层的"**可读写层"(COW), 加上原先容器镜像的只读层**, 打包组成了一个新的镜像. 下面这些只读层在宿主机上是共享的, 不会占用额外的空间.
+
+`Init`层的存在，就是为了避免你执行 docker cmmit 时, 把 Docker 自己对 `/etc/hosts` 等文件做的修改, 也一起提交掉.
 
 #### 查看当前正在运行的`Docker`容器的进程号
 
@@ -96,7 +101,7 @@ $ docker inspect --format '{{ .State.Pid }}'  4ddf4638572d
 25686
 ```
 
-查看宿主机的`proc`文件, 查该进程所有的`Namespace`对应的文件.
+(18907)是我做例子的时候的真实`PID`, 查看宿主机的`proc`文件, 查该进程所有的`Namespace`对应的文件.
 
 ```
 [root@borad ~]# ll -s /proc/18907/ns
@@ -113,7 +118,7 @@ total 0
 
 #### docker exec 的实现原理
 
-一个进程, 可以选择加入到某个进程已有的`Namespace`当中, 从而达到"进入"这个进程所在容器的目的, 这正是 `docker exec` 的实现原理.
+**一个进程, 可以选择加入到某个进程已有的`Namespace`当中, 从而达到"进入"这个进程所在容器的目的, 这正是 `docker exec` 的实现原理**.
 
 依赖一个`setns()`的 Linux 系统调用.
 
@@ -184,7 +189,7 @@ $ ls -l  /proc/25686/ns/net
 lrwxrwxrwx 1 root root 0 Aug 13 14:05 /proc/25686/ns/net -> net:[4026532281]
 ```
 
-在`/proc/[PID]/ns/net`目录下, 这个 PID=28499 进程, 与我们前面的 DOcker 容器进程 (PID=25686)指向的 Network Namespace 文件完全一样. **这说明这两个进程, 共享了这个名叫`net:[4026532281]`的Network Namespace.
+在`/proc/[PID]/ns/net`目录下, 这个 PID=28499 进程, 与我们前面的 DOcker 容器进程 (PID=25686)指向的 Network Namespace 文件完全一样. **这说明这两个进程, 共享了这个名叫`net:[4026532281]`的Network Namespace**.
 
 #### docker run --net
 
@@ -214,7 +219,7 @@ $ docker run -v /home:/test ...
 
 ##### 挂载原理
 
-只需要在`rootfs`准备好之后, 在执行`chroot`之前, 把`Volume`指定的宿主机目录(比如`/home`目录). 挂载到指定的容器目录(比如`/test`目录)在宿主机上对应的目录(即`/var/lib/docker/aufs/mnt/[可读写层ID]/test`)上, 这个 Volume 的挂载工作就完成了.
+只需要**在`rootfs`准备好之后, 在执行`chroot`之前**, 把`Volume`指定的宿主机目录(比如`/home`目录). 挂载到指定的容器目录(比如`/test`目录)在宿主机上对应的目录(即`/var/lib/docker/aufs/mnt/[可读写层ID]/test`)上, 这个 Volume 的挂载工作就完成了.
 
 由于执行这个挂载操作时, "容器进程"已经创建了, 也就意味着此时`Mount Namespace`已经开启了. 所以**这个挂载事件只在这个容器里可见**. 在宿主机上, 是看不见容器内部的这个挂载点的. **保证了容器的隔离性不会被 Volume 打破**.
 
@@ -238,7 +243,10 @@ $ docker run -v /home:/test ...
 
 ###### 原理
 
-**绑定挂载**实际上是一个`inode`替换的过程. 在 Linux 操作系统中, inode 可以理解为存放文件内容的"对象", 而 `dentry`, 也叫目录项, 就是访问这个`inode`所使用的"指针".
+**绑定挂载**实际上是一个`inode`替换的过程. 在 Linux 操作系统中:
+
+* `inode`可以理解为存放**文件内容的"对象"**(有关该文件的组织和管理的信息主要存放inode里面，它记录着文件在存储介质上的位置与分布, inode代表的是物理意义上的文件，通过inode可以得到一个数组，这个数组**记录了文件内容的位置**, 如该文件位于硬盘的第3，8，10块，那么这个数组的内容就是3,8,10).
+* `dentry`, 也叫目录项, 就是访问这个`inode`所使用的**"指针"**(dentry记录着文件名，上级目录等信息，正是它形成了我们所看到的树状结构).
 
 ![](./img/08_01.png)
 
@@ -248,7 +256,7 @@ $ docker run -v /home:/test ...
 
 ##### 挂载内容会不会被 `docker commit`提交
 
-由于`Mount Namespace`的隔离作用, 书足迹并不知道这个绑定挂载的存在. 所以, 在宿主机看来,容器中可读写层的`/test`目录(/var/lib/docker/aufs/mnt/[可读写层ID]/test), **始终是空的**.
+由于`Mount Namespace`的隔离作用, **宿主机并不知道这个绑定挂载的存在**. 所以, 在宿主机看来,容器中可读写层的`/test`目录(/var/lib/docker/aufs/mnt/[可读写层ID]/test), **始终是空的**.
 
 由于 Docker 一开始还是要创建`/test`这个目录作为挂载点, 所以执行了 `docker commit`之后, 会发现新产生的镜像里, 会多出一个空的`/test`目录. 因为 **新建目录**, **不是挂载操作**, **Mount Namespace**对它可起不到"障眼法"的作用.
 
@@ -306,6 +314,8 @@ $ ls /var/lib/docker/aufs/mnt/6780d0778b8a/test
 ![](./img/08_02.png)
 
 示例中的容器进程`python app.py`运行在由Linux Namesapce 和 Cgroups 构成的隔离环境里. 而它运行所需要的各种文件, 比如 python, app.py, 以及整个操作系统文件, 则由多个联合挂载在一起的`rootfs`层提供.
+
+容器声明的`Volume`挂载点, 也在**可读写层**.
 
 ## 扩展
 
