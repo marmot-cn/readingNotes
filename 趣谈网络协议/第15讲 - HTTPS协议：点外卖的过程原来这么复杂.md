@@ -33,7 +33,12 @@
 * 证书发布机构
 * 证书有效期
 
-权威机构我们称为`CA`.
+**权威机构我们称为`CA`**.
+
+如何将公钥传给对方:
+
+* 放在公网的地址, 让对方下载
+* 建立连接的时候, 传给对方
 
 #### 示例
 
@@ -56,6 +61,8 @@ openssl rsa -in cliu8siteprivate.key -pubout -out cliu8sitepublic.pem
 ```
 openssl req -key cliu8siteprivate.key -new -out cliu8sitecertificate.req
 ```
+
+**签名**
 
 将请求发给权威机构, 权威机构会给这个证书上一个章(**签名算法**). 使用`CA`的私钥保证是真的权威机构签名.
 
