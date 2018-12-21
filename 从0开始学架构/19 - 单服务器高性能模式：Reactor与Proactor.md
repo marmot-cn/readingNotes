@@ -26,6 +26,8 @@
 
 `Reactor`也叫`Dispatcher`.
 
+**I/O多路复用统一监听事件, 收到事件后分配(Dispatch)给某个进程**
+
 #### Reactor 模式
 
 * Reactor
