@@ -45,7 +45,7 @@ location /uri {
 
 #### 情况2(使用了模式匹配)
 
-如果`location`的`URI`是通过模式匹配定义的, 其`UIR`将直接被传递至上游服务器, 而不能为其指定转换的另一个`URI`.
+如果`location`的`URI`是通过模式匹配定义的, 其`URI `将直接被传递至上游服务器, 而不能为其指定转换的另一个`URI`.
 
 ```
 location ~ ^/forum {
@@ -67,5 +67,11 @@ location / {
 ```
 
 传给上游服务器的是`index.php?page=<match>`, 而不是`/index`.
+
+#### 传递真实IP
+
+```
+proxy_set_header X-Real-IP
+```
 
 ## 整理知识点
