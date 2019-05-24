@@ -83,7 +83,87 @@
 * 虚拟机`1,2,3`属于云中同一个用户的虚拟机, 因而需要分配相同的`VXLAN ID=101`. 在云的界面上, 就可以知道它们的`IP`地址, 越是可以在虚拟机`1`上`ping`虚拟机`2`.
 * 虚拟机`1`发现, 它不知道虚拟机`2`的`MAC`地址, 因为包没办法发出去, 于是要送`ARP`广播.
 
+![](./img/28_06.jpg)
+
+* `ARP`请求到达`VTEP1`的时候, `VTEP1`知道, 我这里有一台虚拟机, 要访问一台不归我管的虚拟机, 要访问一台不归我管的虚拟机, 需要知道`MAC`地址, 可是我不知道, 但是我加入到了一个微信群, 可以在里面`@all`一下, 问问虚拟机`2`归谁管. 于是`VTEP1`将`ARP`请求封装在`VXLAN`里面, **组播出去**
+* 群里面, `VTEP2`和`VTEP3`都收到了消息, 因为都会解开`VXLAN`包看, 里面是一个`ARP`.
+* `VTEP3`在本地广播了半天, 没人回, 都说虚拟机`2`不归自己管
+* `VTEP2`在本地广播, 虚拟机`2`回了, 说虚拟机`2`归我管, `MAC`地址是这个. 通过这次通信, `VTEP2`也学到了, **虚拟机`1`贵`VTEP1`管, 以后要找虚拟机`1`, 去找`VTEP1`就可以了**.
+
+![](./img/28_07.jpg)
+
+* `VTEP2`将`ARP`的回复封装在`VCLAN`里面, 这次不用组播了, 直接发回给`VTEP1`.
+* `VTEP1`解开`VXLAN`的包, 发现是`ARP`的回复, 于是发给虚拟机`1`. 通过这次通信, **`VTEP1`也絮叨了, 虚拟机`2`归`VTEP2`管, 以后找虚拟机`2`, 去找`VTEP2`就可以了**.
+* 虚拟机`1`的`ARP`得到了回复, 知道了虚拟机`2`的`MAC`地址, 于是就可以发送包了.
+
+![](./img/28_08.jpg)
+
+* 虚拟机`1`发给虚拟机`2`的包到达`VTEP1`, 它记得刚才学的东西, 要找虚拟机`2`, 就去`VTEP2`, 于是将包封装在`VXLAN`里面, 外层加上`VTEP1`和`VTEP2`的`IP`地址, 发送出去.
+* 虚拟机`2`回复的包, 到达`VTEP2`的时候, 它也记得刚才学的东西, 要找虚拟机`1`, 就去`VTEP1`, 于是将包封装在`VXLAN`里面, 外层加上`VTEP1`和`VTEP2`的`IP`地址, 也发送出去.
+* 网络包到达`VTEP1`之后, `VTEP1`解开`VXLAN`的封装, 将包转发给虚拟机`1`.
+
+![](./img/28_09.jpg)
+
+### 融入云平台
+
+![](./img/28_10.jpg)
+
+分开
+
+![](./img/28_11.jpg)
+
+通过`br1`这一层**将虚拟机之间的互联和物理机之间的互联分成两层来设计**, 中间隧道可以有各种挖法, `GRE`和`VXLAN`都可以.
+
+`OpenvSwitch`支持三类隧道: `GRE`, `VXLAN`, `IPsec_GRE`. 虚拟交换机就相当于`GRE`和`VXLAN`封装的端点.
+
+#### 示例
+
+模拟创建一个如下的网络拓扑结构, 看隧道应该如何工作.
+
+![](./img/28_12.jpg)
+
+三台物理机, 每台上都有两台虚拟机, 分别属于两个不同的用户, 因为`VLAN tag`都得打的不一样, 这样才能相互通信. 但是不通物理机上的相同用户, 是可以通过隧道相互通信的, 因为通过`GRE`隧道可以连接到一起.
+
+`FLow Table`规则都设置在`br1`上, 每个`br1`有三个网卡, 其中网卡`1`是对内的, 网卡`2`和`3`是对外的.
+
+![](./img/28_13.jpg)
+
+1. `Table 0`是所有流量的入口, 所有进入`br1`的流量, 分为两种流量, 一个是进入物理机的流量, 一个是从物理机发出的流量.
+	* 从`port 1`进来的, 都是发出去的流量, 全部由`Table 1`处理.
+	* 从`port 2,3`进来的, 都是进入物理机的流量, 全部由`Table 3`处理.
+	* 如果都没匹配上, 就默认丢弃
+2. `Table 1`用于处理所有出去的网络包, 分为两种情况, 一种是单播, 一种是多播
+	* 对于单播, 由`Table 20`处理.
+	* 对于多播, 由`Table 21`处理.
+3. `Table 2`是紧接着`Table 1`的, 如果不是单播也不是多播, 就默认丢弃
+4. `Table 3`用于处理所有进来的网络包, 需要将隧道`Tunnel ID`转换为`VLAN ID`.
+	* 如果匹配不上`Tunnel ID`, 就默认丢弃.
+	* 如果匹配上了`Tunnel ID`, 就转换为响应的`VLAN ID`, 然后跳转到`Table 10`.
+5. 对于进来的包, `Table 10`会进行`MAC`地址学习. 这是一个二层交换机应该做的事情, 学习完之后, 再从`port 1`发出去.
+6. `Table 10`是用来学习`MAC`地址的, 学习的结果放在`Table 20`里面. `Table 20`被称为`MAC learning table`.
 
 
+`Table 10`学习`MAC`
+
+```
+ovs-ofctl add-flow br1 "hard_timeout=0 idle_timeout=0 priority=1 table=10  actions=learn(table=20,priority=1,hard_timeout=300,NXM_OF_VLAN_TCI[0..11],NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[],load:0->NXM_OF_VLAN_TCI[],load:NXM_NX_TUN_ID[]->NXM_NX_TUN_ID[],output:NXM_OF_IN_PORT[]),output:1"
+```
+
+`NXM_OF_VLAN_TCI`是`VLAN tag`. 在`MAC learning table`中, 每一个`entry`都仅仅是针对某一个`VLAN`来说的, 不同`VLAN`的`learning table`是分开的. 在学习结果的`entry`中, 会标出这个`entry`是针对哪个`VLAN`的.
+
+`NXM_OF_ETH_DST[]=NXM_OF_ETH_SRC[]`表示, 当前包里面的`MAC Source Address`会被放在学习结果的`entry`里的`dl_dst`里. 因为每个交换机都是通过进入的网络包来学习的. 某个`MAC`从某个`port`进来, 交换机就应该记住, 以后发往这个`MAC`的包都要从这个`port`出去, 因为源`MAC`地址就被放在了目标`MAC`地址里面, 因为这是为了发送才这么做的.
+
+`load:0->NXM_OF_VLAN_TCI[]`是说, 在`table20`中, 将包从物理机发出去的时候, `VLAN tag`设为`0`, 所以学习完了之后, `Table 20`中会有`actions=strip_vlan`.
+
+`load:NXM_NX_TUN_ID[]->NXM_NX_TUN_ID[]`的意思是, 在`Table 20`中, 将包从物理机发出去的时候, 设置`Tunnel ID`, 进来的时候是多少, 发送的时候就是多少. 所以学习完了之后, `Table 20`中会有`set_tunnel`.
+
+`output:NXM_OF_IN_PORT[]`是发送给哪个`port`. 例如是从`port 2`进来的, 那学习完了之后, `Table 20`中会有`putput:2`.
+
+![](./img/28_14.jpg)
+
+7. `Table 20`是`MAC Address Learning Table`. 如果不为空, 就按照规则处理. 如果为空, 就说明没有进行过`MAC`地址学习, 只好进行广播了, 因而要教给`Table 21`处理.
+8. `Table 21`用于处理多播的包.
+	* 如果匹配不上`VLAN ID`, 就默认丢弃
+	* 如果匹配上了`VLAN ID`, 就将`VLAN ID`转换为`Tunnel ID`, 从两个网卡`port 2`和`port 3`都发出去, 进行多播.
 
 ## 扩展
