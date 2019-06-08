@@ -78,6 +78,54 @@ deb http://mirrors.163.com/ubuntu/ xenial-backports main restricted universe mul
 
 #### 通过`zip`下载安装
 
+* `Windows`上`jdk`安装, 使用下载压缩包的格式, 需要在系统设置的环境变量配置里面设置`JAVA_HOME`和`PATH`.
 
+```
+export JAVA_HOME=
+export PATH=
+```
+
+* `Linux`上通过`tar`解压缩之后, 可需要配置环境变量, 可以通过`export`来配置
+
+```
+export JAVA_HOME=/root/jdk-XXX_linux-x64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+`export`仅在当前命令行会话中管用, 一旦退出重新登陆就不管用了.
+
+在当前用户的默认工作目录中, 有一个`.bashrc`文件, 可以放在该文件内, 然后通过`source .bashrc`手动执行.
+
+### 运行程序
+
+`Linux`执行条件:
+
+* 只要文件有`x`执行权限, 可以到文件所在目录下, 通过`./filename`运行这个程序.  如果放阿紫`PATH`的设置路径下面, 就不用`./`了.
+
+#### 运行程序的常用方式
+
+* `shell`在交互命令行里面运行
+* 后台运行
+* 以服务的方式运行
+
+#### 后台运行
+
+使用`nohup`命令, 意思是`no hang up`(不挂起). 当前交互命令行退出的时候, 程序还要在.
+
+最后加一个`&`, 表示在后台运行.
+
+`nohup command >out.file 2>&1 *`
+
+* `1`表示文件描述符`1`, 表示标准输出
+* `2`表示文件描述符`2`, 表示标准错误输出
+* `2>&1`表示标准输出和错误输出合并了, 合并到 `out.file`里
+
+### 总结
+
+![](./img/04_01.jpg)
 
 ## 扩展
+
+### nohup 和 & 区别
+
+### xargs

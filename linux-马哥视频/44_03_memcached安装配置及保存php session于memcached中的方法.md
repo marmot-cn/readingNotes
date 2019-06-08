@@ -73,6 +73,11 @@
 
 一致性`hash`.
 
+### php
 
+客户端库:
+
+* memcache: 独立用`php`实现
+* memcached: 是基于原生的c的libmemcached的扩展
 
 ## 整理知识点
