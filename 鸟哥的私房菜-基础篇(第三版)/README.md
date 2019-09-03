@@ -2,7 +2,7 @@
 
 ## 知识点
 
-* [basename和dirname](linux知识点/basename和dirname.md) **p173 not done**
+* [basename和dirname](../linux知识点/basename和dirname.md) **p173 not done**
 * SUID,SGID和SBIT **p184 not done**
 * 目录权限 **p148 not done**
 * 卷标 **p228 not done**
