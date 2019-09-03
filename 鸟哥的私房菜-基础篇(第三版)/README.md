@@ -12,7 +12,7 @@
 
 * [basename和dirname](../linux知识点/basename和dirname.md) **p173 not done**
 * SUID,SGID和SBIT **p184 not done**
-* 目录权限 **p148 not done**
+* 目录权限以及umask对文件和目录的区别 **p148 not done**
 * 卷标 **p228 not done**
 * 软raid **p490 not done**
 * bin和sbin的区别
