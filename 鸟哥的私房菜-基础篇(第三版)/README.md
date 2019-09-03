@@ -1,5 +1,13 @@
 # README
 
+### todo
+
+* p336-p343 整理分类命令
+* p368 diff path
+* p395 测试服务器之间ping
+* p576-p577 日志文件
+* p151 FIFO
+
 ## 知识点
 
 * [basename和dirname](../linux知识点/basename和dirname.md) **p173 not done**
@@ -10,6 +18,9 @@
 * bin和sbin的区别
 * 虚拟化文件系统
 * linux启动过程
+* linux用户登录流程
+* non-login shell 和 login shell
+* loop device
 
 ## 命令
 
