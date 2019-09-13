@@ -245,7 +245,7 @@ umount
 		 e2fsck -f /dev/volume-group1/data
 		 resize2fs /dev/volume-group1/data
 		 
-调整被加载的文件系统大小(xfs)使用`xfs_growfs`(只支持增大)
+调整被加载的文件系统大小(xfs)使用`xfs_growfs`(只支持增大), **可以不用卸载文件系统, 直接扩展文件系统, xfs_growfs /mountpoint**
 
 		xfs_growfs /dev/volume-group1/data
 
