@@ -2,6 +2,8 @@
 
 ---
 
+**1:13:17**
+
 ## 笔记
 
 ### memcached
@@ -79,5 +81,10 @@
 
 * memcache: 独立用`php`实现
 * memcached: 是基于原生的c的libmemcached的扩展
+
+### 关键选项
+
+* `-p`: TCP port, 11211.
+* `-m #`: 以`MB`为单位, 指定`memcached`可用的最大内存空间.
 
 ## 整理知识点
