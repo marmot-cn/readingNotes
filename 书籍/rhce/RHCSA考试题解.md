@@ -10,6 +10,16 @@
 * [6. 配置文件`/var/tmp/fstab`的权限](#6) **简单**
 * [7. 建立计划任务](#7) **简单**
 * [8. 创建一个共享目录](#8) **简单**
+* [9.  升级系统内核](#9)
+* [10. 绑定验证服务](#10)
+* [11. 配置 autofs](#11)
+* [12. 配置 NTP](#12)
+* [13. 创建一个归档](#13) **简单**
+* [14. 配置一个用户账户](#14) **简单**
+* [15. 创建一个 swap 分区](#15)
+* [16. 查找文件](#16) **中等**
+* [17. 查找一个字符串](#17) **简单**
+* [18. 创建一个逻辑卷](#18)
 
 ### <a name="1">1. 重置系统密码, 完成网络配置</a>
 
@@ -267,6 +277,153 @@ echo redhat | passwd --stdin sarah
 
 ### <a name="6">6. 配置文件`/var/tmp/fstab`的权限</a>
 
-### 8
+* 复制文件`/etc/fstab`到`/var/tmp`下, 并配置权限
+	* 文件所属人为`root`
+	* 文件的所属组为`root`
+	* 文件对任何人均没有执行权限
+	* 用户`natasha`对该文件有读和写的权限
+	* 用户`harry`对该文件既不能读也不能写
+	* 所有其他用户对该文件都有读的权限
 
- 该权限只对目录有效. 目录被设置该位后, 任何用户在此目录下创建的文件都具有和该目录所属的组相同的组
+#### 答题步骤
+
+```
+cp /etc/fstab /var/tmp
+chonw root:root /var/tmp
+chmod a-x /var/tmp
+
+# 通过acl设定 natasha 和 harry 权限
+setfacl -m u:natasha:rw,u:harry:--- /var/tmp/fstab
+
+# 检查
+getface /var/tmp/fstab
+
+# 如果其他用户没有对该文件有读的权限, 可以设置. 答案里面没有该设置
+chmod o+r /var/tmp
+```
+
+#### 难点
+
+* `setface` 命令
+
+### <a name="7">7. 建立计划任务</a>
+
+对`natasha`用户建立计划任务, 要求在本地时间的每天`14:23`执行以下命令
+
+```shell
+/bin/echo "rchsa"
+```
+
+#### 答题步骤
+
+```shell
+crontab -e -u natasha
+23 14 * * * /bin/echo  "rhcsa"
+```
+
+#### 难点
+
+`crontab`中的`*`依次是:
+
+* 分钟
+* 小时
+* 每天
+* 每月
+* 每星期
+
+### <a name="8">8. 创建一个共享目录</a>
+
+ 在`/home`目录下创建名为`admins`的子目录, 并按以下需求设置权限:
+ 
+ * `/home/admins`目录的所属组为`adminuser`
+ * 该目录对`adminuser`组的成员可读可执行可写, 但对其他用户没有任何权限, 但`root`不受限制
+ * 在`/home/admins`目录下创建的所属组自动被设置为`adminuser`
+ 
+#### 答题步骤
+
+```shell
+mkdir -p /home/admins
+chown :adminuser /home/admins 或者 chgrp adminuser /home/admins
+chmod grwx,o=--- /home/admins
+chmod g+s /home/admins
+```
+
+#### 难点
+
+* `g+s`: 该权限只对目录有效. 目录被设置该位后, 任何用户在此目录下创建的文件都具有和该目录所属的组相同的组
+
+### <a name="9">9. 升级系统内核</a>
+
+从`xxx`下找到需要升级的内核
+
+* 当系统重新启动之后, 升级的内核要作为默认的内核
+* 原来的内核要保留, 并且仍然可以正常启动
+
+#### 答题步骤
+
+#### 难点
+
+### <a name="13">13. 创建一个归档</a>
+
+创建一个名为`/root/sysconfig.tar.bz2`的归档文件, 其中包含了`/etc/sysconfig`目录中的内容.
+
+#### 答题步骤
+
+```shell
+tar -jcf /root/sysconfig.tar.bz2 /etc/susconfig/
+```
+
+#### 难点
+
+* `tar -jcf` 使用 `bz2`
+* `tar -zxf` 使用 `gzip`
+
+### <a name="14">14. 配置一个用户账户</a>
+
+创建一个名为`jay`的用户.
+
+* 用户`id`为`3456`
+* 密码为`gleunge`
+
+#### 答题步骤
+
+```shell
+useradd -u 3456 jay
+echo gleunge | passwd --stdin jay 
+```
+
+#### 难点
+
+* `useradd -u`, 添加用户并设定用户`uid`
+* `passwd --stdin`, 从`stdin`输入密码
+
+### <a name="16">16. 查找文件</a>
+
+把系统上拥有者为`jay`用户的所有文件拷贝到`/root/findfiles`目录中
+
+#### 答题步骤
+
+```shell
+mkdir -p /root/findfiles
+find / -user jay -exec cp -a {} /root/finedfiles/ \l
+```
+
+#### 难点
+
+* `-user` 按文件属主来查找
+* `-exec`  find命令对匹配的文件执行该参数所给出的shell命令, 相应命令的形式为`'command' { } \;`，注意{ }和\；之间的空格
+	* 花括号代表前面find查找出来的文件名.
+
+### <a name="17">17. 查找一个字符串</a>
+
+把`/user/share/dict/words`文件中所包含`seismic`字符串的行找到, 并将这些按照原始文件中的顺序存放到`/root/wordlist`中, `/root/wordlist`文件中不能包含换行.
+
+#### 答题步骤
+
+```shell
+grep seismic /usr/share/dict/words > /root/wordlist
+```
+
+#### 难点
+
+* `grep`命令

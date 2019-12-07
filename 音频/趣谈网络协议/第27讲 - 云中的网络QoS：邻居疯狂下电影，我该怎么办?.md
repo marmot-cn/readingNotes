@@ -137,8 +137,14 @@ ovs-ofctl add-flow br0 "in_port=7 nw_src=192.168.100.101 actions=enqueue:5:1"
 ovs-ofctl add-flow br0 "in_port=8 nw_src=192.168.100.102 actions=enqueue:5:2"
 ```
 
+### 总结
 
+云中的流量控制主要是通过队列进行的, 队列分为两大类:
 
+* 无类别队列规则
+* 基于类别队列规则
+
+云中网络`Openvswitch`中, 主要使用的是分层令牌通规则(HTB), 将总的带宽在一棵树上按照配置的比例进行分配, 并在在一个分支不用的时候, 可以借给另外的分支, 从而增强带宽利用率.
 
 ## 扩展
 
