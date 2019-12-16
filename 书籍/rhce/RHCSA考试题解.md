@@ -10,16 +10,16 @@
 * [6. 配置文件`/var/tmp/fstab`的权限](#6) **简单**
 * [7. 建立计划任务](#7) **简单**
 * [8. 创建一个共享目录](#8) **简单**
-* [9.  升级系统内核](#9)
-* [10. 绑定验证服务](#10)
-* [11. 配置 autofs](#11)
-* [12. 配置 NTP](#12)
+* [9. 升级系统内核](#9) **简单**
+* [10. 绑定验证服务](#10) **中等**
+* [11. 配置 autofs](#11) **中等**
+* [12. 配置 NTP](#12) **简单**
 * [13. 创建一个归档](#13) **简单**
 * [14. 配置一个用户账户](#14) **简单**
-* [15. 创建一个 swap 分区](#15)
+* [15. 创建一个 swap 分区](#15) **难**
 * [16. 查找文件](#16) **中等**
 * [17. 查找一个字符串](#17) **简单**
-* [18. 创建一个逻辑卷](#18)
+* [18. 创建一个逻辑卷](#18) **难**
 
 ### <a name="1">1. 重置系统密码, 完成网络配置</a>
 
@@ -361,7 +361,162 @@ chmod g+s /home/admins
 
 #### 答题步骤
 
+##### 9.1 安装内核文件
+
+1. 通过火狐浏览器打开链接, 手动下载`kernel-xxx`内核文件, 然后使用`rpm -ivh *.rpm`命令安装
+2. 通过`curl --silent xxx | grep kenel`过滤出内核`rpm`包地址, 使用`yum install -y xxxx.rpm`远程安装
+
+##### 9.2 验证
+
+`grub2-editenv list`
+
 #### 难点
+
+* `curl --silent xxx | grep kenel`远程过滤
+* 手动安装`rpm -ivh *.rpm`(也可以使用`rpm -uvh *.rpm`)
+* 自动安装`yum install -y 远程地址.rpm`
+* 查看默认启动项`grub2-editenv list`
+* 修改默认启动项`grub2-set-default`
+
+### <a name="10">10. 绑定外部验证服务</a>
+
+系统`server.group8.example.com`提供了一个`LDAP`验证服务. 系统新药按照以下要求绑定到这个服务上:
+
+* 验证服务器的基本`DN`是: `dc=group8, dc=example, dc=com`
+* 账户信息和验证信息都是由`LDAP`提供
+* 链接需要使用证书加密, 证书可以在下面的链接下`证书下载链接/cacert.crt`
+
+正确配置完成后, 用户`thales`可以登录系统, 登录密码是`redhat`
+
+#### 答题步骤
+
+##### 10.1 下载相关组件
+
+```shell
+yum install authconfig-gtk sssd -y
+```
+
+##### 10.2 配置相关组件
+
+```
+authconfig-gtk &
+```
+
+配置:
+
+* DN
+* Server
+* 证书
+
+##### 10.3 测试
+
+```shell
+su - thales
+```
+
+或者
+
+```shell
+# 相当于 cat /etc/passwd|grep thales
+getent passwd thales
+```
+
+如果无法登录, 先完成`ntp`时间同步, 在重启`sssd`, 并确认`sssd`启动正常.
+
+#### 难点
+
+* `authconfig`配置以及相关组件安装
+* `sssd`一个守护进程，该进程可以用来访问多种验证服务器, 如LDAP, Kerberos等, 并提供授权. SSSD是介于本地用户和数据存储之间的进程, 本地客户端首先连接SSSD, 再由SSSD联系外部资源提供者(一台远程服务器).
+
+### <a name="11">11. 配置autofs</a>
+
+按照下述要求配置`autofs`用来自动挂载`DLAP`用户的主目录.
+
+* `server.group8.example.com`通过`NFS`输出了`/rhome`目录到您的系统. 这个文件系统包含了用户`thales`的主目录, 并且已经预先配置好了.
+* `thales`用户的主目录是`server.group8.example.com:/rhome/thales`
+* `thales`用户的主目录应该挂载到本地的`/home/ldap/thales`
+* 用户对其主目录必须是读写的
+* `thales`的登录密码是`redhat`
+
+#### 答题步骤
+
+##### 11.1 安装服务
+
+```shell
+yum install autofs -y
+```
+
+##### 11.2 修改配置文件
+
+```shell
+vim /etc/auto.master
+# 当系统访问以/home/ldap路径开头的资源时, 读取/etc/.ldap配置文件进行自动挂载
+/home/ldap	/etc/auto.ldap
+```
+
+```shell
+vim /etc/auto.ldap
+
+# 配置含义: 当访问 /home/ldap/* (* 代表任意路径)的资源时, 自动挂载到server.group8.example.com:/rhome/对应路径的资源
+*	-rw,sync,soft  server.group8.example.com:/rhome/&
+```
+
+##### 11.3 开机启动服务
+
+```shell
+systemctl enable autofs
+systemctl restart autofs
+```
+
+##### 11.4 验证
+
+```shell
+ssh thales@localhost
+pwd
+/home/ldap/thales
+```
+
+#### 难点
+
+* 理解配置文件
+
+### <a name="12">12. 配置NTP</a>
+
+配置系统时间与服务器`server.group8.example.com`同步, 要求系统重启后依然生效.
+
+#### 答题步骤
+
+##### 12.1 修改`/etc/chrony.con`配置文件
+
+注释掉原来的同步时间服务器
+
+```shell
+# server 0.rhel.pool.ntp.org iburst
+# server 1.rhel.pool.ntp.org iburst
+# ...
+```
+
+添加新的同步时间服务器
+
+```
+server server.group8.example.com iburst
+```
+
+##### 12.2 配置服务
+
+```shell
+stsremctl enable chronyd
+systemctl restart chronyd
+# 手动同步时间
+chronyc
+
+chronyc>waitsync
+```
+
+#### 难点
+
+* 修改配置文件`/etc/chrony.con`
+* 手动同步时间`chronyc`
 
 ### <a name="13">13. 创建一个归档</a>
 
@@ -397,6 +552,65 @@ echo gleunge | passwd --stdin jay
 * `useradd -u`, 添加用户并设定用户`uid`
 * `passwd --stdin`, 从`stdin`输入密码
 
+### <a name="15">15. 添加一个 swap 分区</a>
+
+添加一个新的`swap`分区
+
+* `swap`分区容量为`512 MiB`
+* 系统启动时, `swap`分区应该可以自动挂载
+* 不要移除或者修改其他已经存在于您的系统中的`swap`分区
+
+#### 答题步骤
+
+##### 15.1 格式化磁盘
+
+```shell
+fdisk /dev/xxx
+n
+e #使用扩展分区
+回车
+回车
+# 创建完成扩展分区
+
+n
+回车
++512M
+
+t
+分区号
+82 #82代表swap
+w #保存
+
+partprobe
+# 如果生成设备文件失败可以使用 partx -a /dev/sda 再次生成
+```
+
+##### 15.2 格式化分区
+
+```shell
+# 格式化分区, 生成 UUID, 再次查看UUID 使用 blkid /dev/xxx
+mkswap /dev/xxx
+
+# 开启swap
+swapon /dev/xxx
+
+# 开机启动 /etc/fstab
+
+UUID(也可以使用/dev/xxx) swap swap defaults 0 0
+```
+
+#### 难点
+
+* `fdisk`
+	* 创建逻辑分区
+	* 格式化一个确认大小的磁盘
+* `mkswap` 格式化分区
+* `/etc/fstab` 开机自动挂载 
+* `partprobe` 用于重读分区表, 当出现删除文件后, 出现仍然占用空间. 可以`partprobe`在不重启的情况下重读分区.
+* `partx` 告诉内核当前磁盘的分区情况
+	* `-a`: 增加指定的分区或读磁盘新增的分区
+* `blkid` 对查询设备上所采用文件系统类型进行查询, 可以查看UUID
+
 ### <a name="16">16. 查找文件</a>
 
 把系统上拥有者为`jay`用户的所有文件拷贝到`/root/findfiles`目录中
@@ -427,3 +641,66 @@ grep seismic /usr/share/dict/words > /root/wordlist
 #### 难点
 
 * `grep`命令
+
+### <a name="18">18. 创建一个逻辑卷</a>
+
+创建一个新的逻辑卷
+
+* 创建一个名为`datastore`的卷组, 卷组`PE`尺寸为`16 MiB`
+* 逻辑卷的名字为`database`, 所属卷组为`datastore`, 该逻辑卷由`50`个`PE`组成
+* 将新建的逻辑卷格式化为`xfs`文件系统, 要求系统启动时, 该逻辑卷能被自动挂碍到`/mnt/database`
+
+#### 答题步骤
+
+##### 18.1 格式化磁盘
+
+```shell
+fdisk /dev/sda
+n #这里自动使用上个扩展分区
+回车
+回车 #用完所有控件
+
+t #修改分区类型标记
+8e #修改类型为 LVM
+w #保存分区设定
+
+partprobe 
+```
+
+##### 18.2 创建逻辑卷
+
+```shell
+pvcreate /dev/sda#
+
+# 创建卷组
+vgcreate -s 16M datastore /dev/sda#
+vgdisplay
+
+# 创建逻辑卷, -l 50 代表使用50个PE的容量 
+lvcreate -n database -l 50 datastore
+lvs
+
+# 格式化操作系统
+mkfs.xfs /dev/datastore/database
+mkdir -p /mnt/database
+
+# 自动化挂载
+# 查看 UUID
+blkid /dev/datastore/database
+# 修改/etc/fstab 自动化挂载
+
+UUID="xxx" /mnt/dayabase xfs defaults 0 0
+
+# 挂载
+mount -a
+
+# 确认已挂载上
+df -h
+```
+
+#### 难点
+
+* `vgcreate` 创建卷组
+	* `-s` 卷组上的物理卷`PE`大小
+* `lvcreate` 创建逻辑卷
+* `mks.xfs` 格式化操作系统
