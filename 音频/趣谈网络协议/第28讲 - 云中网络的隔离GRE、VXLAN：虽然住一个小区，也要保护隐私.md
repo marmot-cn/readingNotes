@@ -166,4 +166,10 @@ ovs-ofctl add-flow br1 "hard_timeout=0 idle_timeout=0 priority=1 table=10  actio
 	* 如果匹配不上`VLAN ID`, 就默认丢弃
 	* 如果匹配上了`VLAN ID`, 就将`VLAN ID`转换为`Tunnel ID`, 从两个网卡`port 2`和`port 3`都发出去, 进行多播.
 
+### 总结
+
+`GRE`是三层(IP)上面再套三层.
+
+`VXLAN`是二层外面套了一个`VXLAN`的头.
+
 ## 扩展
