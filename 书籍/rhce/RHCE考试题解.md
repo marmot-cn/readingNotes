@@ -3,8 +3,8 @@
 ## 目录
 
 * [1. 设定 SELinux](#1) **简单**
-* [2. 配置防火墙](#2)
-* [3. 自定义用户环境](#3)
+* [2. 配置防火墙](#2) **中等**
+* [3. 自定义用户环境](#3) **简单**
 * [4. 配置端口转发](#4)
 * [5. 配置链路聚合](#5)
 * [6. 配置 IPv6 地址](#6)
@@ -18,8 +18,8 @@
 * [14. 配置虚拟主机](#14)
 * [15. 配置 web 内容的访问](#15)
 * [16. 实现动态 web 内容](#16)
-* [17. 创建一个脚本](#17) 
-* [18. 创建一个添加用户的脚本](#18)
+* [17. 创建一个脚本](#17) **简单**
+* [18. 创建一个添加用户的脚本](#18) **中等**
 * [19. 配置 ISCSI 服务端](#19)
 * [20. 配置 ISCSI 的客户端](#20)
 * [21. 配置一个数据库](#21) **简单**
@@ -55,13 +55,65 @@ SELINUX=enforcing
 
 ### <a name="2">2. 配置防火墙</a>
 
+在`system1`和`system2`上设定防火墙系统:
+
+* 允许`group8.example.com`域的客户对`system1`和`system2`进行`ssh`访问
+* 禁止`my133t.org`域的客户对`system1`和`system2`进行`ssh`访问
+* 备注: `my133t.org`是在`172.13.8.0/24`网络
+
 #### 答题步骤
+
+在`system1`和`system2`上执行
+
+```shell
+systemctl enable firewalld
+firewall-cmd --permanent --add-service=ssh
+firewall-cmd --permanent --add-rich-rule 'rule family="ipv4" source address="172.13.8.0/24" service name="ssh" reject'
+firewall-cmd --reload
+
+#验证结果
+firewall-cmd --list-all 
+```
 
 #### 难点
 
+`firewall-cmd`的语法
+
+```
+[family="ipv4|ipv6"]
+　　　　　　[source |destination] address="address[/mask]" [invert="True|yes"]
+　　　　　　[[service name="service name" ]| [port port="number_or_range" protocol="tcp|udp"] | [protocol value="协议名"] ]
+　　　　　　[ icmp-block name="icmptype name" ]
+　　　　　　[masquerade]
+　　　　　　[forward-port port="number_or_range" protocol="tcp|udp" to-port="number_or_range" to-addr="address"]
+　　　　　　[log [prefix=prefix text] [level=log level] limit value=rate/duration]
+　　　　　　[audit]
+　　　　　　[accept | reject [type="reject type"] | drop]
+```
+
 ### <a name="3">3. 自定义用户环境</a>
 
+在`system1`和`system2`上创建自动以命令为`qstat`, 要求:
+
+* 此自定义命令将执行以下命令: `/bin/pas -Ao pid,tt,user,fname,rsz`
+* 此命令对系统中的所有用户有效
+
 #### 答题步骤
+
+在`system1`和`system2`上执行
+
+```shell
+/etc/bashrc 文件
+
+alias astat='/bin/pas -Ao pid,tt,user,fname,rsz'
+```
+
+验证
+
+```shell
+bash
+which astat
+```
 
 #### 难点
 
@@ -205,15 +257,80 @@ curl system1.group8.example.com
 
 ### <a name="17">17. 创建一个脚本</a>
 
+在`system1`上创建一个名为`/root/foo.sh`的脚本, 让其提供下列特性:
+
+* 运行`/root/foo.sh redhat`, 输出为`fedora`
+* 运行`/root/foo.sh fedora`, 输出为`redhat`
+* 当没有任何参数或者参数不是`redhat`或者`fedora`时, 其错误输出产生一下的信息:
+
+```
+/root/foo.sh redhat | fedora
+```
+
 #### 答题步骤
 
+```
+#!/bin/bash
+case $1 in
+  redhat)
+  echo "fedora"
+  ;;
+  fedora)
+  echo "redhat"
+  ;;
+  *)
+  echo "/root/foo.sh redhat|fedora"
+  ;;
+esac
+```
+
+赋予脚本执行权限
+
+```
+chmod 755 /root/foo.sh
+```
+
 #### 难点
+
+* `shell`脚本的`case`用法
 
 ### <a name="18">18. 创建一个添加用户的脚本</a>
 
+在`system1`上创建一个脚本, 名为`/root/batchusers`, 此脚本能实现为系统`system1`创建本地用户, 并且这些用户的用户名来自一个包含用户名列表的文件, 同时满足下列要求:
+
+* 此脚本要求提供一个参数, 此参数就是包含用户列表的文件.
+* 如果没有提供参数, 此脚本应该给出下面的提示信息`Usage: /root/batchusers userfile`然后退出并返回相应的值
+* 如果提供一个不存在文件名, 此脚本应该给出下面的提示信息`Input file not found`然后退出并返回影响的值
+* 创建的用户登录`shell`为`/bin/false`
+* 此脚本不需要为用户设置密码
+* 用户名列表`http://xxxx/userlist`
+
 #### 答题步骤
 
+```shell
+/root/batchusers
+
+#!/bin/bash
+if [ $# -eq 1 ];then
+	if [ -f "$1" ];then
+		while read username; do
+			useradd -s /bin/false $username &> /dev/null
+		done < $1
+	else
+		echo "Input file not found"
+		exit 1
+	fi
+else
+	echo "Usage: /root/batchusers userfile"
+	exit 2
+fi
+	
+```
+
 #### 难点
+
+* `done < $1`, `while`循环从文件中读取内容
+* 设置登录`shell`, `useradd -s xxx`
 
 ### <a name="19">19. 配置 ISCSI 服务端</a>
 
