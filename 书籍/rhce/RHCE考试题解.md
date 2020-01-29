@@ -5,10 +5,10 @@
 * [1. 设定 SELinux](#1) **简单**
 * [2. 配置防火墙](#2) **中等**
 * [3. 自定义用户环境](#3) **简单**
-* [4. 配置端口转发](#4)
-* [5. 配置链路聚合](#5)
-* [6. 配置 IPv6 地址](#6)
-* [7. 配置本地邮件服务](#7)
+* [4. 配置端口转发](#4) **简单**
+* [5. 配置链路聚合](#5) **中等**
+* [6. 配置 IPv6 地址](#6) **简单**
+* [7. 配置本地邮件服务](#7) **中等**
 * [8. 通过 SMB 共享目录](#8)
 * [9. 配置多用户 SMB 挂载](#9)
 * [10. 配置 NFS 服务](#10)
@@ -117,31 +117,172 @@ which astat
 
 #### 难点
 
+* 命令对系统中的所有用户有效, 需要修改文件`/etc/bashrc`文件
+* 了解`alias`命令
+
 ### <a name="4">4. 配置端口转发</a>
+
+在系统`system1`设定端口转发
+
+* 在`172.24.8.0/24`网络中的系统, 访问`system1`的本地端口`5423`将被转发到`80`
+* 此设置必须永久有效
 
 #### 答题步骤
 
+在`system1`上执行
+
+```shell
+firewall-cmd --permanent --add-rich-rule 'rule family="ipv4" source address="172.24.8.0/24" forward-port port="5423" protocol="tcp" to-port="80"'
+```
+
+验证
+
+```shell
+firewall-cmd --list-all
+```
+
 #### 难点
+
+`firewall-cmd`的语法
 
 ### <a name="5">5. 配置链路聚合</a>
 
+在`system2`和`system1`之间按以下要求设定一个链路:
+
+* 此链路使用接口`eth1`和`eth2`
+* 此链路在一个接口失效时仍然能工作
+* 此链路在`system1`使用下面的地址`172.16.3.40/255.255.255.0`
+* 此链路在`system1`使用下面的地址`172.16.3.45/255.255.255.0`
+* 此链路在系统重启之后依然保持正常状态
+
 #### 答题步骤
 
+在`system1`和`system2`上执行
+
+```shell
+nmcli connection add con-name team0 type team ifname team0 config '{"runner":{"name":"activebackup"}}'
+
+#system1
+nmcli connection modify team0 ipv4.address "172.16.3.40/24" connection.autoconnect yes ipv4.method manual
+
+#system2
+nmcli connection modify team0 ipv4.address "172.16.3.45/24" connection.autoconnect yes ipv4.method manual
+
+nmcli connection add con-name team0-salve1 ifname eth1 type team-slave master team0
+nmcli connection add con-name team0-salve2 ifname eth2 type team-slave master team0
+nmcli connection up team0
+```
+
+验证:
+
+```shell
+ifconfig team0
+....
+
+teamdctl team0 state
+
+在system2上 ping 172.16.3.40
+```
+
+如果配置错误
+
+```shell
+nmcli connection delete team0-slave1
+nmcli connection delete team0-slave2
+nmcli connection delete team0
+nmcli connection reload
+```
+
 #### 难点
+
+* `nmcli`的命令使用
+* 配置主备`activebackup`
 
 ### <a name="6">6. 配置 IPv6 地址</a>
 
+设定接口`eth0`使用下列`IPv6`地址:
+
+* `system1`上的地址应该是`2003:ac18::305/64`
+* `system2`上的地址应该是`2003:ac18::30a/64`
+* 两个系统必须能与网络`2003:ac18/64`内的系统通信
+* 地址必须在重启后依然生效
+* 两个系统必须保持当前的`IPv4`地址并能通信
+
 #### 答题步骤
 
+在`system1`和`system2`上执行
+
+```shell
+# system1
+nmcli connection modify eth0 ipv6.addresses "2003:ac18::305/64" ipv6.method manual connection.autoconnect yes
+
+# system2
+nmcli connection modify eth0 ipv6.addresses "2003:ac18::30a/64" ipv6.method manual connection.autoconnect yes
+
+nmcli connection reload
+nmcli connection down eth0 && nmcli connection up eth0
+```
+
+验证
+
+```shell
+ping6 -c1 2003:ac18::30a
+```
+
 #### 难点
+
+* `nmcli`配置`IPV6`的命令
 
 ### <a name="7">7. 配置本地邮件服务</a>
 
+在系统`system1`和`system2`上配置邮件服务, 要求:
+
+* 这些系统不接受外部发来的邮件
+* 在这些系统上本地发送的任何邮件都会自动路由到`mail.group8.exmaple.com`
+* 从这些系统上发送的优先见识来自于`server.group8.example.com`
+
+测试: 可以发送邮件到本地用户`dave`来测试配置, 系统`server.group8.example.com`已经把此用户的邮件转到`URL`:`http://server.group8.example.com/pub/received_mail/8`.
+
 #### 答题步骤
+
+在`system1`和`system2`上执行
+
+```shell
+postconf -e inet_interfaces=loopback-only
+postconf -e mydestindation=
+postconf -e local_transport=error:err
+postconf -e relayhost=[mail.group8.exmaple.com]
+postconf -e myorigin=server.group8.exmaple.com
+systemctl enable postfix
+systemctl restart postfix
+```
+
+验证
+
+```shell
+echo "hello" | mail -s testmail dave
+curl http://server.group8.example.com/pub/received_mail/8
+....
+```
 
 #### 难点
 
+* `postconf`的配置
+	* `inet_interfaces`
+	* `mydestindation`
+	* `local_transport`禁止本地分发邮件到本地用户邮箱 
+	* `relayhost`
+	* `myorigin`
+
 ### <a name="8">8. 通过 SMB 共享目录</a>
+
+在`system1`上配置`SMB`服务, 要求:
+
+* `SMB`服务器必须是`STFF`工作组的一个成员
+* 共享`/common`目录, 共享名必须为`common`
+* 只有`group8.example.com`域内的客户端可以访问`common`共享
+* `common`必须是可以浏览的
+* 用户`andy`必须能够读取共享中的内容, 验证密码是`redhat`
 
 #### 答题步骤
 
