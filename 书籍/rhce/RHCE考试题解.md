@@ -9,15 +9,15 @@
 * [5. 配置链路聚合](#5) **中等**
 * [6. 配置 IPv6 地址](#6) **简单**
 * [7. 配置本地邮件服务](#7) **中等**
-* [8. 通过 SMB 共享目录](#8)
-* [9. 配置多用户 SMB 挂载](#9)
-* [10. 配置 NFS 服务](#10)
-* [11. 挂载一个 NFS 共享](#11)
+* [8. 通过 SMB 共享目录](#8) **困难**
+* [9. 配置多用户 SMB 挂载](#9) **困难**
+* [10. 配置 NFS 服务](#10) **困难**
+* [11. 挂载一个 NFS 共享](#11) **中等**
 * [12. 实现一个 web 服务器](#12) **中等**
-* [13. 配置安全 web 服务](#13)
-* [14. 配置虚拟主机](#14)
-* [15. 配置 web 内容的访问](#15)
-* [16. 实现动态 web 内容](#16)
+* [13. 配置安全 web 服务](#13) **简单**
+* [14. 配置虚拟主机](#14) **简单**
+* [15. 配置 web 内容的访问](#15) **简单**
+* [16. 实现动态 web 内容](#16) **中等**
 * [17. 创建一个脚本](#17) **简单**
 * [18. 创建一个添加用户的脚本](#18) **中等**
 * [19. 配置 ISCSI 服务端](#19)
@@ -286,25 +286,322 @@ curl http://server.group8.example.com/pub/received_mail/8
 
 #### 答题步骤
 
+在`system1`上执行
+
+##### 1. 安装软件包
+
+```shell
+yum install samba samba-client -y
+systemctl enable smb.service nmb.service
+```
+
+##### 2. 设定防火墙
+
+```shell
+firewall-cmd --permanent --add-service=samba
+firewall-cmd --reload
+```
+
+##### 3. 编辑配置文件
+
+```shell
+/etc/samba/smb.conf
+
+...
+[global]
+	...
+	workgroup=STAFF
+	...
+
+[common]
+	...
+	path=/common
+	hosts allow=172.24.8.0/24
+	borwseable=yes
+```
+
+##### 4. 创建目录并设定`selinux`上下文
+```shell
+mkdir /common
+semanage fcontext -a -t "samba_share_t" '/common(/.*)?'
+restorecon -Rv /common/
+```
+
+##### 5. 创建 samba 用户
+
+```shell
+smbpasswd -a andy
+...输入密码 redhat
+```
+
+##### 6. 启动服务
+
+```shell
+systemctl restart smb nmb
+```
+
+##### 7. 验证
+
+在`system2`上执行
+
+```shell
+# 安装软件包
+yum install samba-client -y
+
+# 验证服务是否可以访问
+smbclient -L //172.24.8.11/ -U andy
+...
+
+smbclient -L //172.24.8.11/ -U andy
+```
+
 #### 难点
+
+* `/etc/samba/smb.conf`配置文件修改规则
+* `selinux`上下文
 
 ### <a name="9">9. 配置多用户 SMB 挂载</a>
 
+在`system1`上通过`SMB`共享目录`/devops`, 并满足下列要求:
+
+* 共享名为`devops`
+* 共享目录`devops`只能`group8.example.com`域中的客户端使用
+* 共享目录`devops`必须可以被浏览
+* 用户`silene`必须能以读的方式访问此共享, 访问密码是`redhat`
+* 用户`akira`必须能以读写的方式访问此共享, 访问密码是`redhat`
+* 此共享永久挂载在`system2.group8.exmaple.com`上的`/mnt/dev`目录, 并使用用户`silene`违认证任何用户, 可以通过用户`akira`来临时获取写的权限
+
 #### 答题步骤
 
+##### 1. 修改配置文件 (system1)
+
+```shell
+# /etc/samba/smb.conf
+
+[devops]
+	path=/devops
+	hosts allow=172.24.8.
+	browseable=yes
+	writable=no
+	write list=akira
+```
+
+##### 2. 设定目录 (system1)
+
+```shell
+mkdir /devops
+semanage fcontext -a -t 'samba_share_t' '/devops(/.*)?'
+restorecon -Rv /devops
+setfacl -m u:akira:rwx /dev/ops
+```
+
+##### 3. 建立用户 (system1)
+
+```shell
+smbpasswd -a silene
+...输入密码 redhat
+
+smbpasswd -a akira
+...输入密码 redhat
+```
+
+##### 4. 重启服务 (system1)
+
+```shell
+systemctl restart smb nmb
+```
+
+##### 5. 安装软件 (system2)
+
+```shell
+yum install cifs-utils -y
+```
+
+##### 6. 建立挂载点 (system2)
+
+```shell
+mkdir /mnt/dev
+```
+
+##### 7. 编辑 fstab 增加持久挂载 (system2)
+
+```shell
+#查看共享
+smbclient -L //172.24.8.11/ -U silene
+
+#编辑/etc/fstab
+//172.24.8.11/devops /mnt/dev cifs defaults,multiuser,username=silene,password=redhat,sec=ntlmssp 0 0
+
+#测试
+mount -a
+df -h
+
+#测试silene
+su - silene
+cd /mnt/dev
+cifscreds add 172.24.8.11
+...输入密码
+touch testfile #不能创建成功, 可以读不能写
+exir
+
+#测试akira
+su = akira
+cd /mnt/dev
+cifscreds add 172.24.8.11
+...输入密码
+ls
+touch testfile #可以创建成功
+ls
+exit
+```
+
+挂载参数需要添加"multiuser,sec=ntlmssp", 客户机上的普通用户可以通过`cifscreds`命令提交新的身份凭据.
+
 #### 难点
+
+* `smb`服务端配置
+* `smb`客户端挂载
 
 ### <a name="10">10. 配置 NFS 服务</a>
 
+在`system1`配置`NFS`服务, 要求:
+
+* 以只读方式共享目录`/public`, 同时只能被`group8.example.com`域中的系统访问
+* 以读写的方式共享目录`/protected`, 同时只能被`group8.example.com`域中的系统访问
+* 访问`/protocted`需要通过`Kerberos`安全加密, 您可以使用下面`URL`提供密钥`http://server.group8.example.com/pub/keytabs/system1.keytab`
+* 目录`/protocted`应该包含名为`project`拥有认为`andres`的子目录
+* 用户`andres`能以读写访问访问`/protocted/project`
+
 #### 答题步骤
 
+##### 1. 安装软件
+
+```shell
+yum install nfs-utils -y
+```
+
+##### 2. 服务器开机启动
+
+```shell
+systemctl enable nfs-server nfs-secure-server
+```
+
+##### 3. 设定防火墙规则
+
+```shell
+firewall-cmd --permanent --add-service=nfs
+firewall-cmd --permanent --add-service=rpc-bind
+firewall-cmd --permanent --add-service=mountd
+firewall-cmd --reload
+```
+
+##### 4. 设定目录及 SELinux 安全上下文
+
+```shell
+mkdir -p /public /protected/project
+chown andres /protected/project
+semanage fcontext -a -t'public_contect_t' '/protected(/.*)?'
+semanage fcontext -a -t'public_contect_rw_t' '/protected/project(/.*)?'
+restorecon -Rv /protected
+```
+
+##### 5. 下载 kerberos 证书
+
+```shell
+wget -O /etc/krb5.keytab htt[://server.group8.example.com/pub/keytabs/system1.keytab
+```
+
+##### 6. 编辑 nfs 资源导出配置文件
+
+```shell
+# /etc/exports
+
+/public *.group8.example.com(ro,sec=sys,sync)
+/protected *.group8.example.com(rw,sec=krb5p,sync)
+```
+
+##### 7. 修改 nfs 启动参数, 重启服务
+
+```shell
+# /etc/sysconfig/nfs
+...
+RPCNFSDARGS="-V 4.2"
+...
+
+systemctl restart nfs-server.service nfs-secure-server.service
+```
+
+##### 8. 刷新并验证导出资源
+
+```shell
+exports -ra
+exportfs 
+```
+
 #### 难点
+
+* 设定防火墙
+* 设定`SELinux`安全上下文
+* `nfs`先关配置文件
+	* `/etc/exports`
+	* `/etc/sysconfig/nfs`
 
 ### <a name="11">11. 挂载一个 NFS 共享</a>
 
+在`system2`上挂载一个来自`system1.group8.example.com`的`NFS`共享, 要求:
+
+* `/public`挂载在下面的目录上`/mnt/nfsmount`
+* `/protected`挂载在下面的目录上`/mnt/nfssecure`并使用安全的方式, 密钥下载的`URL`如下:`http://server.group8.example.com/pub/keytabs/system2.keytab`
+* 用户`andres`能够在`/mnt/nfssecure/project`上创建文件
+* 这些文件系统在系统启动时自动挂载
+
 #### 答题步骤
 
+##### 1.建立挂载点
+
+```shell
+mkdir /mnt/nfsmount /mnt/nfssecure
+```
+
+##### 2. 下载 kerberos 证书
+
+```shell
+wget -O /etc/krb5.keytab htt[://server.group8.example.com/pub/keytabs/system2.keytab
+```
+
+##### 3. 修改 fstab 添加持久化挂载选项
+
+```
+# /etc/fstab
+system1:/public /mnt/nfsmount nfs defaults,sec=sys 0 0
+system1:/protected /mnt/nfssecure nfs defaults,sec=krb5p,v4.2 0 0
+```
+
+###### 4. 设定开启及启动
+
+```shell
+systemctl enable nfs-secure
+systemctl start nfs-secure.service
+```
+
+###### 5. 测试
+
+```shell
+mount -a
+df -h
+
+su = andres
+kinit
+...输入密码
+cd /mnt/nfssecure/project/
+touch testfile
+ls -l #确认创建成功
+```
+
 #### 难点
+
+* 客户端挂载
+* kerberos验证
 
 ### <a name="12">12. 实现一个 web 服务器</a>
 
@@ -370,31 +667,281 @@ curl system1.group8.example.com
 
 * `httpd`配置文件格式, 包括禁用来自xx域
 	* `Require not host`
-* 设定返货强
+* 设定防火墙
 
 ### <a name="13">13. 配置安全 web 服务</a>
 
+为站点`http://system1.group8.example.com`配置`TLS`加密:
+
+* 一个以签名证书从`http://证书链接`获取
+* 此证书的密钥从`http://证书密钥链接`获取
+* 此证书的签名授权信息从`http://证书签名授权信息链接`获取
+
 #### 答题步骤
 
+##### 1. 安装`ssl`模块
+
+```shell
+yum install mod_ssl -y
+```
+
+##### 2. 修改配置文件
+
+```shell
+# /etc/httpd/conf.d/httpd-vhosts.conf
+
+# 增加虚拟主机配置
+...
+<VirtualHost *:443>
+	DocumentRoot "/var/www/html" 
+	ServerName 	system1.group8.example.com
+	<Directory "/var/www/html"> 
+		<RequireAll>
+			Require all granted
+			Require not host .my133t.org 
+		</RequireAll>
+	</Directory>
+	
+	SSLEngine on
+	SSLProtocol all ‐SSLv2 ‐SSLv3
+	SSLCertificateFile /etc/pki/tls/certs/system1.crt 	SSLCertificateKeyFile /etc/pki/tls/private/system1.key 	SSLCACertificateFile /etc/pki/tls/certs/ssl‐ca.crt
+</VirtualHost>
+...
+```
+
+##### 3. 下载证书
+
+```shell
+wget -O /etc/pki/certs/system1.crt http://证书链接
+wget -O /etc/pki/tls/private/system1.key http://证书密钥链接
+wget -O /etc/pki/tls/certs/ssl‐ca.crt http://证书签名授权信息链接
+```
+
+##### 4. 添加防火墙规则
+
+```shell
+firewall‐cmd ‐‐permanent ‐‐add‐service=https
+firewall‐cmd ‐‐reload
+```
+
+##### 5. 重启服务
+
+```shell
+systemctl restart httpd
+```
+
+##### 6. 验证
+
+```shell
+# -k 忽略证书不受信问题
+curl -k https://system1.group8.example.com
+```
+
 #### 难点
+
+* `apache`配置文件添加`ssl`证书
 
 ### <a name="14">14. 配置虚拟主机</a>
 
+在`system1`上扩展您的`web`服务器, 为站点`http://www8.group8.example.com`创建一个虚拟主机, 然后执行下述步骤:
+
+* 设置`DocumentRoot`为`/var/www/virtual`
+* 从`http://server.group8.exmaple.com/pub/wwww8.html`下载文件重名为`index.html`(不对文件做修改)
+* 将文件`index.html`放到虚拟主机的`DocumentRoot`目录下
+* 确保`andy`用户能够在`/var/www/virtual`目录下创建文件
+
+源站点`http://system1.group8.example.com`必须仍然能够服务.
+
 #### 答题步骤
 
+##### 1. 创建网站目录并下载首页
+
+```shell
+mkdir /var/www/virtual
+wget -O /var/www/virtual/index.html http://server.group8.exmaple.com/pub/wwww8.html
+```
+
+##### 2. 设定网站目录权限
+
+```shell
+setfacl -m u:andy:rwx /var/www/virtual
+```
+
+##### 3. 建立虚拟主机
+
+```shell
+# 修改配置文件 /etc/httpd/conf.d/httpd-vhosts.conf
+
+...
+<VirtualHost *:80>
+	DocumentRoot "/var/www/virtual" 
+	ServerName www8.group8.example.com
+	<Directory "/var/www/virtual"> 
+		<RequireAll>
+		Require all granted 
+		</RequireAll>
+	</Directory> 
+</VirtualHost>
+...
+```
+
+##### 4. 重启服务
+
+```shell
+systemctl restart httpd
+```
+
+##### 5. 测试
+
+在`system2`上
+
+```shell
+curl http://www8.group8.example.com
+```
+
 #### 难点
+
+* 添加虚拟主机配置
 
 ### <a name="15">15. 配置 web 内容的访问</a>
 
+在`system1`上的`web`服务器的`DocumentRoot`目录下, 创建一个名为`private`的目录, 要求：
+
+* 从`http://server.group8.example.com/pub/private.html`下载一个文件副本到这个目录, 并且命名为`index.html`
+* 不要对这个文件的内容做修改
+* 从`system1`上, 任何人都可以浏览`private`的内容, 但是从其他系统不能访问这个目录的内容
+
 #### 答题步骤
 
+##### 1. 建立目录
+
+```shell
+mkdir /var/www/html/private
+mkdir /var/www/virtual/private
+```
+
+##### 2. 下载页面
+
+```shell
+wget ‐O /var/www/html/private/index.html http://server.group8.example.com/pub/private.html
+wget ‐O /var/www/virtual/private/index.html http://server.group8.example.com/pub/private.html
+```
+
+##### 3. 修改虚拟主机的配置
+
+```shell
+# /etc/httpd/conf.d/httpd‐vhosts.conf
+# www8.group8.example.com 的配置文件添加如下信息
+
+# 在 system1.group8.example.com
+...
+<Directory "/var/www/html/private"> 
+	Require all denied
+	Require local 
+</Directory>
+...
+
+# www8.group8.example.com 
+...
+<Directory "/var/www/private/private"> 
+	Require all denied
+	Require local 
+</Directory>
+...
+```
+
+##### 4. 重启服务
+
+```shell
+systemctl restart httpd
+```
+
+##### 5. 测试
+
+```shell
+#在system1, 可以访问正常
+curl http://system1.group8.example.com/private/
+
+#在system2, 访问出现403
+curl http://system1.group8.example.com/private/
+```
+
 #### 难点
+
+* 配置信息
+	* Require all denied
+	* Require local 
 
 ### <a name="16">16. 实现动态 web 内容</a>
 
+实现动态`WEB`内容
+
+在`system1`上配置提供动态`web`内容, 要求:
+
+* 动态内容由名为`wsgi.group8.example.com`的虚拟主机提供
+* 虚拟主机侦听在端口`8909`
+* 从`http://server.group8.example.com/pub/webinfo.wsgi`下载一个脚本, 放在适当位置, 不要修改
+* 客户端访问`http://wsgi.group8.example.com:8909`时, 应该接收到动态生成的`web`页面
+* 此`http://wsgi.group8.example.com:8909`, 必须能被`group8.example.com`域内的所有系统访问
+
 #### 答题步骤
 
+在`system1`上执行
+
+##### 1. 建立虚拟主机
+
+```shell
+# /etc/httpd/conf.d/httpd‐vhosts.conf
+...
+Listen 8909
+<VirtualHost *:8909>
+	ServerName wsgi.group8.example.com
+	WSGIScriptAlias / /var/www/html/webinfo.wsgi 
+</VirtualHost>
+```
+
+##### 2. 下载页面
+
+```shell
+wget -O /var/www/html/webinfo.wsgi http://server.group8.example.com/pub/webinfo.wsgi
+```
+
+##### 3. 安装模块包
+
+```shell
+yum install mod_wsgi -y
+```
+
+##### 4. 添加防火墙规则
+
+```shell
+firewall-cmd --permanent ‐‐add‐rich‐rule 'rule family="ipv4" port port=8909 protocol=tcp accept'
+firewall-cmd --reload
+```
+
+##### 5. 设定 SELinux
+
+```shell
+# SELinux 放行端口
+semanage port -a -t http_port_t -p tcp 8909
+```
+
+##### 6. 重启服务
+
+```shell
+systemctl restart httpd
+```
+
+##### 7. 测试
+
+```shell
+curl http://wsgi.group8.example.com:8909
+...
+```
+
 #### 难点
+
+* `semanage port`针对端口做修改
 
 ### <a name="17">17. 创建一个脚本</a>
 
