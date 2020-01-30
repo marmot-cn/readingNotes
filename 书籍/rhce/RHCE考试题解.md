@@ -20,8 +20,8 @@
 * [16. 实现动态 web 内容](#16) **中等**
 * [17. 创建一个脚本](#17) **简单**
 * [18. 创建一个添加用户的脚本](#18) **中等**
-* [19. 配置 ISCSI 服务端](#19)
-* [20. 配置 ISCSI 的客户端](#20)
+* [19. 配置 ISCSI 服务端](#19) **困难**
+* [20. 配置 ISCSI 的客户端](#20) **困难**
 * [21. 配置一个数据库](#21) **简单**
 * [22. 数据库查询](#22) **简单**
 
@@ -1022,15 +1022,173 @@ fi
 
 ### <a name="19">19. 配置 ISCSI 服务端</a>
 
+配置`ISCSI`服务端
+
+配置`system1`提供一个`ISCSI`服务, 磁盘名为`iqn.2014-08.com.exmaple.group8:system1`, 并符合下列要求:
+
+* 服务端口为`3260`
+* 使用`iscis_store`做其后端逻辑卷名称, 其大小为`3G`
+* 此服务只能被`system2,group8.example.com`访问
+
 #### 答题步骤
 
+在`system1`上执行
+
+##### 1. 安装软件并启动服务 
+
+```shell
+yum install targetcli -y
+systemctl enable target
+systemctl start target
+```
+
+##### 2. 添加防火墙规则
+
+```shell
+firewall-cmd --permanent --add-rich-rul 'rule family="ipv4" source address="172.24.8.12/32" port port=3260 protocol=tcp accept'
+fireall-cmd --reload
+```
+
+##### 3. 创建逻辑卷作为后端存储
+
+```shell
+fdisk /dev/sda
+n
+p
+回车
+回车
++3G
+t
+8e
+w
+
+partprobe
+pvcreate /dev/sda3
+vgcreate iscsi_vg /dev/sda3
+lvcreate -n iscsi_store -l 100%VG iscsi_vg
+```
+
+##### 4. 配置 iscsi
+
+```shell
+targetcli
+
+# 定义一块本地设备
+backstores/block create name=iscsi_store dev=/dev/iscsi_vg/iscsi_store
+cd iscsi
+# 定义了一个 iscsi(target)
+create iqn.2014‐08.com.example.group8:system1
+cd iqn.2014‐08.com.example.group8:system1/tpg1/
+
+# 把定义好了的块设备通过该target共享出去
+luns/ create /backstores/block/iscsi_store
+
+# 创建基于 iqn 的 acl:允许该名字的客户端访问本 iscsi 的 tagert
+acls/ create iqn.2014‐08.com.example.group8:system2
+
+# 定义 target 的入口(客户使用什么 IP 和端口访问) 
+portals/ create 172.24.8.11 3260
+
+# 该tgp关闭帐号验证
+setattributeauthentication=0
+
+# 该tgp使用自定义的 acl 实现节点访问限制
+set attribute generate_node_acls=0
+
+# 保存设备
+saveconfig
+
+exit
+```
+
 #### 难点
+
+* ISCSI 服务端配置
 
 ### <a name="20">20. 配置 ISCSI 的客户端</a>
 
+配置`iSCISI`的客户端
+
+配置`system2`使其能连接在`system1`上提供的`iqn.2014-08.com.exmaple.group8:system1`, 并符合下列要求:
+
+* `iSCISI`设备在系统启动的期间自动加载
+* 块设备`iSCISI`上包含一个大小为`2100MiB`的分区, 并格式化为`ext4`
+* 此分区挂载在`/mnt/data`上, 同时在系统启动的期间自动挂载
+
 #### 答题步骤
 
+在`system2`上执行
+
+##### 1. 安装客户端软件
+
+```shell
+yum install iscsi‐initiator‐utils ‐y
+```
+
+##### 2. 配置 iscsi 客户端的名字, 根据题目要求修改
+
+```shell
+# 配置文件 /etc/iscsi/initiatorname.iscsi
+InitiatorName=iqn.2014‐08.com.example.group8:system2
+```
+
+##### 3. 设定服务开机启动和马上启动
+
+```shell
+systemctl enable iscsi iscsid
+systemctl restart iscsi iscsid
+```
+
+##### 4. 发现 target
+
+```shell
+执行命令: iscsiadm ‐m discovery ‐t st ‐p 172.24.8.11
+172.24.8.11:3260,1 iqn.2014‐08.com.example.group8:system1
+```
+
+##### 5. 登录 target
+
+```shell
+iscsiadm ‐m node ‐l
+
+# 本地多了一个 3G 的硬盘
+lsblk 
+```
+
+##### 6. 分区并格式化
+
+```shell
+fidsk /dev/sdb
+n
+p
+回车
+回车
++2100M
+w
+
+partprobe
+mkfs.ext4 /dev/sdb1
+```
+
+##### 7. 配置开机自动挂载
+
+```shell
+mkdir /mnt/data
+
+# 挂载的时候需要添加_netdev参数
+blkid /dev/sdb1
+UUID="xxx"
+
+# 修改/etc/fstab
+UUID="xxx" /mnt/data ext4 defaults,_netdev 0 0
+
+mount -a
+df -h
+```
+
 #### 难点
+
+* 客户端挂载
 
 ### <a name="21">21. 配置一个数据库</a>
 
