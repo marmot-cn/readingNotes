@@ -1,0 +1,29 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"></head><body>Fatal
+ error: Namespace declaration statement has to be the very first 
+statement or after any declare call in the script in 
+/var/www/html/src/Home/View/Template/IndexView.php on line 3
+
+Call Stack:
+    0.0008     353528   1. {main}() /var/www/html/public/index.php:0
+    0.0570     370512   2. Marmot\Core-&gt;init() 
+/var/www/html/public/index.php:6
+    0.1489     626840   3. Marmot\Core-&gt;initRoute() 
+/var/www/html/vendor/chloroplast/framework-basecode/src/MarmotCore.php:59
+
+    0.1790     641184   4. DI\Container-&gt;call() 
+/var/www/html/vendor/chloroplast/framework-basecode/src/MarmotCore.php:261
+
+    0.1947     712184   5. Invoker\Invoker-&gt;call() 
+/var/www/html/vendor/php-di/php-di/src/DI/Container.php:256
+    0.2448     825040   6. 
+call_user_func_array:{/var/www/html/vendor/php-di/invoker/src/Invoker.php:82}()
+ /var/www/html/vendor/php-di/invoker/src/Invoker.php:82
+    0.2448     825104   7. Home\Controller\IndexController-&gt;index() 
+/var/www/html/vendor/php-di/invoker/src/Invoker.php:82
+    0.2448     825104   8. spl_autoload_call() 
+/var/www/html/src/Home/Controller/IndexController.php:15
+    0.2449     825160   9. Marmot\Core-&gt;Marmot\{closure}() 
+/var/www/html/src/Home/Controller/IndexController.php:15
+
+</body></html>
