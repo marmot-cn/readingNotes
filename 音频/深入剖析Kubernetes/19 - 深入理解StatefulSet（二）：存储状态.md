@@ -59,7 +59,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
- ```
+```
 
 没有关于`Volme`细节的字段, **只有描述性的属性和定义**(如: storage: 1Gi, 大小是1GiB. ReadWriteOnce, 只能被单个节点以读写的方式映射)
 
