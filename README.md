@@ -54,6 +54,7 @@
 * The Four Steps to the Epiphany (2019)
 * 重来2 (2019)
 * 金字塔原理1(2020)
+* PMI-PBA认证与商业分析实战精析(2020)
 
 ### 项目管理
 
