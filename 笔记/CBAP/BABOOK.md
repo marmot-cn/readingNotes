@@ -169,5 +169,7 @@ The **purpose** of Plan Business Analysis Approach is to define an appropriate m
 
 #### 3.1.4 Elements
 
-##### 3.1.4.1 Planning Approach
+* Predictive approaches
+* Adaptive approaches
 
+![](./img/3_03.jpg)
