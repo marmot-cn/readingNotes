@@ -169,7 +169,99 @@ The **purpose** of Plan Business Analysis Approach is to define an appropriate m
 
 #### 3.1.4 Elements
 
-* Predictive approaches
-* Adaptive approaches
+* Predictive approaches 预测型方法
+* Adaptive approaches 适应性方法
 
 ![](./img/3_03.jpg)
+
+#### 3.1.5 Guidlines and tools
+
+* Business Analysis Performance Assessment
+* Business Policies
+* Expert Judgment
+* Methodologies and Frameworks
+* Stakeholder Engagement Approach
+
+#### 3.1.6 Techniques
+
+* Brainstorming
+* Business Cases
+* Document Analysis
+* Estimation
+* Financial Analysis
+* Functional Decomposition
+* Interviews
+* Item Tracking
+* Lessons Learned
+* Process Modelling
+* Reviews
+* Risk Analusis and Management
+* Scope Modelling
+* Survey or Questionnaire
+* Workshops
+
+#### 3.1.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Project Manager
+* Regulator
+* Sponsor
+
+#### 3.1.8 Outputs
+
+* Business Analysis Approach
+
+### 3.2 Plan Stakeholder Engagement
+
+#### 3.2.1 Purpose
+
+#### 3.2.2 Description
+
+#### 3.2.3 Inputs
+
+* Needs
+* Business Analysis Approach 
+
+![](./img/3_04.jpg)
+
+#### 3.2.4 Elements
+
+#### 3.2.5 Guidelines and Tools
+
+* Business Analysis Performance Assessment
+* Change Strategy
+* Current State Description
+
+#### 3.2.6 Techniques
+
+* Brainstorming
+* Business Rules Analysis
+* Document Analysis
+* Interviews
+* Lessons Learned
+* Mind Mapping
+* Organizational Modelling
+* Process Modelling
+* Risk Analysis and Management
+* Scope Modelling
+* Stakeholder List, Map, or Personas
+* Survey or Questionnaire
+* Workshops
+
+#### 3.2.7 Stakeholders
+
+* Customers
+* Domain Subject Matter Expert
+* End User
+* Project Manager
+* Regulator
+* Sponsor
+* Supplier
+
+#### 3.2.8 Outputs
+
+* Stakeholder Engagement Approach
+
+### 3.3 Plan Business Analysis Governance
+ 
+**p37**
