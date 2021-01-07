@@ -263,5 +263,25 @@ The **purpose** of Plan Business Analysis Approach is to define an appropriate m
 * Stakeholder Engagement Approach
 
 ### 3.3 Plan Business Analysis Governance
+
+#### 3.3.3 Inputs
+
+* Business Analysis Approach
+* Stakeholder Engagement Approach
  
-**p37**
+![](./img/3_05.jpg) 
+
+#### 3.3.4 Elements
+
+* Decision Making
+* Change Control Process
+	* Determine the process for requesting changes
+	* Determine the elements of the change request
+	* Determine how changes will be prioritized
+	* Determine how changes will be documented
+	* Determine how changes will be communicated
+	* Determine who will perform the impact analysis
+	* Determine who will authorize changes
+* Plan Prioritization Approach
+ 
+**p40**
