@@ -287,5 +287,73 @@ The **purpose** of Plan Business Analysis Approach is to define an appropriate m
 #### 3.3.5 Guidelines and Tools
 
 * Business Analysis Performance Assessment
+* Business Policies
+* Current State Description
+* Legal/Regulatory Information
+
+#### 3.3.6 Techniques
+
+* Brainstorming
+* Document Analysis
+* Interviews
+* Item Tracking
+* Lessons Learned
+* Organizational Modelling
+* Process Modelling
+* Reviews
+* Survey or Questionnaire
+* Workshops
+
+#### 3.3.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Project Manager
+* Regulator
+* Sponsor
+
+#### 3.3.8 Outputs
+
+* Goverance Approach
+
+### 3.4 Plan Business Analusis Information Management
+
+#### 3.4.1 Purpose
+
+how business analysis information will be stored and accessed
  
-**p41**
+#### 3.4.2 Description
+
+Information management entails identifying
+
+* how information should be organized
+* the level of detail at which information should be captured
+* any relationships between the information
+* how information may be used across multiple initiatives and throughout the enterprise
+* how information should be accessed and stored, and
+* characteristics about the information that must be maintained
+
+#### 3.4.3 Inputs
+
+* Business Analysis Approach
+* Governance Approach
+* Stakeholder Engagement Approach
+
+![](img/3_06.jpg)
+
+#### 3.4.4 Elements
+
+* Organization of Business Analysis Information
+* Level of Abstraction
+* Plan Traceability Approach
+* Plan for Requirements Reuse
+* Storage and Access
+* Requirements Attributes
+	* Absolute reference
+	* Author
+	* Complexity
+	* Ownership
+	* Priority
+	* Risks
+	* Source
+ 
+**p46**
