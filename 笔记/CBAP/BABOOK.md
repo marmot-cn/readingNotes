@@ -284,4 +284,8 @@ The **purpose** of Plan Business Analysis Approach is to define an appropriate m
 	* Determine who will authorize changes
 * Plan Prioritization Approach
  
-**p40**
+#### 3.3.5 Guidelines and Tools
+
+* Business Analysis Performance Assessment
+ 
+**p41**
