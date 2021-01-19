@@ -355,5 +355,94 @@ Information management entails identifying
 	* Priority
 	* Risks
 	* Source
+	* Stability
+	* Status
+	* Urgency
+
+#### 3.4.5 Guidelines and Tools
+
+* Business Analysis Performance Assessment
+* Business Policies
+* Information Management Tools
+* Legal/Regulatory Information
+
+#### 3.4.6 Techniques
+
+* Brainstorming
+* Interviews
+* Item Tracking
+* Lessons Learned
+* Mind Mapping
+* Process Modelling
+* Survey or Questionnaire
+* Workshops
  
-**p46**
+#### 3.4.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Regulator
+* Sponsor
+
+#### 3.4.8 Outputs
+
+* Information Management Approach
+
+### 3.5 Identify Business Analysis Performance Improvements 
+
+#### 3.5.3 Inputes
+
+* Business Analysis Approach
+* Performance Objectives (external)
+
+![](img/3_07.jpg)
+
+#### 3.5.4 Elements
+
+* Performance Analysis
+* Assessment Measures
+	* Accuracy and Completeness
+	* Knowledge
+	* Effectiveness
+	* Organizational Support
+	* Significance
+	* Strategic
+	* Timeliness
+* Analyze Results
+* Recommend Actions for Improvement
+	* Preventive
+	* Corrective
+	* Improvement
+
+#### 3.5.5 Guidelines and Tools
+
+* Organizational Performance Standard
+
+#### 3.5.6 Techniques
+
+* Brainstorming
+* Interviews
+* Item Tracking
+* Lessons Learned
+* Metrics and Key Performance Indicators (KPIs):
+* Observation
+* Process Analysis
+* Process Modelling
+* Reviews
+* Risk Analysis and Management
+* Root Cause Analysis
+* Survey or Questionnaire
+* Workshops
+
+#### 3.5.7 Stakeholders
+
+* Domain Subject Matter Experts
+* Project Manager
+* Sponsor
+
+#### 3.5.8 
+
+* Business Analysis Performance Assessment
+ 
+## 4. Elicitation and Collaboration
+
+**p53**
