@@ -445,4 +445,47 @@ Information management entails identifying
  
 ## 4. Elicitation and Collaboration
 
-**p53**
+* Prepare for Elicitation
+* Conduct Elicitation
+* Confirm Elicitation Results
+
+Core Concept | During Elicitation and Collaboration, business analysts...
+---- | ---
+**Change**: the act of transformation in response to a need. | use a variety of elicitation techniques to fully identify the characteristics of the change including concerns that stakeholders have about the change. The change itself may determine the appropriate types and extent of elicitation and collaboration.
+**Need**: a problem or opportunity to be addressed. | elicit, confirm, and communicate needs and supporting business analysis information. As elicitation is iterative and incremental, the understanding of needs may evolve over time.
+**Solution**: a specific way of satisfying one or more needs in a context. | elicit, confirm, and communicate necessary or desired characteristics of proposed solutions.
+**Stakeholder**: a group or individual with a relationship to the change, the need, or the solution. | manage the collaboration with the stakeholders who participate in the business analysis work. All stakeholders may participate in different roles and at different times during a change.
+**Value**: the worth, importance, or usefulness of something to a stakeholder within a context. | collaborate with stakeholders to assess the relative value of information provided through elicitation, and apply a variety of techniques to confirm and communicate that value.
+**Context**: the circumstances that influence, are influenced by, and provide understanding of the change. | apply a variety of elicitation techniques to identify business analysis information about the context that may affect the change.
+
+![](img/4_01.jpg)
+
+### 4.1 Prepare for Elicitation
+
+#### 4.1.1 Purpose
+
+#### 4.1.2 Description
+
+#### 4.1.3 Inputs
+
+* **Needs**: guides the preparation in terms of the scope and purpose of elicitation activities. Elicitation can be used to discover the needs, but in order to get started there must be some need that exists—even if it has not yet been fully elicited or understood.
+* **Stakeholder Engagement Approach**: understanding stakeholders' communication and collaboration needs helps plan and prepare appropriate and effective elicitation events.
+
+![](img/4_02.jpg)
+
+#### 4.1.4 Elements
+
+1. Understand the Scope of Elicitation
+	* business domain
+	* overall corporate culture and environment
+	* stakeholder locations
+	* stakeholders who are involved and their group dynamics
+	* expected outputs the elicitation activities will feed
+	* other elicitation activities planned to complement this one
+	* strategy or solution approach
+	* scope of future solution, and
+	* possible sources of the business analysis information that might feed into the specific elicitation activity.
+2. Select Elicitation Techniques
+3. Set Up Logistics
+
+**p59**
