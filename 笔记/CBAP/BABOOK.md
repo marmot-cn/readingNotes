@@ -487,5 +487,16 @@ Core Concept | During Elicitation and Collaboration, business analysts...
 	* possible sources of the business analysis information that might feed into the specific elicitation activity.
 2. Select Elicitation Techniques
 3. Set Up Logistics
+	* the activity's goals
+	* participants and their roles
+	* scheduled resources, including people, rooms, and tools,
+	* locations,
+	* communication channels,
+	* techniques, and
+	* languages used by stakeholders (oral and written).
+4. Secure Supporting Material
+5. Prepare Stakeholders
 
-**p59**
+#### 4.1.5 Guidelines and Tools
+
+**p60**
