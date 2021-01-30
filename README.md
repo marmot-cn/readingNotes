@@ -126,6 +126,7 @@
 ### 安全
 
 * 白帽子讲Web安全(纪念版)
+* CCSK云安全指南V4.0中文版（2020）
 
 ### 测试
 
@@ -239,4 +240,4 @@
 
 ## badges
 
-![pmp](./badges/pmp.png) ![acp](./badges/acp.png) ![pba](./badges/pba.png)
+![pmp](badges/pmp.png) ![acp](badges/acp.png) ![pba](badges/pba.png)
