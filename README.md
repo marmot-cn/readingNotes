@@ -239,4 +239,4 @@
 
 ## badges
 
-[![pmp](./badges/project-management-professional-pmp.png)](https://www.youracclaim.com/badges/13c3cc82-97b7-4c38-8df2-8d1ace580818/public_url) [![acp](./badges/pmi-agile-certified-practitioner-pmi-acp.png)](https://www.youracclaim.com/badges/a4ce7db5-bff6-475e-a009-16a879c108b1/public_url)
+![pmp](./badges/pmp.png) ![acp](./badges/acp.png) ![pba](./badges/pba.png)
