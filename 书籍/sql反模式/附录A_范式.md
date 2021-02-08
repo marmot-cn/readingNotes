@@ -136,7 +136,7 @@
 		违反第三范式示例:
 		assigned_email 并不是 Bug 的属性,且依赖于assign_to.
 		
-		bug_id |assign_to| assigend_emaik  |  
+		bug_id |assign_to| assigend_email  |  
 		-------| ------- | --------------- |
 		1234   | Larry   |Larry@example.com| 
 		3456   | Jerry   |Jerry@example.com|     
