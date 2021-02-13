@@ -499,4 +499,104 @@ Core Concept | During Elicitation and Collaboration, business analysts...
 
 #### 4.1.5 Guidelines and Tools
 
-**p60**
+* Business Analysis Approach
+* Business Objectives
+* Existing Business Analysis Information
+* Potential Value
+
+#### 4.1.6 Techniques
+
+* Brainstorming
+* Data Mining
+* Document Analysis
+* Estimation
+* Interviews
+* Mind Mapping
+* Risk Analysis and Management
+* Stakeholder List, Map, or Personas
+
+#### 4.1.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Project Manager
+* Sponsor
+
+#### 4.1.8 Outputs
+
+* Elicitation Activity Plan
+
+### 4.2 Conduct Elicitation
+
+#### 4.2.1 Purpose
+
+**draw out, explore, and identify information relevant to the change.**
+
+#### 4.2.2 Description
+
+* Collaborative
+* Research
+* Experiments
+
+#### 4.2.3 Inputs
+
+* Elicitation Activity Plan
+
+![](img/4_03.jpg)
+
+#### 4.2.4 Elements
+
+* Guide Elicitation Activity
+* Capture Elicitation Outcomes
+
+#### 4.2.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Existing Business Analysis Information
+* Stakeholder Engagement Approach
+* Supporting Materials
+
+#### 4.2.6 Techniques
+
+* Benchmarking and Market Analysis
+* Brainstorming
+* Business Rules Analysis
+* Collaborative Games
+* Concept Modelling
+* Data Mining
+* Data Modelling
+* Document Analysis
+* Focus Groups
+* Interface Analysis
+* Interviews
+* Mind Mapping
+* Observation
+* Process Analysis
+* Process Modelling
+* Prototyping
+* Survey or Questionnaire
+* Workshops
+
+#### 4.2.7 Stakeholders
+
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Implementation Subject Matter Expert
+* Sponsor
+* Any stakeholders
+* Any stakeholders
+
+#### 4.2.8 Outputs
+
+* Elicitation Results (unconfirmed)
+
+### 4.3 Confirm Elicitation Results
+
+#### 4.3.1 Purpose
+
+**check the information gathered during an elicitation session for accuracy and consistency with other information**
+
+#### 4.3.2 Description
+
+
+**p65**
