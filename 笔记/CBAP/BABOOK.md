@@ -598,5 +598,15 @@ Core Concept | During Elicitation and Collaboration, business analysts...
 
 #### 4.3.2 Description
 
+#### 4.3.3 Inputs
+
+* Elicitation Results (unconfirmed)
+
+![](img/4_04.jpg)
+
+#### 4.3.4 Elements
+
+1. Compare Elicitation Results Against Source Information
+2. Compare Elicitation Results Against Other Elicitation Results
 
 **p65**
