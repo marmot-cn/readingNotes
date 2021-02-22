@@ -609,4 +609,90 @@ Core Concept | During Elicitation and Collaboration, business analysts...
 1. Compare Elicitation Results Against Source Information
 2. Compare Elicitation Results Against Other Elicitation Results
 
-**p65**
+#### 4.3.5 Guidelnes and Tools
+
+* Elicitation Activity Plan
+* Existing Business Analysis Information
+
+#### 4.3.6 Techniques
+
+* Document Analysis
+* Interviews
+* Reviews
+* Workshops
+
+#### 4.3.7 Stakeholders
+
+* Domain Subject Matter Experts
+* Any stakeholder
+
+#### 4.3.8 Outputs
+
+* Elicitation Results (confirmed)
+
+### 4.4 Communicate Business Analysis Information
+
+#### 4.4.1 Purpose
+
+**ensure stakeholders have a shared understanding of business analysis information**
+
+#### 4.4.2 Description
+
+#### 4.4.3 Inputs
+
+* Business Analysis Information
+* Stakeholder Engagement Approach
+
+![](img/4_05.jpg)
+
+#### 4.4.4 Elements
+
+1. Determine Objectives and Format of Communication
+
+Possible forms for packages may include
+
+* Formal Documentation
+* Informal Documentation
+* Presentations
+
+2. Communicate Business Analysis Package
+
+Common communication platforms include:
+
+* Group collaboration
+* Individual collaboration
+* E-mail or other non-verbal methods
+
+#### 4.4.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Information Management Approach
+
+#### 4.4.6 Techniques
+
+* Interviews
+* Reviews
+* Workshops
+
+#### 4.4.7 Stakeholders
+
+* End User
+* Customer
+* Domain Subject Matter Expert
+* Implementation Subject Matter Expert
+* Tester
+* Any stakeholder
+
+#### 4.4.8 Outputs
+
+* Business Analysis Information (communicated)
+
+### 4.5 Manage Stakeholder Collaboration
+
+#### 4.5.1 Purpose
+
+**encourage stakeholders to work towards a common goal**
+
+#### 4.5.2 Description
+
+**p71**
