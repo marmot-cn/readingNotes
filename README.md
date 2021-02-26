@@ -246,4 +246,7 @@
 
 ## badges
 
-![pmp](badges/pmp.png） ![acp](badges/acp.png） ![pba](badges/pba.png）
+* PMP
+* PBA
+* ACP
+* CCSK

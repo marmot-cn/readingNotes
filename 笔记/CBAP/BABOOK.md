@@ -695,4 +695,86 @@ Common communication platforms include:
 
 #### 4.5.2 Description
 
-**p71**
+#### 4.5.3 Inputs
+
+* Stakeholder Engagement Approach
+* Business Analysis Performance Assessment
+
+![](img/4_06.jpg)
+
+#### 4.5.4 Elements
+
+1. Gain Agreement on Commitments
+2. Monitor Stakeholder Engagement
+3. Collaboration
+
+#### 4.5.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Business Objectives
+* Future State Description
+* Recommended Actions
+* Risk Analysis Results
+
+#### 4.5.6 Techniques
+
+* Collaborative Games
+* Lessons Learned
+* Risk Analysis and Management
+* Stakeholder List, Map, or Personas
+
+#### 4.5.7 Stakeholders
+
+* All stakeholders
+
+#### 4.5.8 Outputs
+
+* Stakeholder Engagement
+
+## 5. Requirements Life Cycle Management
+
+The management of requirements does not end once a solution is implemented. Throughout the life of a solution, requirements continue to provide value when they are managed appropriately.
+
+Life cycle refers to the existence of various phases or states that requirements pass through as part of any change. Requirements may be in multiple states at one time.
+
+![](img/5_01.jpg)
+
+The Requirements Life Cycle Management knowledge area includes the following tasks:
+
+* Trace Requirements
+* Maintain Requirements
+* Prioritize Requirements
+* Assess Requirements Changes
+* Approve Requirements
+
+### The Core Concept Model in Requirements Life Cycle Management
+
+Core Concept | During Requirements Life Cycle Management, business analysts...
+---- | ---
+Change: the act of transformation in response to a need. | manage how proposed changes to requirements and designs are evaluated during an initiative.
+Need: a problem or opportunity to be addressed. | trace, prioritize and maintain requirements to ensure that the need is met.
+Solution: a specific way of satisfying one or more needs in a context. | trace requirements and designs to solution components to ensure that the solution satisfies the need.
+Stakeholder: a group or individual with a relationship to the change, the need, or the solution. | work closely with key stakeholders to maintain understanding, agreement, and approval of requirements and designs.
+Value: the worth, importance, or usefulness of something to a stakeholder within a context. | maintain requirements for reuse to extend value beyond the current initiative.
+Context: the circumstances that influence, are influenced by, and provide understanding of the change. | analyze the context to support tracing and prioritization activities.
+
+![](img/5_02.jpg)
+
+### 5.1 Trace Requirements
+
+#### 5.1.1 Purpose
+
+**requirements and designs at different levels are aligned to one another, and to manage the effects of change to one level on related requirements.**
+
+#### 5.1.2 Description
+
+![](img/5_03.jpg)
+
+#### 5.1.3 Inputs
+
+* Requirements
+* Designs
+
+![](img/5_04.jpg)
+
+**p81**
