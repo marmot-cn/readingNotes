@@ -777,4 +777,30 @@ Context: the circumstances that influence, are influenced by, and provide unders
 
 ![](img/5_04.jpg)
 
-**p81**
+#### 5.1.4 Elements
+
+1. Level Of Formality
+2. Relationships
+	* Derive
+	* Depends
+		* Necessity
+		* Effort
+	* Satisfy
+	* Validate
+3. Traceability Repository
+
+#### 5.1.5 Guidelines and Tools
+
+* Domain Knowledge
+* Information Management Approach
+* Legal/Regulatory Information
+* Requirements Management Tools/Repository
+
+#### 5.1.6 Techniques
+
+* Business Rules Analysis
+* Functional Decomposition
+* Process Modelling
+* Scope Modelling
+
+**p83**
