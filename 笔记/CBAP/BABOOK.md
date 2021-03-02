@@ -803,4 +803,324 @@ Context: the circumstances that influence, are influenced by, and provide unders
 * Process Modelling
 * Scope Modelling
 
-**p83**
+#### 5.1.7 Stakeholders
+
+* Customers
+* Domain Subject Matter Expert
+* End User
+* Implementation Subject Matter Expert
+* Operational Support
+* Project Manager
+* Sponsor
+* Suppliers
+* Tester
+
+#### 5.1.8 Outputs
+
+* Requirements (traced)
+* Designs (traced)
+
+### 5.2 Maintain Requirements
+
+#### 5.2.1 Purpose
+
+**retain requirement accuracy and consistency throughout and beyond the change during the entire requirements life cycle, and to support reuse of requirements in other solutions**
+
+#### 5.2.2 Description
+
+the requirements should be:
+
+* consistently represented,
+* reviewed and approved for maintenance using a standardized process that defines proper access rights and ensures quality, and
+* easily accessible and understandable.
+
+#### 5.2.3 Inputs
+
+* Requirements
+* Designs
+
+![](img/5_05.jpg)
+
+#### 5.2.4 Elements
+
+1. Maintain Requirements
+2. Maintain Attributes
+3. Reusing Requirements
+
+#### 5.2.5 Guidelines and Tools
+
+* Information Management Approach
+
+#### 5.2.6 Techniques
+
+* Business Rules Analysis
+* Data Flow Diagrams
+* Data Modelling
+* Document Analysis
+* Functional Decomposition
+* Process Modelling
+* Use Cases and Scenarios
+* User Stories
+
+#### 5.2.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Implementation Subject Matter Expert
+* Operational Support
+* Regulator
+* Tester
+
+#### 5.2.8 Outputs
+
+* Requirements (maintained)
+* Designs (maintained)
+
+### 5.3 Prioritize Requirements
+
+#### 5.3.1 Purpose
+
+**rank requirements in the order of relative importance**
+
+#### 5.3.2 Description
+
+Prioritization is the act of ranking requirements to determine their relative importance to stakeholders.
+
+#### 5.3.3 Inputs
+
+* Requirements
+* Designs
+
+![](img/5_06.jpg)
+
+#### 5.3.4 Elements
+
+1. Basis for Prioritization
+
+The basis on which requirements are prioritized is agreed upon by relevant stakeholders as defined in the Business Analysis Planning and Monitoring knowledge area.
+
+Typical factors that influence prioritization include:
+
+* Benefit
+* Penalty
+* Cost
+* Risk
+* Dependencies
+* Time Sensitivity
+* Stability
+* Regulatory or Policy Compliance
+
+2. Challenges of Prioritization
+3. Continual Prioritization
+
+#### 5.3.5 Guidelines and Tools
+
+* Business Constraints
+* Change Strategy
+* Domain Knowledge
+* Governance Approach
+* Requirements Architecture
+* Requirements Management Tools/Repository
+* Solution Scope
+
+#### 5.3.6 Techniques
+
+* Backlog Management
+* Business Cases
+* Decision Analysis
+* Estimation
+* Financial Analysis
+* Interviews
+* Item Tracking
+* Prioritization
+* Risk Analysis and Management
+* Workshops
+
+#### 5.3.7 Stakeholders
+
+* Customer
+* End User
+* Implementation Subject Matter Expert
+* Project Manager
+* Regulator
+* Sponsor
+
+#### 5.3.8 Outputs
+
+* Requirements (prioritized)
+* Designs (prioritized)
+
+### 5.4 Assess Requirements Changes
+
+#### 5.4.1 Purpose
+
+**evaluate the implications of proposed changes to requirements and designs**
+
+#### 5.4.2 Description
+
+When assessing changes, business analysts consider if each proposed change:
+
+* aligns with the overall strategy,
+* affects value delivered to the business or stakeholder groups,
+* impacts the time to deliver or the resources required to deliver the value, and
+* alters any risks, opportunities, or constraints associated with the overall initiative.
+
+#### 5.4.3 Inputs
+
+* Proposed Change
+* Requirements
+* Designs
+
+![](img/5_07.jpg)
+
+#### 5.4.4 Elements
+
+1. Assessment Formality
+2. Impact Analysis
+
+When considering changes or additions to existing requirements, business analysts assess the impact of the proposed change by considering:
+
+* Benefit
+* Cost
+* Impact
+* Schedule
+* Urgency
+
+3. Impact Resolution
+
+#### 5.4.5 Guidelines and Tools
+
+* Change Strategy
+* Domain Knowledge
+* Governance Approach
+* Legal/Regulatory Information
+* Requirements Architecture
+* Solution Scope
+
+#### 5.4.6 Techniques
+
+* Business Cases
+* Business Rules Analysis
+* Decision Analysis
+* Document Analysis
+* Estimation
+* Financial Analysis
+* Interface Analysis
+* Interviews
+* Item Tracking
+* Risk Analysis and Management
+* Workshops
+
+#### 5.4.7 Stakeholders
+
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Tester
+
+#### 5.4.8 Outputs
+
+* Requirements Change Assessment
+* Designs Change Assessment
+
+### 5.5 Approve Requirements
+
+#### 5.5.1 Purpose
+
+**to obtain agreement on and approval of requirements and designs for business analysis work to continue and/or solution construction to proceed**.
+
+#### 5.5.2 Description
+
+#### 5.5.3 Inputs
+
+* Requirements (verified)
+* Designs
+
+![](img/5_08.jpg)
+
+#### 5.5.4 Elements
+
+1. Understand Stakeholder Roles
+2. Conflict and Issue Management
+3. Gain Consensus
+4. Track and Communicate Approval
+
+#### 5.5.5 Guidelines and Tools
+
+* Change Strategy
+* Governance Approach
+* Legal/Regulatory Information
+* Requirement Management Tools/Repository
+* Solution Scope
+
+#### 5.5.6 Techniques
+
+* Acceptance and Evaluation Criteria
+* Decision Analysis
+* Item Tracking
+* Reviews
+* Workshops
+
+#### 5.5.7 Stakeholders
+
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Tester
+
+#### 5.5.8 Outputs
+
+* Requirements (approved)
+* Designs (approved)
+
+## 6. Strategy Analysis
+
+The Strategy Analysis knowledge area includes the following tasks:
+
+* Analyze Current State
+* Define Future State
+* Assess Risks
+* Define Change Strategy
+
+### The Core Concept Model in Strategy Analysis
+
+![](img/6_01.jpg)
+
+Core Concept | During Strategy Analysis, business analysts...
+---- | ----
+Change: the act of transformation in response to a need. | define the future state and develop a change strategy to achieve the future state.
+Need: a problem or opportunity to be addressed. | identify needs within the current state and prioritize needs to determine the desired future state.
+Solution: a specific way of satisfying one or more needs in a context. | define the scope of a solution as part of developing a change strategy.
+Stakeholder: a group or individual with a relationship to the change, the need, or the solution. | collaborate with stakeholders to understand the business need and to develop a change strategy and future state that will meet those needs.
+Value: the worth, importance, or usefulness of something to a stakeholder in a context. | examine the potential value of the solution to determine if a change is justified.
+Context: the circumstances that influence, are influenced by, and provide understanding of the change. | consider the context of the enterprise in developing a change strategy.
+
+![](img/6_02.jpg)
+
+### 6.1 Analyze Current State
+
+#### 6.1.1 Purpose
+
+**to understand the reasons why an enterprise needs to change some aspect of how it operates and what would be directly or indirectly affected by the change**.
+
+#### 6.1.2 Description
+
+#### 6.1.3 Inputs
+
+* Elicitation Results
+* Needs
+
+![](img/6_03.jpg)
+
+#### 6.1.4 Elements
+
+1. Business Needs
+
+**p105**
