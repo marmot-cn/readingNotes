@@ -1123,4 +1123,95 @@ Context: the circumstances that influence, are influenced by, and provide unders
 
 1. Business Needs
 
-**p105**
+A business need may be identified at many different levels of the enterprise:
+
+* From the top-down
+* From the bottom-up
+* From middle management
+* From external drivers
+
+2. Organizational Structure and Culture
+3. Capabilities and Processes
+4. Technology and Infrastructure
+5. Policies
+6. Business Architecture
+7. Internal Assets
+8. External Influencers
+	* Industry Structure
+	* Competitors
+	* Customers
+	* Suppliers
+	* Political and Regulatory Environment
+	* Technology
+	* Macroeconomic Factors
+
+#### 6.1.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Enterprise Limitation
+* Organizational Strategy
+* Solution Limitation
+* Solution Performance Goals
+* Solution Performance Measures
+* Stakeholder Analysis Results
+
+#### 6.1.6 Techniques
+
+* Benchmarking and Market Analysis
+	* 5 Forces analysis
+	* PEST
+	* STEEP
+	* CATWOE
+* Business Capability Analysis
+* Business Model Canvas
+* Business Cases
+* Concept Modelling
+* Data Mining
+* Document Analysis
+* Financial Analysis
+* Focus Groups
+* Functional Decomposition
+* Interviews
+* Item Tracking
+* Lessons Learned
+* Metrics and Key Performance Indicators (KPIs)
+* Mind Mapping
+* Observation
+* Organizational Modelling
+* Process Analysis
+* Process Modelling
+* Risk Analysis and Management
+* Root Cause Analysis
+* Scope Modelling
+* Survey or Questionnaire
+* SWOT Analysis
+* Vendor Assessment
+* Workshops
+
+#### 6.1.7 Stakeholders
+
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Implementation Subject Matter Expert
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Supplier
+* Tester
+
+#### 6.1.8 Outputs
+
+* Current State Description
+* Business Requirements
+
+### 6.2 Define Future State
+
+#### 6.2.1 Purpose
+
+**to determine the set of necessary conditions to meet the business need**.
+
+#### 6.2.2 Description
+
+**p111**
