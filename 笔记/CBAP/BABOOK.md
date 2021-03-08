@@ -1214,4 +1214,61 @@ A business need may be identified at many different levels of the enterprise:
 
 #### 6.2.2 Description
 
-**p111**
+#### 6.2.3 Inputs
+
+* Business Requirements
+
+![](img/6_04.jpg)
+
+#### 6.2.4 Elements
+
+1. Business Goals and Objectives
+
+business goals include:
+
+* Create a new capability such as a new product or service, address a competitive disadvantage, or create a new competitive advantage
+* Improve revenue by increasing sales or reducing cost
+* Increase customer satisfaction
+* Increase employee satisfaction
+* Comply with new regulations
+* Improve safety
+* Reduce time to deliver a product or service
+
+SMART:
+
+* **S** pecific: describing something that has an observable outcome.
+* **M** easurable: tracking and measuring the outcome.
+* **A** chievable: testing the feasibility of the effort.
+* **R** elevant: aligning with the enterprise’s vision, mission, and goals, and
+* **T** ime-bounded: defining a time frame that is consistent with the need.
+
+2. Scope of Solution Space
+3. Constraints
+
+Constraints may reflect any of the following:
+
+* budgetary restrictions,
+* time restrictions,
+* technology,
+* infrastructure,
+* policies,
+* limits on the number of resources available,
+* restrictions based on the skills of the team and stakeholders,
+* a requirement that certain stakeholders not be affected by the implementation of the solution,
+* compliance with regulations, and
+* any other restriction
+
+4. Organizational Structure and Culture
+5. Capabilities and Processes
+6. Technology and Infrastructure
+7. Policies
+8. Business Architecture
+9. Internal Assets
+10. Identify Assumptions
+11. Potential Value
+
+#### 6.2.5 Guidelines and Tools
+
+
+
+**p117**
