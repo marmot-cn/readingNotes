@@ -1269,6 +1269,30 @@ Constraints may reflect any of the following:
 
 #### 6.2.5 Guidelines and Tools
 
+* Current State Description
+* Metrics and Key Performance Indicators (KPIs)
+* Organizational Strategy
+
+#### 6.2.6 Techniques
+
+* Acceptance and Evaluation Criteria
+* Balanced Scorecard
+* Benchmarking and Market Analysis
+* Brainstorming
+* Business Capability Analysis
+* Business Cases
+* Business Model Canvas
+* Decision Analysis
+* Decision Modelling
+* Financial Analysis
+* Functional Decomposition
+* Interviews
+* Lessons Learned
+* Metrics and Key Performance Indicators (KPIs)
+* Mind Mapping
+* Organizational Modelling
+* Process Modelling
+* Prototyping
 
 
-**p117**
+**p118**
