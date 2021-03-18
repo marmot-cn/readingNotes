@@ -1293,6 +1293,209 @@ Constraints may reflect any of the following:
 * Organizational Modelling
 * Process Modelling
 * Prototyping
+* Scope Modelling
+* Survey or Questionnaire
+* SWOT Analysis
+* Vendor Assessment
+* Workshops
 
+#### 6.2.7 Stakeholders
 
-**p118**
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Implementation Subject Matter Expert
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Supplier
+* Tester
+
+#### 6.2.8 Outputs
+
+* Business Objectives
+* Future State Description
+* Potential Value
+
+### 6.3 Assess Risks
+
+#### 6.3.1 Purpose
+
+The purpose of Assess Risks is to understand the undesirable consequences of internal and external forces on the enterprise during a transition to, or once in, the future state. An understanding of the potential impact of those forces can be used to make a recommendation about a course of action.
+
+#### 6.3.2 Description
+
+The risks are analyzed for the:
+
+* possible consequences if the risk occurs,
+* impact of those consequences,
+* likelihood of the risk, and
+* potential time frame（时间范围） when the risk might occur.
+
+positive risk = opportunities
+
+#### 6.3.3 Inputs
+
+* Business Objectives
+* Elicitation Results (confirmed)
+* Influences
+* Potential Value
+* Requirements (prioritized)
+
+![](img/6_05.jpg)
+
+#### 6.3.4 Elements
+
+1. Unknowns
+2. Constraints, Assumptions, and Dependencie
+3. Negative Impact to Value
+4. Risk Tolerance
+
+three broad ways of describing attitude toward risk
+
+* Risk-aversion
+* Neutrality
+* Risk-seeking
+
+5. Recommendation
+
+* pursue the benefits of a change regardless of the risk,
+* pursue the benefits of a change while investing in reducing risk (likelihood and/or impact),
+* seek out ways to increase the benefits of a change to outweigh the risk
+* identify ways to manage and optimize opportunities, and
+* do not pursue the benefits of a change
+
+#### 6.3.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Business Policies
+* Change Strategy
+* Current State Description
+* Future State Description
+* Identified Risks
+* Stakeholder Engagement Approach
+
+#### 6.3.6 Techniques
+
+* Brainstorming
+* Business Cases
+* Decision Analysis
+* Document Analysis
+* Financial Analysis
+* Interviews
+* Lessons Learned
+* Mind Mapping
+* Risk Analysis and Management
+* Root Cause Analysis
+* Survey or Questionnaire
+* Workshops
+
+#### 6.3.7 Stakeholders
+
+* Domain Subject Matter Expert
+* Implementation Subject Matter Expert
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Supplier
+* Tester
+
+#### 6.3.8 Outputs
+
+### 6.4 Define Change Strategy
+
+#### 6.4.1 Purpose
+
+The purpose of Define Change Strategy is to develop and assess alternative approaches to the change, and then select the recommended approach.
+
+#### 6.4.2 Description
+
+The change strategy clearly describes the nature of the change in terms of:
+
+* context of the change,
+* identified alternative change strategies,
+* justification for why a particular change strategy is the best approach,
+* investment and resources required to work toward the future state,
+* how the enterprise will realize value after the solution is delivered,
+* key stakeholders in the change, and
+* transition states along the way.
+
+#### 6.4.3 Inputs
+
+* Current State Description
+* Future State Description
+* Risk Analysis Results
+* Stakeholder Engagement Approach
+
+![](img/6_06.jpg)
+
+#### 6.4.4 Elements
+
+1. Solution Scope
+2. Gap Analysis
+3. Enterprise Readiness Assessment
+4. Change Strategy
+
+The preferred change strategy should be selected considering:
+
+* organizational readiness to make the change,
+* major costs and investments needed to make the change,
+* timelines to make the change,
+* alignment to the business objectives,
+* timelines for value realization, and
+* opportunity costs of the change strategy.
+
+5. Transition States and Release Planning
+
+#### 6.4.5 Guidelines and Tools
+
+* Business Analysis Approach
+* Design Options
+* Solution Recommendations
+
+#### 6.4.6 Techniques
+
+* Balanced Scorecard
+* Benchmarking and Market Analysis
+* Brainstorming
+* Business Capability Analysis
+* Business Cases
+* Business Model Canvas
+* Decision Analysis
+* Estimation
+* Financial Analysis
+* Focus Groups
+* Functional Decomposition
+* Interviews
+* Lessons Learned
+* Mind Mapping
+* Organizational Modelling
+* Process Modelling
+* Scope Modelling
+* SWOT Analysis
+* Vendor Assessment
+* Workshops
+
+#### 6.4.7 Stakeholders
+
+* Customer
+* Domain Subject Matter Expert
+* End User
+* Implementation Subject Matter Expert
+* Operational Support
+* Project Manager
+* Regulator
+* Sponsor
+* Supplier
+* Tester
+
+#### 6.4.8 Outputs
+
+* Change Strategy
+* Solution Scope
+
+## 7. Requirements Analysis and Design Definition
+
+**p133**
