@@ -1498,4 +1498,37 @@ The preferred change strategy should be selected considering:
 
 ## 7. Requirements Analysis and Design Definition
 
-**p133**
+![](img/7_01.jpg)
+
+The Requirements Analysis and Design Definition knowledge area includes the following tasks:
+
+* Specify and Model Requirements
+* Verify Requirements
+* Validate Requirements
+* Define Requirements Architecture
+* Define Solution Options
+* Analyze Potential Value and Recommend Solution
+
+
+Core Concept |  During Requirements Analysis and Design Definition, business analysts...
+---- | ---
+Change: the act of transformation in response to a need. | transform elicitation results into requirements and designs in order to define the change.
+Need: a problem or opportunity to be addressed. | analyze the needs in order to recommend a solution that meets the needs.
+Solution: a specific way of satisfying one or more needs within a context. | define solution options and recommend the one that is most likely to address the need and has the most value.
+Stakeholder: a group or individual with a relationship to the change, the need, or the solution.| tailor the requirements and designs so that they are understandable and usable by each stakeholder group.
+Value: the worth, importance, or usefulness of something to a stakeholder within a context. | analyze and quantify the potential value of the solution options.
+Context: the circumstances that influence, are influenced by, and provide understanding of the change. | 
+model and describe the context in formats that are understandable and usable by all stakeholders.
+
+![](img/7_02.jpg)
+
+### 7.1 Specify and Model Requirements
+
+### 7.1.1 Purpose
+
+**to analyze, synthesize, and refine elicitation results into requirements and designs**
+
+### 7.1.2 Description
+
+
+**p137**
