@@ -1530,5 +1530,67 @@ model and describe the context in formats that are understandable and usable by 
 
 ### 7.1.2 Description
 
+### 7.1.3 Inputs
 
-**p137**
+* Elicitation Results (any state)
+
+![](img/7_03.jpg)
+
+### 7.1.4 Elements
+
+#### 1. Model Requirements
+
+Business analysts choose from one or more of the following modelling formats:
+
+* Matrices
+* Diagrams
+
+Model categories can include:
+
+* People and Roles
+	* Organizational Modelling
+	* Roles 
+	* Permissions Matrix 
+	* Stakeholder List, Map, or Personas.
+* Rationale
+	*  Decision Modelling
+	*  Scope Modelling
+	*  Business Model Canvas
+	*  Root Cause Analysis
+	*  Business Rules Analysis
+* Activity Flow
+	* Process Modelling
+	* Use Cases and Scenarios
+	* User Stories
+* Capability
+	* Business Capability Analysis
+	* Functional Decomposition
+	* Prototyping
+* Data and Information
+	* Data Dictionary
+	* Data Flow Diagrams
+	* Data Modelling
+	* Glossary
+	* State Modelling
+	* Interface Analysis
+
+#### 2. Analyze Requirements
+
+#### 3. Represent Requirements and Attributes
+
+#### 4. Implement the Appropriate Levels of Abstraction
+
+### 7.1.5 Guidelines and Tools
+
+* Modelling Notations/Standards
+* Modelling Tools
+* Requirements Architecture
+* Requirements Life Cycle Management Tools
+* Solution Scope
+
+### 7.1.6 Techniques
+
+* Acceptance and Evaluation Criteria
+* Business Capability Analysis
+
+**p142**
