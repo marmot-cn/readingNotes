@@ -32,3 +32,29 @@
 ```
 nginx -g WINCH
 ```
+
+### NGINX 静态资源
+
+`$limit_rate ?`如`set $limit_rate 1k;`, 限制访问速率
+
+`log_format`日志格式
+
+### NGINX 缓存
+
+* `proxy_cache_path`
+	* 缓存路径
+	* 命名
+
+### 工具
+
+`go access`查看`nginx`的`access`日志
+
+### 证书
+
+* DV: 域名验证
+* OV: 组织验证, 申请证书验证组织机构
+* EV: 扩展验证, 更严格的验证
+
+NGINX向浏览器发送两个证书, 二级与一级证书。根证书操作系统内部自己验证。
+
+![](img/20210928102323.jpg)
