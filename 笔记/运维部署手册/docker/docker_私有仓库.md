@@ -10,14 +10,15 @@
 
 **编写`dokcer-compose.yml`**
 
-		registry:
- 		 image: "registry:latest"
- 		 ports:
-  		  - "5000:5000"
- 		 volumes:
-          - "/data/docker-registry:/tmp/registry"
-         container_name: self-registry
-         
+```
+registry:
+ image: "registry:latest"
+ ports:
+  - "5000:5000"
+ volumes:
+  - "/data/docker-registry:/tmp/registry"
+ container_name: self-registry
+ ```        
  
 **`push`镜像**
 
