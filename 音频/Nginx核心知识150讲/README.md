@@ -90,3 +90,29 @@ worker进程数与CPU核心数匹配，并且绑定CPU, 可以最大限度防止
 进程间通信使用共享内存管理。
 
 为什么多进程结构, 需要高性能，高可靠性。因为线程之间共享同一个地址空间，一个线程段错误，整个进程挂掉。
+
+### Nginx reload 流程
+
+1. 向`master`进程发送`HUP`信号(`reload`命令)
+2. `master`进程校验配置语法是否正确
+3. `master`进程打开新的监听端口(可能会打开新的端口，子进程会集成父进程端口)
+4. `master`进程用新配置启动新的`worker`子进程
+5. `master`进程向老`worker`子进程发送`QUIT`信号
+6. 老`worker`进程关闭监听句柄，处理完当前连接后结束进程
+
+### Nginx 热升级流程
+
+1. 将旧`Nginx`文件换成新`Nginx`文件（注意备份）
+2. 向`master`进程发送`USR2`信号
+3. `master`进程修改`pid`文件名，加后缀`.oldbin`
+4. `master`进程用新`Nginx`文件启动新`master`进程
+5. 向老`master`进程发送`QUIT`信号，关闭老`master`进程
+6. 回滚: 向老`master`发送`HUP`, 向新`master`发送`QUIT`
+
+### `worker`进程：优雅的关闭
+
+1. 设置定时器`worker_shutdown_timeout`
+2. 关闭监听句柄
+3. 关闭空闲连接
+4. 在循环中等待全部连接关闭, 超过`worker_shutdown_timeout`则强制关闭
+5. 退出进程
