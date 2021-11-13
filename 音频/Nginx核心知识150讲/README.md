@@ -116,3 +116,21 @@ worker进程数与CPU核心数匹配，并且绑定CPU, 可以最大限度防止
 3. 关闭空闲连接
 4. 在循环中等待全部连接关闭, 超过`worker_shutdown_timeout`则强制关闭
 5. 退出进程
+
+### Nginx 一线程同时处理多连接
+
+* 用户态代码完成连接切换
+* 建立减少OS进程切换
+
+### Nginx模块
+
+`nginx`编译后模块可通过在`objs/ngx_modules.c`中检查是否编译某个模块。
+
+### Nginx模块的分类
+
+* `NGX_CORE_MODULE`: 核心模块, 也会衍生定义子类型模块
+* `NGX_CONF_MODULE`: 解析配置文件
+* `NGX_EVENT_MODULE`: 事件模块
+
+### Nginx 连接池
+
