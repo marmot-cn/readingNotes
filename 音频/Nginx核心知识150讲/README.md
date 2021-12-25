@@ -181,5 +181,57 @@ worker进程数与CPU核心数匹配，并且绑定CPU, 可以最大限度防止
 * 不能合并
 	* 动作类指令: 指定行文
 
-### Listen
+### HTTP请求头部的流程
+
+*  接收`URI`
+	* 分配请求内存池`request_pool_size: 4k`, 如果超过`4k`会扩充
+	* 状态机解析请求行
+	* 分配大内存`large_client_header_buffers:4 8k`
+	* 状态机解析请求行
+	* 标识URI
+* 接收`header`
+	* 状态机解析`header`
+	* 分配大内存`large_client_header_buffers:4 8k`
+		* `4 8k`代表先分配一个`8k`, 不够在分配一个`8k`
+	* 标识`header`
+	* 移除超时定时器`cleint_header_timeout: 60s`
+	* 开始11个阶段的`http`请求处理
+
+#### `request_pool_size`
+
+nginx在接收到每个http请求时，都会为其申请一个内存池，该参数指定了该内存池的大小，需要注意的是，该内存池本质上就是从`connection_pool_size`内存池中进行申请
+
+* `connection_pool_size`是 nginx 框架和客户端建立了连接时就产生的
+* 当客户端有数据请求发来时，这时候是`request_pool_size 4k`的空间里，开始分配出具体的 `client_header_buffer_size 1k`
+* 如果客户端的请求头部太长、超过了 4k ，这时候`large_client_header_buffers 4 8k`会其作用
+
+#### `large_client_header_buffers`
+# 
+`client_header_buffer_size`, 该参数指定了用户请求的http头部的size大小，如果请求头部大小超过了该数值，那么就会将请求就会交由large_client_header_buffers参数定义的buffer处理。
+
+### 正在额表达式
+
+工具`pcretest`验证正则表达式
+
+`$0`标识`url`本身
+
+### 如何找到处理请求的`server`指令
+
+`server`匹配顺序
+
+1. 精确匹配
+2. `*`在前的泛域名
+3. `*`在后的泛域名
+4. 按文件中的顺序匹配正则表达式域名
+5. `default server`
+	* 第一个
+	* `linsten`指定`default`
+
+**`server_name_in_redirect`**
+
+If server_name_in_redirect is on, then Nginx will use the first value
+of the server_name directive for redirects. If server_name_in_redirect
+is off, then nginx will use the requested Host header.
+
+### HTTP请求的11个阶段
 
