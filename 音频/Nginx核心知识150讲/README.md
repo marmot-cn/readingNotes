@@ -235,3 +235,39 @@ is off, then nginx will use the requested Host header.
 
 ### HTTP请求的11个阶段
 
+* POST_READ
+	* 读取请求头部之后, `realip`模块
+* SERVER_REWRITE
+	* `rewrite`模块
+* FIND_CONFIG
+	* `location`匹配
+* REWRITE
+* POST_REWRITE
+* PREACCESS
+	* 限流`limit_conn`,`limit_req`模块
+* ACCESS
+	* 用户能否访问`auth_basic`,`access`,`auth_request`模块
+* POST_ACCESS
+* PRECONTENT
+	* `try_files`
+* CONTENT
+	* `index`,`autoindex`,`concat`
+* LOG
+	* `access_log`
+
+#### `realip`模块
+
+属于`postread`阶段
+
+启用`real_ip_recursive on`后，是` X-Forward-For `从右边开始数，第一个非可信地址的IP.
+
+`set_real_ip_from`设置可信`ip`.
+
+#### `rewrite`模块
+
+属于`rewrite`阶段
+
+`return`指令
+
+
+
