@@ -267,7 +267,7 @@ is off, then nginx will use the requested Host header.
 
 属于`rewrite`阶段
 
-`return`指令
-
+* `return`指令
+* `error_page`
 
 
