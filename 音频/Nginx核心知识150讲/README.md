@@ -263,11 +263,17 @@ is off, then nginx will use the requested Host header.
 
 `set_real_ip_from`设置可信`ip`.
 
-#### `rewrite`模块
+#### `rewrite`模块的`return`指令
 
 属于`rewrite`阶段
 
 * `return`指令
 * `error_page`
 
+#### `rewrite`模块的`rewrite`指令
 
+修改用户传入的`url`
+
+`rewrite_log`，默认没有开启，会在`rewrite_error.log`中记录重写`url`的日志.
+
+#### `rewrite`模块的`if`指令
