@@ -39,6 +39,8 @@ nginx -g WINCH
 
 `$limit_rate ?`如`set $limit_rate 1k;`, 限制访问速率
 
+`limit_rate`主要用于限制用户和服务器之间传输的字节数
+
 `log_format`日志格式
 
 ### NGINX 缓存
@@ -313,3 +315,17 @@ is off, then nginx will use the requested Host header.
 生效范围：全部`worker`进程（基于共享内存）
 
 #### `preaccess`阶段: `limit_req`模块
+
+限制一个链接上每秒的请求数
+
+`leaky bucket`算法
+
+把突发的流量，限定为恒定的流量。如果盆已经满了，立刻返回错误。如果盆没满，则放如到盆中。
+
+比`limit_conn`之前生效。
+
+#### `access`阶段：对`ip`做限制的`access`模块
+
+哪些`ip`可以访问，哪些`ip`不能访问。
+
+#### `access`阶段：对用户名密码做限制的`auth_basic`模块
