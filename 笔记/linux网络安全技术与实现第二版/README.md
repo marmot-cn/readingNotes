@@ -45,12 +45,14 @@
 
 `Netfilter`存放规则的内存块被分为四个**表**(Table)
 
-* filter: 过滤，起到防火墙作用。
-* nat: Network Address Translation, 功能是IP分享
-* managle: 通过`managle`机制来修改经过防火墙内数据包的内容
-* raw: 负责加快数据包穿过防火墙机制的速度，由此提高防火墙的性能
+* `filter`: 过滤，起到防火墙作用。
+* `nat`: Network Address Translation, 功能是IP分享
+* `managle`: 通过`managle`机制来修改经过防火墙内数据包的内容
+* `raw:` 负责加快数据包穿过防火墙机制的速度，由此提高防火墙的性能
 
 ### 2.6 Netfilter的filter机制
+
+![](img/01.jpg)
 
 **链**
 
@@ -140,3 +142,246 @@
 
 ### 2.11 使用`filter`机制来构建网关式防火墙
 
+### 2.12 `Netfilter`的`NAT`机制
+
+`NAT`是`Network Address Transaltion`的缩写，即“网络地址转换”。
+
+`NAT`应用在客户端的主要目的是隐藏客户端的`IP`, 由此达到阿博湖客户端主机免于遭受因特网攻击的行为，以及节省公用`ip`的使用了。
+
+`NAT`应用在服务端的主要用途是保护服务器端主机在因特网上的安全。
+
+#### 2.12.2 私有IP
+
+* A类: `10.0.0.0 ~ 10.255.255.255`, 子网掩码: `255.0.0.0`
+* B类: `172.16.0.0 ~ 172.32.255.255`, 子网掩码: `255.255.0.0`
+* C类: `192.168.0.0 ~ 192.168.255.255`, 子网掩码: `255.255.255.0`
+
+#### 2.12.4 数据包传输方向与SNAT及DNAT的关系
+
+* 变更`Source IP`的机制称为`SNAT`
+* 变更`Destionation IP`的机制称为`DNAT`
+
+无论NAT机制有多少种，都是由SNAT和DNAT所共同搭配出来的。
+
+![](img/02.jpg)
+
+**PREROUTING链**
+
+当我们下发“规则”要去修改数据包的`Destion IP`时，需要将规则置于PREROUTING链中。
+
+因此PREROUTING链的功能在于执行`DNAT`任务。
+
+==PREROUTING链的位置在整个NAT机制的最前面==。因此数据包一旦进入`NAT`机制，数据包内的`Dstion IP`即被修改。
+
+**POSTROUTING链**
+
+POSTROUTING链的任务是修改数据包内的"来源端IP", POSTROUTING链的功能在于执行`SNAT`任务。
+
+== POSTROUTING链的位置在整个NAT机制的最末端==。因此执行`SNAT`操作时，`Source IP`是在整个`NAT`机制的最末端才会修改的。
+
+**OUTPUT链**
+
+==和`filter`表的OUTPUT链毫无关系==
+
+因为本机进程生成数据包并向外发送，这个数据包会先交给路由表来判断路由，接着数据包进入`OUTPUT`链，最后进入`POSTROUTING`链，然后送离本机。**这个数据包不可能送到`PREROUTING`链内**.
+
+`NAT`特别设计了一个名为`OUTPUT`链的机制，这个链的功能是执行`DNTA`任务，其对象就是本机进程产生炳耀外送的这些数据包。
+
+#### 2.12.5 NAT的分类
+
+**一对多NAT**
+
+"让大家共用一个公网IP来上网", 也称为`ip`分享器
+
+* 节省公网`ip`的使用量
+* 隐藏企业内部主机的`ip`地址
+
+不管我们下达的是`SNAT`或`DNAT`的规则，`NAT`机制都会自动帮我们判别"另一个方向的应答数据包“，因此，我们只需要下达单一方向的规则即可。
+
+设定公网`ip`
+
+* `-j SNAT --to Public IP`, 公网`ip`固定
+* `-j MASQUERADE`, 公网`ip`不固定
+
+**多对多NAT**
+
+先决条件：拥有多个公网ip, 且是连续的。
+
+`-j SNAT --to 10.0.1.200 - 10.0.1.205`
+
+会循环使用公网`ip`。
+
+**一对一NAT**
+
+为每个服务单一设置映射`ip`
+
+**NAPT**
+
+`NAPT(Network Address Port Translation)`
+
+### 2.13 `Netfilter`的`Mangle`机制
+
+![](img/03.jpg)
+
+当一个数据包"穿过"防火墙时，可以通过`Mangle`的机制来修改数据包的内容。
+
+* 修改`IP`包头的`TTL`值
+	* 如修改由`linux`主机发送的数据包，将这些数据包的`TTL`值改为`128`, 让黑客误以为是`Windows`操作系统；也可以将`Windows`曹组哦系统所送出的数据包`TTL`值改为`64`, 让黑客误以为是`Linux`系统。
+* 修改`IP`包头的`DSCP`值或对特定的数据报设置特征
+	* `QOS(Quality of Service)`机制，`QOS`机制可以让我们在有限的带宽中，有效分配不同的带宽给不同的协议来使用。
+	* `QOS`是由两个不同部分组成
+		* 数据包分类器
+		* 带宽分配器
+	* 数据先进入"数据包分类器"，数据包即会被加以分类，被分类后的数据报接着进入"带宽分配器"，再由带宽分配器决定各类数据包可以使用多少网络带宽
+		* 通过`IP`包内的`DSCP`值类分类，通过`Managle`机制来修改`IP`包内的`DSCP`值，如, 把`DSCP`值改为`0000-01`, 后在"带宽分配器"上设置，如果数据包内的`DSCP`值为`0000-01`, 就给予`xxKB/s`的带宽
+		* 使用`Managle`机制来为数据包标识识别码
+
+```
+#修改SSH协议的数据报，修改后的DSCP值为43
+
+iptables -t mangle -A OUTPUT -p tcp --dport 22 -j DSCP --set-dscp 43
+```
+
+### 2.14 `Netfilter`的`raw`机制
+
+![](img/04.jpg)
+
+## 3. `Netfilter`的匹配方式及处理方法
+
+### 3.1.1 内置的匹配方式
+
+**接口的匹配方式**
+
+```
+-i xxx , 进入接口的数据包
+-o xxx, 出接口的数据包
+```
+
+**Source/Destination Address匹配**
+
+```
+-d: 匹配目的端IP
+-s: 匹配来源端IP
+```
+
+**协议**
+
+```
+-p 协议
+
+-p icmp 与 -p 1 等效（1代表icmp）
+```
+
+**icmp**
+
+* `icmp`的请求包: `Type=0、Code=0`
+* `icmp`的应答包: `Type=0、Code=0`
+
+希望别人`ping`不到我们，我们可以`ping`到别人
+
+```
+iptables -A INPUT -p icmp --icmp-type 8 -j DROP
+```
+
+### 3.1.2 从模块扩展而来的匹配方式
+
+**TCP**
+
+匹配端口
+
+```
+--dport 20
+--sport 20:50, 支持范围匹配, 匹配端口20到端口50之间的范围
+```
+
+`TCP-Flags`的匹配
+
+TCP-Flags
+
+* 位1: Finish, 连接终止信号
+* 位2: Synchronize, 连接请求信号
+* 为3: Reset, 立即终止信号
+* 位4: Acknowledge, 确认应答信号
+
+三次握手
+
+```
+客户端 --SYN--> 服务端
+客户端 <--SYN, ACK-- 服务端
+客户端 --ACK--> 服务端
+```
+
+四次挥手
+
+```
+客户端 --FIN--> 服务端
+客户端 <--ACK-- 服务端
+客户端 <--FIN-- 服务端
+客户端 --ACK--> 服务端
+```
+
+```
+#检查"所有"TCP-Flags, 但只有 syn 和 fin 两个标记同时为 1 时，数据包才会删选出来
+
+iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j DROP
+```
+
+**UDP**
+
+只能匹配
+
+* `--sport`
+* `--dport`
+
+**MAC地址匹配**
+
+不能用在`OUTPUT`和`POSTROUTING`的规则链上（OUTPUT是自己发出的数据包，不是接收的数据包，所以没有源mac地址， POSTROUTING是要路由出去了，源mac要换成自己的了，也不是接收到的数据包），这是因为封包要送出网卡后，才能由网卡驱动程序透过 ARP 通讯协议查出目的地的 MAC 地址，所以 iptables 在进行封包对比时，并不知道封包会送到那个网络接口去（MAC地址是绑定到网卡上的）。
+
+```
+-m mac --mac-source xx:xx:xx:xx:xx
+```
+
+**Multiport的匹配**
+
+```
+-m multiport --dports 21,22,23,35
+```
+
+**匹配数据包的MARK值**
+
+```
+#设置mark值
+
+-j MARK --set-mark xxx
+```
+
+```
+#匹配mark值
+
+-m mark --mark xx
+```
+**`Owner`的匹配**
+
+* `--uid-owner userid|username`
+* `--gid-owner groupid|groupname`
+
+只能在本机使用，因为这些要匹配的特征不会随着数据包送到网上。
+
+**`IP`范围的匹配**
+
+```
+-m iprange --src-range xx.xx.xx-xx.xx.xx
+```
+
+* `--src-range`: 匹配"来源地址"范围
+* `--dst-range`: 匹配"目的地址"范围
+
+**`TTL`值的匹配**
+
+* `-m ttl --ttl-eq 64`: 匹配`TTL`值“等于”64
+* `-m ttl --ttl-lt 64`: 匹配`TTL`值“小于”64
+* `-m ttl --ttl-gt 64`: 匹配`TTL`值“大于”64
+
+**数据包的状态匹配**
+
+![](img/05.jpg)

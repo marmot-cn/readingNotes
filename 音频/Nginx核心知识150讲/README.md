@@ -329,3 +329,5 @@ is off, then nginx will use the requested Host header.
 哪些`ip`可以访问，哪些`ip`不能访问。
 
 #### `access`阶段：对用户名密码做限制的`auth_basic`模块
+
+#### `access`阶段: 使用第三方做权限控制的`auth_request`模块
