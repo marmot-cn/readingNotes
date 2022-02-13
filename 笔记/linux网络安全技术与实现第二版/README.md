@@ -128,6 +128,8 @@
 
 即，只要应答的数据包是因为本机先送出一个数据包而导致另一条连接的产生，那么这个新连接的所有数据包都属于`RELATED`状态的数据包。
 
+如`FTP`协议工作在“主动模式”时，当客户端对服务器端的`TCP Port 21`提出服务请求时，服务器端会主动使用`TCP Port21`对客户端建立另一条`TCP`连接，而这条`TCP`l连接也是`RELATED`状态。
+
 **INVALID**
 
 `INVALID`状态是指"状态不明的数据包", 也就是不属于`ESTABLISHED`、`NEW`及`RELATED`的数据包。凡是`INVALID`状态的数据包皆视为“恶意”的数据报，因此，请将`INVALID`状态的数据包丢弃掉。
@@ -274,7 +276,7 @@ iptables -t mangle -A OUTPUT -p tcp --dport 22 -j DSCP --set-dscp 43
 
 **icmp**
 
-* `icmp`的请求包: `Type=0、Code=0`
+* `icmp`的请求包: `Type=8、Code=0`
 * `icmp`的应答包: `Type=0、Code=0`
 
 希望别人`ping`不到我们，我们可以`ping`到别人
@@ -382,6 +384,214 @@ iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j DROP
 * `-m ttl --ttl-lt 64`: 匹配`TTL`值“小于”64
 * `-m ttl --ttl-gt 64`: 匹配`TTL`值“大于”64
 
-**数据包的状态匹配**
+**数据包的状态匹配:TCP**
+
+`TCP`链接状态
+
+* ESTABLISHED
+* SYN_SENT
+* SYN_RECV
+* FIN_WAIT1
+* FIN_WAIT2
+* TIME_WAIT
+* CLOSED
+* CLOSE_WAIT
+* LAST_ACK
+* LISTEN
+* CLOSING
+* UNKNOWN
+
+`Netfilter`的`state`模块
+
+* ESTABLISHED
+* RELATED
+* NEW
+* INVALID
 
 ![](img/05.jpg)
+
+`/proc/net/nf_conntrack`这个文件是`Netfilter`链接跟踪功能的数据库。
+
+```
+示例: 客户端发送数据报给服务端，第一次握手
+
+1	tcp
+2	6
+3 	117
+4	SYN_SET
+5	src=192.168.0.200 dst=100.1.102 sport=41501 dport=23
+6	[UNREPLIED]
+7	src=10.0.1.102 dst=192.168.0.200 sport=23 dport=41501
+8	mark=0 secmark=0 use=1
+```
+
+记录:
+
+1. 协议
+2. 协议代码
+3. 超时时间`/porc/sys/net/netfilter/nf_conntrack_tcp_timeout_xx`文件决定, 超过该时间都无法得到应答，则该连接的状态在防火墙上就会被清除掉
+4. 链接状态
+	* `TCP`规范中是`SYN_SENT`, 在`state`模块的记录则是为`NEW`状态
+5. 记录该数据包的
+	* Source IP
+	* Destination IP
+	* Source Port
+	* Destionation Port
+6. `UNREPLIED`代表防火墙尚未收到服务器端应答的数据包
+7. 有防火墙自动产生的，依据是第5个字段的反向（为何服务器应答给客户端的数据报可以正常返回客户端？关键就是这一条新信息）
+
+
+```
+#超时时间
+[ansible@k8s-agent-1 ~]$ ls /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_*
+/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_close        /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_last_ack     /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_time_wait
+/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_close_wait   /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_max_retrans  /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_unacknowledged
+/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_established  /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_recv
+/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_fin_wait     /proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_sent
+```
+
+```
+#服务器硬蛋带有SYN及ACK标记的数据包，第二次握手
+1	tcp
+2	6
+3	54 (/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_recv, 如果在该时间内没有等到客户端响应，防火墙会清楚记录)
+4	SYN_RECY
+5	src=192.168.0.200 dst=10.0.1.102 sport=41501 dport=23
+6	
+7	src=10.0.1.102 dst=192.168.0.200 sport=23 dport=41501
+8	mark=0 secmark=0 use=1
+```
+
+```
+#客户端应答带有ACK标记的数据包，第三次握手
+1	tcp
+2	6
+3	431956
+4	ESTABLISHED
+5	src=192.168.0.200 dst=10.0.1.102 sport=41501 dport=23
+6	src=10.0.1.102 dst=192.168.0.200 sport=23 dport=41501
+7	[ASSURED]（表示链接已经确认）
+8	mark=0 secmark=0 use=1
+```
+
+![](img/06.jpg)
+
+**数据包的状态匹配:UDP**
+
+```
+# 客户端发出DNS的服务器请求数据报
+1	udp
+2	17
+3	22
+4	src=10.0.1.103 dst=168.95.192.1 sport=32881	dport=53
+5	[UNREPLIED]
+6	src=168.95.192.1 dst=10.0.1.103 sport=53 dport=32881
+7	mark=0 secmark=0 use=1
+```
+
+```
+# 客户端收到DNS的应答数据包
+1	udp
+2	17
+3	166
+4	src=10.0.1.103 dst=168.95.192.1 sport=32881	dport=53
+5	src=168.95.192.1 dst=10.0.1.103 sport=53 dport=32881
+6	[ASSURED]（表示链接已经确认）
+7	mark=0 secmark=0 use=1
+```
+
+**数据包的状态匹配:ICMP**
+
+`ICMP`不像`TCP`有"会话（Session）"的概念，而且`ICMP`也不像`UDP`协议一样会有一段较长的超时时间。
+
+`nf_conntrack`是以单一数据报为单位来跟踪`ICMP`数据报，每当一个`ICMP`数据包经过防火墙时，`nf_conntract`就会在数据库中建立一条跟踪记录；但在`ICMP`数据包返回时候，`nf_conntrack`就会从数据库中清除之前的记录。
+
+```
+# 客户端送出ICMP服务请求包
+1	ICMP
+2	1
+3 	29
+4	src=192.168.0.200 dst=168.85.192.1 type=8 code=0
+5	[UNREPLIED]
+6	src=168.85.192.1 dst=192.168.0.200 type=0code=0
+7	mark=0 secmark=0 use=1
+```
+
+**AH及ESP协议的SPI值匹配**
+
+`IPSec`由`AH`及`ESP`组合而成。
+
+* AH: 负责完整性验证，数据包没有篡改
+* ESP: 负责数据包的"加密"操作
+
+`IPSec`微辣几块系统查找密钥的速度，会在`IPSec`的数据库中为每一把密钥加上一个"索引"值，称其为`SPI`值。
+
+```
+# AH包头内的SPI值为300, 可以通过防火墙
+iptables -A FORWARD -p ah -m ah --ahspi 300 -j ACCEPT
+# ESP包头内的SPI值为200, 可以通过防火墙
+iptables -A FORWARD -p esp -m esp --espspi 200 -j ACCEPT
+```
+
+**pkttype匹配**
+
+在`TCP/IP`网络环境中，数据包的传输方式如下：
+
+* `Unicast`: 数据包发送的对象是特定的，如主机A传输给主机B即为`unicast`类型
+* `Broadcast`: 数据包传送的对象为广播地址，如`192.168.0.255`
+* `Multicast`: 多播，通常应用于网络的“音频”或“视频”广播，而`Multicast`数据包的特点是，其`Source IP`一定介于`224.0.0.0/4`之间
+
+```
+-m pkttype --pkt-type broadcast
+```
+
+**length(MTU值)匹配**
+
+* `MTU`: 实体网络层每一次能传输数据大小的限制, 如MTU=(IP包头+ICMP包头+DATA)
+* `MSS`: 每次传输的最大数据分段, 如MSS+(ICMP包头+DATA)
+
+**limit特定数据包重复率的匹配**
+
+**recent特定数据包重复率匹配**
+
+“先取证，后处理”
+
+```
+#当进来的数据报是icmp type 8，就使用recent模块来处理这个数据包，以icmp_db这个数据库作为匹配的依据，并且以目前这个时间点向前搜索60秒内的数据来做匹配，如果在这个60秒内已有超过6个以上的符合记录，那就将目前符合规则的这个icmp包丢弃掉
+iptables -A INPUT -p icmp --icmp-type 8 -m recent --name icmp_db --recheck --second 60 --hitcount 6 -j DROP
+
+#如果进来的数据包是icmp type 8，就使用recent模块来处理这个数据包，并将符合规则的数据包相关信息记录到名为icmp_db的数据库之中，这个数据库会存放在/proc/net/xt_recent/icmp_db
+iptables -A INPUT -p icmp --icmp-type 8 -m recent --set --name icmp_db
+```
+
+优先匹配第一个规则，数据库中没有数据的时候，则进入第二个规则更新数据库
+
+**IP包头内TOS值的匹配**
+
+匹配DSCP
+
+**使用String模块匹配数据包内所承载的数据内容**
+
+```
+# 如果数据包是要送往Web服务器的端口80，那我们就使用string模块来进行匹配的操作，而匹配的操作使用bm算法进行处理的：如果这个数据包内包含 'system32' 字符串的话，就将这个数据包丢弃掉
+iptables -A FORWARD -i eth0 -o eth1 -p tcp -d $WEB_SERVER --dport 80 -m string --algo bm --string "system32" -j DROP
+```
+
+**使用connlimit模块限制连接的最大数量**
+
+以`/prot/net/nf_conntrack`文件中的数据为依据，来限制一个IP或一个网段同时对目标主机或服务所能建立的最大连接数。
+
+* `--connlimit-above xx`: 指定最大连接数量
+* `--connlimit-mask xx`
+	* 8 A类子网
+	* 16 B类子网
+	* 24 C类子网
+	* 25 代表1/2个C类子网
+	* 32 代表单一一个IP
+
+**使用connbytes模块限制每个连接中所能传输的数据量**
+
+**使用quota模块限制数据传输量的上限**
+
+**使用time模块来设置规则的生效时间**
+
