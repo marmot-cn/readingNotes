@@ -595,3 +595,4 @@ iptables -A FORWARD -i eth0 -o eth1 -p tcp -d $WEB_SERVER --dport 80 -m string -
 
 **使用time模块来设置规则的生效时间**
 
+p130
