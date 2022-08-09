@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  golang:
+    image: "golang:1.19.0-buster"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/go
+    tty: true
+    container_name: go-env
