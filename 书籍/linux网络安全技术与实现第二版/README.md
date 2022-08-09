@@ -45,10 +45,10 @@
 
 `Netfilter`存放规则的内存块被分为四个**表**(Table)
 
-* `filter`: 过滤，起到防火墙作用。
-* `nat`: Network Address Translation, 功能是IP分享
-* `managle`: 通过`managle`机制来修改经过防火墙内数据包的内容
-* `raw:` 负责加快数据包穿过防火墙机制的速度，由此提高防火墙的性能
+* `filter`: 过滤，起到防火墙作用。默认机制，作用于`INPUT`, `OUTPUT`和`FORWARD`
+* `nat`: Network Address Translation, 功能是IP分享, 作用于`PREROUTING`和`POSTROUTING`
+* `managle`: 通过`managle`机制来修改经过防火墙内数据包的内容, 在5类`hook_function`中的任意位置
+* `raw:` 负责加快数据包穿过防火墙机制的速度，由此提高防火墙的性能。动作是`notrack`, 将跳过`nat`表和`ip_conntract`处理
 
 ### 2.6 Netfilter的filter机制
 
@@ -247,6 +247,9 @@ iptables -t mangle -A OUTPUT -p tcp --dport 22 -j DSCP --set-dscp 43
 ### 2.14 `Netfilter`的`raw`机制
 
 ![](img/04.jpg)
+![](img/07.jpg)
+
+`raw`表与"连接跟踪"机制有关
 
 ## 3. `Netfilter`的匹配方式及处理方法
 
@@ -504,7 +507,7 @@ iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j DROP
 
 `ICMP`不像`TCP`有"会话（Session）"的概念，而且`ICMP`也不像`UDP`协议一样会有一段较长的超时时间。
 
-`nf_conntrack`是以单一数据报为单位来跟踪`ICMP`数据报，每当一个`ICMP`数据包经过防火墙时，`nf_conntract`就会在数据库中建立一条跟踪记录；但在`ICMP`数据包返回时候，`nf_conntrack`就会从数据库中清除之前的记录。
+`nf_conntrack`是以单一数据报为单位来跟踪`ICMP`数据报，每当一个`ICMP`数据包经过防火墙时，`nf_conntrack`就会在数据库中建立一条跟踪记录；但在`ICMP`数据包返回时候，`nf_conntrack`就会从数据库中清除之前的记录。
 
 ```
 # 客户端送出ICMP服务请求包
@@ -593,6 +596,68 @@ iptables -A FORWARD -i eth0 -o eth1 -p tcp -d $WEB_SERVER --dport 80 -m string -
 
 **使用quota模块限制数据传输量的上限**
 
+`quota`限制每个使用者每小时或每天所能够传输的数据总量。
+
+`-m quota`
+
 **使用time模块来设置规则的生效时间**
 
-p130
+`xt_time.ko`, 设置规则的生效时间。
+
+`-m time`
+
+**使用connmark模块匹配mark值**
+
+`-m connmark`
+
+`CONNMARK`是对一整条连接来设置`mark`值。只要连接中的某一个数据包被标记了`mark`, 那么, 其后所有该连接双向的所有数据包都会自动设置这个`mark`值。
+
+* mark 匹配方式只识别 nfmark
+* connmark 识别 nfmark 即 ctmark
+
+**使用conntrack模块匹配数据包的状态**
+
+`-m conntrack`
+
+`state`模块的加强版
+
+* `DNAT`, 匹配一条连接是否经过`DNAT`处理
+* `SNAT`, 匹配一条链接是否经过`SNAT`处理
+
+**使用statistic模块进行比率匹配**
+
+`-m statistic`
+
+* `--mode random`: 以随机方式丢弃包
+	* `--probability`, 随机
+* `--mode nth`: 按一定规律丢弃数据包
+
+**使用hashlimit模块进行重复率匹配**
+
+`-m hashlimit`
+
+数据库存在`/proc/net/ipt_hashlimit/xxx`目录下(`xxx`由`--hashlimit-name`设置)
+
+hashlimit的匹配是基于令牌桶 (Token bucket）模型的。令牌桶是一种网络通讯中常见的缓冲区工作原理，它有两个重要的参数，令牌桶容量n和令牌产生速率s。我们可以把令牌当成是门票，而令牌桶则是负责制作和发放门票的管理员，它手里最多有n张令牌。一开始，管理员开始手里有n张令牌。每当一个数据包到达后，管理员就看看手里是否还有可用的令牌。如果有，就把令牌发给这个数据包，hashlimit就告诉iptables，这个数据包被匹配了。而当管理员把手上所有的令牌都发完了，再来的数据包就拿不到令牌了。这时，hashlimit模块就告诉iptables，这个数据包不能被匹配。除了发放令牌之外，只要令牌桶中的令牌数量少于n，它就会以速率s来产生新的令牌，直到令牌数量到达n为止。通过令牌桶机制，即可以有效的控制单位时间内通过（匹配）的数据包数量，又可以容许短时间内突发的大量数据包的通过（只要数据包数量不超过令牌桶n）。
+
+--hashlimit-name。 hashlimit会在/proc/net/ipt_hashlimit目录中，为每个调用了hashlimit模块的iptables 命令建立一个文件，其中保存着各匹配项的信息。--hashlimit-name参数即用来指定该文件的文件名。
+
+**多功能匹配模块u32**
+
+为什么要减3
+
+FF = 00000000000000000000000011111111
+
+6&0xFF, 因为每次抓取4个字节，从第6个字节抓取刚好最后8位是`protocol`
+
+
+### 3.2.1 内置处理方法
+
+`QUEUE`是功能是将符合条件的数据包转发给`User Space`的应用程序来处理。
+
+```
+iptables -A FORWARD -p tcp -d $MAIL_SERVER --dport 25 -j QUEUE
+```
+
+
+
