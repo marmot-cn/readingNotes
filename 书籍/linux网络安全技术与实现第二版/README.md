@@ -41,7 +41,7 @@
 * 透明防火墙
 	* 一个网桥设备，并且在网桥设备上赋予过滤器（Filter）功能。网桥是工作在OSI第二层的网络设备，因此不会有任何路由的问题，并且网桥上可以不需要设置任何的IP，如此就没有路由问题。即防火墙主机无需设置IP，即使黑客要攻击这个防火墙，也可能会因为没有目的端IP而无功而返。
 
-## 2. Netfilet/iptables
+## 2. Netfiletr/iptables
 
 `Netfilter`存放规则的内存块被分为四个**表**(Table)
 
@@ -112,7 +112,7 @@
 
 **ESTABLISHED**
 
-只要数据报能够成功穿过防火墙，那么之后的所有数据报（包括反向的所有数据报），其状态都会是`ESTABLISHED`。
+只要数据包能够成功穿过防火墙，那么之后的所有数据报（包括反向的所有数据报），其状态都会是`ESTABLISHED`。
 
 所以解决无法在防火墙主机上对外建立连接，可以用`state`模块匹配所有`ESTABLISHED`状态的数据包。
 
@@ -457,7 +457,7 @@ iptables -A INPUT -p tcp --tcp-flags ALL SYN,FIN -j DROP
 #服务器硬蛋带有SYN及ACK标记的数据包，第二次握手
 1	tcp
 2	6
-3	54 (/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_recv, 如果在该时间内没有等到客户端响应，防火墙会清楚记录)
+3	54 (/proc/sys/net/netfilter/nf_conntrack_tcp_timeout_syn_recv, 如果在该时间内没有等到客户端响应，防火墙会清除记录)
 4	SYN_RECY
 5	src=192.168.0.200 dst=10.0.1.102 sport=41501 dport=23
 6	
@@ -653,11 +653,271 @@ FF = 00000000000000000000000011111111
 
 ### 3.2.1 内置处理方法
 
+`ACCEPT` 是允许
+
+`DROP` 是不允许
+
 `QUEUE`是功能是将符合条件的数据包转发给`User Space`的应用程序来处理。
 
 ```
 iptables -A FORWARD -p tcp -d $MAIL_SERVER --dport 25 -j QUEUE
 ```
+
+**用户定义链**
+
+除了三个基本链`INPUT`,`FORWARD`和`OUTPUT`，扩充出来的新的链就是用户定义链。
+
+`inptables -N xxx`
+
+数据包经过`Netfilter`结构时，默认不会进入任何的用户定义的链之中。
+
+```
+iptables -N ICMP
+iptables -A ICMP -p icmp -j DROP
+
+# 把ICMP链与INPUT链关联在一起
+iptables -A INPUT -p icmp -j ICMP
+```
+
+**`RETURN`**
+
+`RETURN`是用在用户链之中，目的是让符合规则的数据包提前返回其原来的链。
+
+### 3.2.2 由模块扩展的处理方法
+
+**REJECT**
+
+`REJECT`是由`ipt_REJECT.ko`模块提供的功能。
+
+* `DROP`把数据包丢掉，这将使得发送端误以为在网络上传输时丢失ile，因此发送端会重复地 发送数据包直到超时为止。
+* `REJECT`在丢掉数据包的同事，会会送一个`icmp`包给发送端，由此高松网络或者服务发生的问题，当发送端收到这个`icmp`包之后，会终止服务请求的操作。
+
+**LOG**
+
+由`ipt_LOG.ko`模块提供功能。`Netfilter`默认并不会生产任何日志。
+
+`LOG`只会记录数据包的信息，不会真正处理这个数据包，因此，这个数据包继续匹配INPUT链中其他规则，而LOG所记录下来的日志会存放在`/var/log/messages`这个文件内。
+
+**ULOG**
+
+由`ipt_ULOG.ko`提供，与`LOG`都是用于记录日志
+
+* `LOG`，将日志交给`syslogd`处理
+* `ULOG`，将日志交给特定的`User Space`机制处理(ulogd)
+
+**TOS**
+
+`ipt_TOS.ko`, 修改路过`magle`机制的数据包，改变对象为`IP`包头内的`TOS`(Type Of Service)值。
+
+**DSCP**
+
+`ipt_DSCP.ko`
+
+TOS有8位，划分8个优先级。但8个优先级已经不能满足实际需要，于是RFC2474又对TOS重新进行了定义，把前六位定义为DSCP差分服务代码（Differentiated Services Code Point），后两位保留。
+
+通过修改`dscp`值来规划带宽，可以将数据包分为64种（6位，2的6次方）。
+
+**MARK**
+
+`xt_MARK.ko`, 数据包分类方式。MARK可以在特定的数据包上标记一个“记号”，这个记号由数字构成。记号没有写入到数据包，Linux内核使用一块内存来记录数据包与MARK值对应的关系，因此，当数据包离开本机之后，MARK值也就随之消失了。
+
+```
+iptables -t mangle -A FORWARD -p tcp --sport 25 -j MARK --set-mark 25
+```
+
+**CONNMARK**
+
+CONNMARK与MARK功能类似，设置的mark称为`ctmark`, MARK设置的mark值称为`nfmark`。区别在于值的有效范围:
+
+* nfmark: 有效范围局限在单一数据包(比如数据包进入到本机，从OUTPUT链出去就会无效。因为进入到本机后相当于这个包已经小时了，从OUTPUT链出去的包是进程新生成的包）
+* ctmartL 为一个完整的链接
+
+CONNMARK用来复制`nfmark`，数据包进入本机后，通过MARK将数据包`nfmark`标记，接在以`CONNMARK`将`nfmark`存储起来，最后再把`nfmark`值复制到这条链接上，通过`CONNMARK`的帮助，使得`nfmark`可以作用在链接的所有数据包之上。
+
+**TTL**
+
+TTL模块，修改“路过”防火墙上的数据包内的`TTL`值。
+
+```
+-j TTL --ttl-set xxx
+```
+
+**REDIRECT**
+
+由`ipt_REDIRECT.ko`模块提供，是一种特殊的`DNAT`机制，通常会与代理服务器结合使用，使其成为透明代理的结构。
+
+**MASQUERADE**
+
+由`ipt_MASQUERADE.ko`模块提供，是一种特殊的`SNAT`机制。
+
+**NETMAP**
+
+一对一NAT是由一个SNAT及一个DNAT组合而成，`NETMAP`可以映射一个网段。下面的例子是把一个`10.0.0.0/24`的网段映射到`192.168.1.0/24`网段。
+
+```
+iptables -t nat -A PREQOUTING -i eth0 -d 10.0.0.0/24 -j NETMAP --to 192.168.1.0/24
+iptables -t nat -A POSTROUTING -i eth0 -s 192.168.1.0/24 -j NETMAP --to 10.0.0.0/24
+```
+
+## Netfilter/Iptables的高级技巧
+
+### 4.1 防火墙性能的最优化
+
+**调整防火墙规则顺序**
+
+匹配命中次数越高者的规则越靠前。
+
+`iptables -L -n -v`可以查看每条规则的匹配次数。
+
+**multiport及iprange模块**
+
+通过`multiport`和`iprange`把多个端口或`ip`的匹配规则合并到一条。
+
+**使用用户定义链**
+
+### 4.2 Netfilter连接处理能力与内存消耗
+
+`nf_conntrack`的数据存在`/proc`目录下，该目录下的文件都存放在内存中。`Netfilter`每跟踪一条链接，就必然消耗一块内存。
+
+**计算链接最大数**
+
+`/proc/sys/net/netfilter/nf_conntrack_max`文件限制着`nf_conntrack`模块所能跟踪的最大连接数量。默认值会随着硬件内存的大小而改变。
+
+`CONNTRACK_MAX=RAMSIZE(in-bytes)/16384/(x/32)`
+
+* x: 操作系统地址位数(32/64)
+
+如操作系统为32位，有512MB内存，`nf_conntrack_max`中的默认值为`512*1024*1024/16384/1=32768`
+
+如果企业所需要的最大连接数量若超过防火墙的最大链接跟踪数量，会在`/var/log/messages`提示`nf_conntrack: table full dropping packet`
+
+**调整链接跟踪数**
+
+查看是动态模块还是静态模块：
+
+* 查看`Kernel Source`配置文件，`CONFIG_NF_CONNTRACK=y`, 代表是静态模块。
+* 在`/lib/modules/Kernel_Version/modules.dep`文件中，找`nf_conntrack.ko`，如果找见就是以动态模块存在，否则就是静态模块
+
+修改内核参数
+
+* 在`/etc/sysctl.conf`中修改`net.netfilter.nf_conntrack_max=xxx`
+* 在`/boot/grub/grub.conf`中修改`nf_conntrack.hashsize=xxx`
+
+**链接跟踪数量与内存消耗**
+
+### 4.3 使用raw表
+
+`nf_conntrack`模块默认会自动跟踪所有链接，修改`raw`表，可以让`nf_conntrack`模块不去跟踪某条链接。
+
+让`nf_conntrack`模块不跟踪`-i eth2 -o eth1`这个方向的`SMTP`协议。
+
+```
+iptables -t raw -A PREROUTING -i eth2 -o eth1 -p tcp --dport 25 -j NOTRACK
+iptables -t raw -A PREROUTING -i eth1 -o eth2 -p tcp --sport 25 -j NOTRACK
+```
+
+`raw TABLE`所定义的链接会跳过`nat`表，所以任何被`raw`表定义的连接都无法被`NAT`机制处理。
+
+* `PREROUTING` 外到内的连接
+* `OUTPUT` 内到外的连接
+
+### 4.4 简单及复杂通信协议的处理
+
+**简单通信协议**
+
+如果客户端访问服务端只使用“一条连接”的协议，就是简单通信协议。
+
+* HTTP
+* SSH
+* TELNET
+* SMTP
+* POP3
+* IMAP
+* HTTPS
+
+简单通信协议只需要考虑到连接的“来源端口”及“目的端口”，并且确认连接的双向皆可正常通过防火墙即可。
+
+```
+# -P 设置一个链的默认策略
+iptables -P FORWARD DROP
+iptables -A FORWARD -i eth0 -o eth1 -p tcp -d $WEB --dport 80 -j ACCEPT
+iptables -A FORWARD -i eth1 -o eth0 -p tcp -d $WEB --sport 80 -j ACCEPT
+```
+
+**复杂通信协议**
+
+客户端与服务器端之间，需要多条连接才能完成应用的协议，就属于复杂通信协议。如`FTP`。
+
+
+`nf_conntrack_ftp`模块处理`FTP`协议的：
+
+* 监控所有与端口21相关的TCP数据包
+* 从数据包中取出返回的字符串，即客户端与服务端建立的数据端口链接
+* 将新的链接（端口）归为`RELEATED`状态
+
+**ICMP数据包的处理原则**
+
+* 放行所有因特网送来的`ESTABLISHED`及`RELATED`的`ICMP`数据包
+* 丢弃所有因特网送来的其他状态的`ICMP`数据包
+
+**PortScan攻击**
+
+通过`recent`模块防止`PortScan`攻击
+
+* 记录异常端口的请求
+* 在一定时间内请求过多禁掉请求
+
+**Telnet明文破解密码攻击**
+
+`-m string`
+
+可以抓取服务端返回的字符串来判断次数，超过多少次就拒绝。
+
+**SSH破解密码攻击**
+
+根据`syn`链接次数禁止
+
+**TCP SYN Flooding攻击**
+
+* 减少重发数据包次数: `net.ipv4.tcp_synack_retries=3`
+* 增大队列: `net.ipv4.tcp_max_syn_backlog=2048`
+* 启动`tcp_syncookies=1`
+
+## 5. 代理服务器的应用
+
+### 5.1 何谓代理服务
+
+* 缓存代理
+* 反向代理
+
+### 5.8 反向代理
+
+**基于IP的虚拟主机**
+
+一个反向代理绑定多个IP, 每个IP指向不同的网站。
+
+**基于名称的虚拟主机**
+
+一个IP, 多个域名。
+
+## 6. 使用Netfilter/Iptables保护企业网络
+
+### 6.1 防火墙结构的选择
+
+**DMZ式防火墙**
+
+所有对外服务主机部署于DMZ之上。
+
+## 7. Linux 内核编译
+
+* 动态模块：模块代码被单独放在单一的文件中，根据任务需要将模块加载到内存，可以将暂时不用的模块从内存中移除，实现内存使用的最优化。动态模块存放在`/lib/modules/kernel_version/*.ko`
+* 静态模块：模块的代码已经结合到结构中心。静态模块数量越大，结构中心就越大。除非这个模块在大多数情况下都会用到，否则，会优先考虑动态模块。
+
+* bzImage: 是压缩的内核映像
+* system.map: 是一个特定内核的内核符号表
+
+## 8. 应用层防火墙
+
 
 
 
