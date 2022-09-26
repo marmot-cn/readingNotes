@@ -610,7 +610,7 @@ iptables -A FORWARD -i eth0 -o eth1 -p tcp -d $WEB_SERVER --dport 80 -m string -
 
 `-m connmark`
 
-`CONNMARK`是对一整条连接来设置`mark`值。只要连接中的某一个数据包被标记了`mark`, 那么, 其后所有该连接双向的所有数据包都会自动设置这个`mark`值。
+`CONNMARK`是对一整条连接来设置`mark`值。只要连接中的某一个数据包被标记了`mark`, 那么, 其后所有该连接双向的所有数据包都会自动设置这个`mark`值。（仅针对链接）
 
 * mark 匹配方式只识别 nfmark
 * connmark 识别 nfmark 即 ctmark
@@ -725,11 +725,13 @@ TOS有8位，划分8个优先级。但8个优先级已经不能满足实际需�
 iptables -t mangle -A FORWARD -p tcp --sport 25 -j MARK --set-mark 25
 ```
 
+MARK模块在数据包设置完MARK值之后，数据包还会进行Netfilter的其他匹配
+
 **CONNMARK**
 
 CONNMARK与MARK功能类似，设置的mark称为`ctmark`, MARK设置的mark值称为`nfmark`。区别在于值的有效范围:
 
-* nfmark: 有效范围局限在单一数据包(比如数据包进入到本机，从OUTPUT链出去就会无效。因为进入到本机后相当于这个包已经小时了，从OUTPUT链出去的包是进程新生成的包）
+* nfmark: 有效范围局限在单一数据包(比如数据包进入到本机，从OUTPUT链出去就会无效。因为进入到本机后相当于这个包已经消失了，从OUTPUT链出去的包是进程新生成的包）
 * ctmartL 为一个完整的链接
 
 CONNMARK用来复制`nfmark`，数据包进入本机后，通过MARK将数据包`nfmark`标记，接在以`CONNMARK`将`nfmark`存储起来，最后再把`nfmark`值复制到这条链接上，通过`CONNMARK`的帮助，使得`nfmark`可以作用在链接的所有数据包之上。
@@ -919,5 +921,191 @@ iptables -A FORWARD -i eth1 -o eth0 -p tcp -d $WEB --sport 80 -j ACCEPT
 ## 8. 应用层防火墙
 
 
+## 9. 透明式防火墙
+
+### 9.1 桥接模式
+
+网桥是部署在OSI中第二层的网络设备，网桥可以识别到MAC地址，具有以下三个特点
+
+* 转发广播数据包
+* 隔离相同实体网段的单播
+* 不同实体网段间的单播，网桥只会将数据包转发到相关的实体网段上
+
+### 9.2 透明式防火墙
+
+又称为桥接式防火墙(`Bridge Firewall`)
+
+**另一种透明式防火墙**
+
+代理ARP是桥接在两个实体网络段之间的设备，这两个实体网段上使用同一个IP网段，特点是代理ARP可以正常地路由两个实体网段之间的数据包。代理ARP工作在OSI 第三层，网桥是在第二层。
+
+```
+echo 1 > /proc/sys/net/ipv4/ip_forward
+
+# 设置是否对网络上的arp包进行中继。参数值为布尔值，1表示中继，0表示忽略，缺省值为0。该参数通常只对充当路由器的linux主机有用。
+echo 1 > /proc/sys/net/ipv4/conf/eth0/proxy_arp
+echo 1 > /proc/sys/net/ipv4/conf/eth1/proxy_arp
+
+# 单独设置每台主机, 192.168.0.60 在网卡 eh1 上
+ip route add 192.168.0.60 dev eth1
+```
+
+## 基于策略的路由及多路带宽合并
+
+### 10.1 基于策略的路由
+
+Gateway 标记 `0.0.0.0` 表示本主机所属的网络，不需要路由。
+
+**路由策略库**
+
+路由策略库 Routing Policy Database, RPDB。可以在RPDB中填写路由规则，确定“哪类数据包”应该“根据哪个路由表”来传输。
+
+```
+[ansible@app ~]$ ip rule show
+0:	from all lookup local
+32766:	from all lookup main
+32767:	from all lookup default
+```
+
+* 第一个字段: 优先级，数字越小，优先级越高
+* 第二个字段: 规则
+	* Source IP
+	* Destination IP
+	* Type of Service
+	* fwmark
+		* 即匹配`nfmark`值
+	* dev
+	* ...
+* 第三个字段: 符合条件的数据报要通过哪个路由表送出
 
 
+`ip rule add`最后添加`prio XXX`添加优先级
+
+**管理路由表**
+
+传统使用`route -n`查看路由表，仅能操作特定的路由表。可以使用`ip rule show`查看目前使用了哪些路由表，在用`ip route show [table id | name]`查看路由表的内容。
+
+默认三个路由表：
+
+* local: 本机路由及广播信息
+* main: 传统使用`route -n`查看的路由表内容就是`main`的内容。Linux默认使用该表的内容来传输数据
+* default: 默认情况下为空
+
+`ip toute show cache`查看路由缓存，只要本机曾经将数据包传输到远程的某一个IP, 系统就会将前往这个IP的路由记录保存到路由缓存之中，已有如果本机要将数据包纯属到远程的某一个IP，系统就会将前往这个IP的路由记录保存到路由缓存之中，以后如果本机要再次将数据包传输到这个IP，系统就会根据路由缓存中的信息将数据包发送出去，以节省系统判断路由路径的时间，进而达到加快发送数据包的目的。
+
+## 13 弱点扫描、入侵检测及主动防御
+
+### 13.1 弱点扫描 
+
+OpenVAS
+
+### 13.2 入侵检测系统
+
+Snort 入侵检测系统
+
+## 14 VPN
+
+### 14.1 vpn
+
+VPN是工作在网络层以下的，所以网络层的协议通通都可以使用VPN加密保护。
+
+### 14.5 基于IPSec的VPN
+
+#### 14.5.1 IPSec的工作模式
+
+**传输模式**
+
+将两台主机之间所传输的数据加密。
+
+![](img/08.png)
+
+**隧道模式**
+
+加密两个不同的网段传输的数据内容，或者需要将两个私有IP的网段通过IPSec VPN来跨越因特网连接。
+
+![](img/09.png)
+
+#### 14.5.2 IPSec的组成要素
+
+**AH: 完整性验证**
+
+以数字签名的方法来确保数据的完整性。确保传输过程中的数据内容没有遭到篡改或因传输质量不佳造成错误。
+
+**AH: 传输模式**
+
+![](img/10.png)
+
+AH协议在IP包头及TCP包头之间插入了AH包头，AH包头中的IV字段，就是"验证数据"(指纹)
+
+**AH: 隧道模式**
+
+隧道模式下的AH应用
+
+![](img/11.png)
+
+**ESP: 完整性验证与加密**
+
+**ESP: 传输模式**
+
+在IP包头及TCP包头之间插入一个ESP包头，并在数据包的末端加入ESP Trailer字段。
+
+加密范围包括:
+
+* TCP包头
+* DATA
+* ESP Trailer
+
+完整性验证哈希计算包
+
+* ESP包头
+* 上文的加密包
+
+哈希计算后会附加在数据包的最末端一个ESP Auth Trailer字段。
+
+![](img/12.png)
+
+**ESP: 隧道模式**
+
+![](img/13.png)
+
+
+### 14.6 Linux中的IPSec架构
+
+启动IPSec VPN时，会将AH及ESP的参数分别写入到两台VPN主机的SPD及SAD数据库中。
+
+#### 14.6.1 SPD
+
+SPD的内容是用来存放IPSec的规则，用来定义哪些流量需要使用IPSec。
+
+#### 14.5.2 SAD
+
+在SPD中决定数据包必须执行AH、ESP或AH及ESP协议后，就会从SAD数据库中找到处理这个数据包的参数。
+
+SAPD数据库中的参数有:
+
+* SPI值（数据库索引值）
+* 目的端IP
+* AH或ESP
+* AH验证算法
+* AH验证的加密密钥
+* ESP验证算法
+* ESP验证算法的加密密钥
+* ESP的加密算法
+* ESP加密算法的加密密钥
+* 使用传输模式还是隧道模式
+
+## 15 VPN实战篇
+
+### 15.1 IKE
+
+## 16 VPN: L2TP Over IPSec
+
+L2TP 属于链路层
+
+L2TP会把整个包送回传输层，接着在真个数据包的最前面再封装一个UDP包头，然后数据会就继续往下层发送到网络层。
+
+![](img/14.png)
+
+**L2TP Over IPSec**
+
+![](img/15.png)

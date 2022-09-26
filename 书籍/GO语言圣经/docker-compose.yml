@@ -4,7 +4,7 @@ services:
   golang:
     image: "golang:1.19.0-buster"
     ports:
-      - "8080:8080"
+      - "8088:8080"
     volumes:
       - ./:/go
     tty: true

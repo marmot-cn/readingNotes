@@ -24,3 +24,63 @@
 
 ### 7.10 类型断言
 
+如果是对象
+
+```
+# 类型判断
+if f, ok := w.(*os.File); ok { 
+	// ...use f... 
+}
+```
+
+### 7.11 基于类型断言区别错误类型
+
+```
+import (
+	"errors" 
+	"syscall" 
+)
+
+var ErrNotExist = errors.New("file does not exist") 
+
+// IsNotExist returns a boolean indicating whether the error is known to 
+// report that a file or directory does not exist. It is satisfied by
+ // ErrNotExist as well as some syscall errors. 
+ func IsNotExist(err error) bool { 
+ 	if pe, ok := err.(*PathError); ok { 
+ 		err = pe.Err 
+ 	}
+ 	
+ 	return err == syscall.ENOENT || err == ErrNotExist 
+ }
+```
+
+### 7.12. 通过类型断言询问行为
+
+```
+package fmt 
+
+func formatOneValue(x interface{}) string { 
+	if err, ok := x.(error); ok { 
+		return err.Error() 
+	}
+	if str, ok := x.(Stringer); ok { 
+	return str.String() 
+	}
+	// ...all other types... 
+}
+```
+
+### 7.13 类型开关
+
+`x.(type)`只能用于`siwtch`
+
+```
+switch x.(type) { 
+	case nil: // ...
+	case int, uint: // ... 
+	case bool: // ... 
+	case string: // ... 
+	default: // ... 
+}
+```
