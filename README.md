@@ -330,3 +330,4 @@
 * DOP
 * CISA
 * CISSP
+* PSM2
