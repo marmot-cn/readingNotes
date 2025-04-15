@@ -8,6 +8,9 @@ def sigmoid(x):
 
 
 def step_function(x):
+    # True 对应 x > 0
+    # False 对应 x <= 0
+    # dtype=np.int 转换成整数
     return np.array(x > 0, dtype=np.int)
 
 x = np.arange(-5.0, 5.0, 0.1)
